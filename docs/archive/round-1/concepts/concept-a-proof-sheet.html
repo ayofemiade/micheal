@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Concept A — The Proof Sheet (static comp)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 1440px;
+        height: 900px;
+        overflow: hidden;
+        background: #ece9e3;
+        color: #141414;
+        font-family: "Instrument Sans", sans-serif;
+        position: relative;
+      }
+      .red {
+        color: #a70405;
+      }
+      nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 56px;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+      }
+      nav .logo {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        font-weight: 300;
+      }
+      nav ul {
+        display: flex;
+        gap: 30px;
+        list-style: none;
+      }
+      nav .cta {
+        border: 1.5px solid #141414;
+        padding: 11px 20px;
+        border-radius: 2px;
+        font-weight: 600;
+      }
+      nav .cta i {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        background: #a70405;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      .mono {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+      }
+      /* portrait: studio white multiplies into paper */
+      .main {
+        position: absolute;
+        right: 70px;
+        top: 72px;
+        width: 610px;
+        height: 742px;
+        mix-blend-mode: multiply;
+      }
+      .main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 8%;
+      }
+      .marks {
+        position: absolute;
+        right: 70px;
+        top: 100px;
+        width: 610px;
+        height: 688px;
+        pointer-events: none;
+      }
+      .marks:before,
+      .marks:after,
+      .marks i,
+      .marks b {
+        content: "";
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border: 2px solid #a70405;
+      }
+      .marks:before {
+        left: 0;
+        top: 0;
+        border-right: 0;
+        border-bottom: 0;
+      }
+      .marks:after {
+        right: 0;
+        top: 0;
+        border-left: 0;
+        border-bottom: 0;
+      }
+      .marks i {
+        left: 0;
+        bottom: 0;
+        border-right: 0;
+        border-top: 0;
+      }
+      .marks b {
+        right: 0;
+        bottom: 0;
+        border-left: 0;
+        border-top: 0;
+      }
+      .tag {
+        position: absolute;
+        right: 70px;
+        top: 90px;
+        transform: translateY(-100%);
+        color: #a70405;
+      }
+      h1 {
+        position: absolute;
+        left: 56px;
+        top: 112px;
+        font-family: "Fraunces", serif;
+        font-weight: 300;
+        font-size: 142px;
+        line-height: 0.9;
+        letter-spacing: -0.035em;
+        font-variation-settings: "opsz" 144;
+      }
+      h1 span {
+        display: block;
+        position: relative;
+      }
+      h1 span em {
+        font-style: italic;
+        color: #a70405;
+      }
+      h1 sup {
+        position: absolute;
+        left: -0px;
+        top: -12px;
+        font-family: "IBM Plex Mono";
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        color: #a70405;
+        font-weight: 400;
+      }
+      h1 .dim {
+        color: #14141455;
+      }
+      .lede {
+        position: absolute;
+        left: 56px;
+        top: 640px;
+        width: 430px;
+        font-size: 17px;
+        line-height: 1.55;
+        color: #141414cc;
+      }
+      .strip {
+        position: absolute;
+        left: 56px;
+        bottom: 40px;
+        display: flex;
+        gap: 10px;
+      }
+      .f {
+        width: 96px;
+        position: relative;
+      }
+      .f .ph {
+        width: 96px;
+        height: 112px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .f img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .f.on .ph {
+        outline: 2px solid #a70405;
+        outline-offset: 3px;
+      }
+      .f .mono {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        color: #14141499;
+      }
+      .f.on .mono {
+        color: #a70405;
+      }
+      .cta2 {
+        position: absolute;
+        left: 480px;
+        bottom: 50px;
+        font-weight: 600;
+        font-size: 14px;
+        border-bottom: 1.5px solid #141414;
+        padding-bottom: 3px;
+      }
+      .note {
+        position: absolute;
+        right: 70px;
+        bottom: 40px;
+        width: 610px;
+        display: flex;
+        justify-content: space-between;
+        color: #14141499;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">Segun Michael</div>
+      <ul>
+        <li>About</li>
+        <li>Listening Hub</li>
+        <li>Media &amp; Communication</li>
+        <li>Real Estate</li>
+        <li>Contact</li>
+      </ul>
+      <div class="cta"><i></i>Book a Listening Session</div>
+    </nav>
+    <div class="main"><img src="img/hero.jpg" alt="" /></div>
+    <div class="marks"></div>
+    <div class="tag mono">FRAME 04 / 04 &nbsp;—&nbsp; POSSIBILITIES</div>
+    <h1>
+      <span class="dim"><sup>01</sup>People.</span>
+      <span class="dim"><sup>02</sup>Stories.</span>
+      <span class="dim"><sup>03</sup>Places.</span>
+      <span><sup>04</sup><em>Possibilities.</em></span>
+    </h1>
+    <p class="lede">
+      I’m Segun Michael. I listen, create and bring ideas to life across
+      conversations, media and real estate.
+    </p>
+    <div class="strip">
+      <div class="f">
+        <div class="ph">
+          <img src="img/listen.jpg" style="object-position: 50% 20%" />
+        </div>
+        <div class="mono"><span>01</span><span>Listen</span></div>
+      </div>
+      <div class="f">
+        <div class="ph">
+          <img src="img/camera.jpg" style="object-position: 50% 25%" />
+        </div>
+        <div class="mono"><span>02</span><span>Create</span></div>
+      </div>
+      <div class="f">
+        <div class="ph">
+          <img src="img/blazer.jpg" style="object-position: 50% 12%" />
+        </div>
+        <div class="mono"><span>03</span><span>Build</span></div>
+      </div>
+      <div class="f on">
+        <div class="ph">
+          <img src="img/hero.jpg" style="object-position: 50% 12%" />
+        </div>
+        <div class="mono"><span>04</span><span>All three</span></div>
+      </div>
+    </div>
+    <div class="cta2">Explore my work →</div>
+    <div class="note mono">
+      <span>HOVER A FRAME — THE PORTRAIT CHANGES</span
+      ><span>SCROLL ↓ DEVELOP THE SHEET</span>
+    </div>
+  </body>
+</html>

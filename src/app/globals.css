@@ -1,0 +1,336 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Segun Michael: "Near to Far"
+   One attention, four distances. See docs/NEW_CREATIVE_DIRECTION.md.
+   ========================================================================== */
+
+@theme {
+  /* The white of his studio backdrop → paper → cyanotype */
+  --color-studio: #fafafa;
+  --color-paper: #f5f3ee;
+  --color-ink: #14161a;
+  --color-ink-2: #4a4e57; /* secondary text: 7.4:1 on paper */
+  --color-rule: #14161a26;
+  --color-cyan: #1b3463; /* Prussian blue: cyanotype and blueprint */
+  --color-cyan-2: #3d5688; /* drawing lines, secondary */
+  --color-mao: #a70405; /* MAO red: the booking action only. Never on cyan. */
+
+  --font-display: var(--font-zodiak), "Iowan Old Style", Georgia, serif;
+  --font-sans:
+    var(--font-switzer), ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
+
+  --ease-camera: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --gutter: clamp(1.25rem, 3.4vw, 2.75rem);
+  --header-h: 4.5rem;
+}
+
+/* ---------- Base ---------- */
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem); /* WCAG 2.4.11: focus not hidden by the header */
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-feature-settings: "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-cyan);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ---------- Type ---------- */
+
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 0.88;
+}
+
+/* The four words and section statements */
+@utility t-word {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3.75rem, 10.6vw, 10.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.86;
+}
+
+@utility t-statement {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 5.6vw, 5.75rem);
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+/* Scale notation: a real drafting convention, used to mean distance */
+@utility t-scale {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility ratio {
+  display: inline-block;
+  padding: 0.2em 0.5em 0.15em;
+  border: 1px solid currentColor;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility shell {
+  padding-inline: var(--gutter);
+}
+
+/* ---------- The booking action ---------- */
+
+@utility cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.85rem 1.35rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  transition:
+    background-color 0.25s var(--ease-camera),
+    color 0.25s var(--ease-camera);
+  &::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    background: var(--color-mao);
+    transition: transform 0.35s var(--ease-camera);
+  }
+  &:hover::before {
+    transform: scale(1.6);
+  }
+}
+
+/* On cyan the CTA inverts and the red mark is dropped (red on cyan is 1.55:1). */
+@utility cta-on-cyan {
+  background: var(--color-paper);
+  color: var(--color-cyan);
+  &::before {
+    background: var(--color-cyan);
+  }
+}
+
+/* Any other action: same shape, no MAO mark (the red is reserved for booking). */
+@utility cta-plain {
+  &::before {
+    display: none;
+  }
+}
+
+@utility link-quiet {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-underline-offset 0.25s var(--ease-camera);
+  &:hover {
+    text-underline-offset: 0.45em;
+  }
+}
+
+/* ==========================================================================
+   The pull-back (hero). Geometry mirrors src/components/home/scene.ts.
+   Before JS, the photographs are laid out at the exact 1:1 camera using
+   container units, so the first paint is the finished composition.
+   ========================================================================== */
+
+.pullback-track {
+  position: relative;
+  height: 100svh;
+}
+:root.js .pullback-track {
+  height: 430svh;
+}
+@media (max-width: 639px) {
+  :root.js .pullback-track {
+    height: 360svh;
+  }
+}
+
+.pullback-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  container-type: size;
+  background: var(--stage-bg, var(--color-studio));
+  color: var(--stage-fg, var(--color-ink));
+
+  /* camera at 1:1: frame world rect (30,2,80,68) */
+  --s0: min(1.25cqw, 1.4706cqh);
+  --tx0: calc(66cqw - 70 * var(--s0));
+  --ty0: calc(55cqh - 36 * var(--s0));
+}
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-photos {
+    --tx0: calc(50cqw - 70 * var(--s0));
+    --ty0: calc(34cqh - 36 * var(--s0));
+  }
+}
+
+.pullback-photos {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+}
+.pullback-photos.is-moving {
+  will-change: transform;
+}
+.pullback-photos > * {
+  position: absolute;
+  left: calc(var(--tx0) + var(--x) * var(--s0));
+  top: calc(var(--ty0) + var(--y) * var(--s0));
+  width: calc(var(--w) * var(--s0));
+  height: calc(var(--h) * var(--s0));
+  max-width: none;
+  object-fit: cover;
+}
+.pullback-photos .print-frame {
+  box-shadow: 0 0 0 1px #14161a14;
+}
+
+/* The cyanotype exposure: blue rises from the horizon at 1:∞ */
+.pullback-exposure {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cyan);
+  clip-path: inset(100% 0 0 0);
+}
+
+/* Narrow screens: keep the 1:1 copy legible where it crosses the shirt */
+.pullback-veil {
+  position: absolute;
+  inset: 45% 0 0 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, #fafafa00, #fafafae6 38%, #fafafa);
+  display: none;
+}
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-veil {
+    display: block;
+  }
+}
+
+.pullback-drawing {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  transform-origin: 0 0;
+  opacity: 0;
+  color: var(--stage-line, var(--color-cyan));
+}
+.pullback-drawing * {
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+.pullback-drawing .faint {
+  stroke-width: 0.6;
+  opacity: 0.5;
+}
+
+.pullback-chapter {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 11svh;
+  width: min(44cqw, 40rem);
+  z-index: 2;
+}
+.pullback-chapter[data-i="1"],
+.pullback-chapter[data-i="2"],
+.pullback-chapter[data-i="3"] {
+  opacity: 0;
+}
+:root:not(.js) .pullback-chapter[data-i="1"],
+:root:not(.js) .pullback-chapter[data-i="2"],
+:root:not(.js) .pullback-chapter[data-i="3"],
+:root:not(.js) .pullback-ruler {
+  display: none;
+}
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-chapter {
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    bottom: 4.5svh;
+  }
+}
+
+.pullback-ruler {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 11svh;
+  z-index: 3;
+}
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-ruler {
+    top: calc(var(--header-h) + 0.25rem);
+    bottom: auto;
+  }
+}
+
+/* ---------- The room, at 1:100 (stroke in user units: ≈1.3px on desktop) ---------- */
+.room-drawing {
+  --sw: 4.5;
+}
+.room-drawing * {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--sw);
+  stroke-linecap: square;
+}
+.room-drawing .faint {
+  stroke-width: calc(var(--sw) * 0.55);
+  opacity: 0.55;
+}
+@media (max-width: 639px) {
+  .room-drawing {
+    --sw: 9;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

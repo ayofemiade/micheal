@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Concept B — Issue 01 (static comp)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=Hanken+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 1440px;
+        height: 900px;
+        overflow: hidden;
+        background: #eae3d4;
+        color: #0f1a22;
+        font-family: "Hanken Grotesk", sans-serif;
+        position: relative;
+      }
+      .top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 44px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 40px;
+        font-size: 12px;
+        font-weight: 500;
+        border-bottom: 1px solid #0f1a22;
+      }
+      .top ul {
+        display: flex;
+        gap: 26px;
+        list-style: none;
+      }
+      .mast {
+        position: absolute;
+        top: 56px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-family: "Bodoni Moda", serif;
+        font-weight: 500;
+        font-size: 176px;
+        line-height: 1;
+        letter-spacing: -0.045em;
+        white-space: nowrap;
+      }
+      .rule {
+        position: absolute;
+        top: 252px;
+        left: 40px;
+        right: 40px;
+        border-top: 3px solid #0f1a22;
+        border-bottom: 1px solid #0f1a22;
+        height: 9px;
+      }
+      .meta {
+        position: absolute;
+        top: 268px;
+        left: 40px;
+        right: 40px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .p {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 262px;
+        width: 640px;
+        height: 640px;
+        mix-blend-mode: multiply;
+      }
+      .p img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 6%;
+      }
+      .col {
+        position: absolute;
+        top: 330px;
+        width: 330px;
+      }
+      .col.l {
+        left: 40px;
+      }
+      .col.r {
+        right: 40px;
+        text-align: right;
+      }
+      .cl {
+        border-top: 1px solid #0f1a22;
+        padding: 14px 0 22px;
+      }
+      .cl small {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: #d8452b;
+        text-transform: uppercase;
+      }
+      .cl h3 {
+        font-family: "Bodoni Moda", serif;
+        font-weight: 500;
+        font-size: 34px;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin: 8px 0 8px;
+      }
+      .cl h3 i {
+        font-style: italic;
+      }
+      .cl p {
+        font-size: 13px;
+        line-height: 1.5;
+        color: #0f1a22cc;
+      }
+      .badge {
+        position: absolute;
+        right: 420px;
+        top: 560px;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: #d8452b;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 1.25;
+        transform: rotate(-9deg);
+        letter-spacing: 0.02em;
+      }
+      .hl {
+        position: absolute;
+        left: 40px;
+        bottom: 34px;
+        font-family: "Bodoni Moda", serif;
+        font-size: 24px;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top">
+      <span><b>Segun Michael</b></span>
+      <ul>
+        <li>About</li>
+        <li>Listening Hub</li>
+        <li>Media &amp; Communication</li>
+        <li>Real Estate</li>
+        <li>Contact</li>
+      </ul>
+      <span style="background: #0f1a22; color: #eae3d4; padding: 6px 14px"
+        >Book a Listening Session</span
+      >
+    </div>
+    <div class="mast">SEGUN MICHAEL</div>
+    <div class="p"><img src="img/hero.jpg" alt="" /></div>
+    <div class="rule"></div>
+    <div class="meta">
+      <span>Issue 01</span><span>People. Stories. Places. Possibilities.</span
+      ><span>One person · Three expressions of purpose</span>
+    </div>
+    <div class="col l">
+      <div class="cl">
+        <small>01 — Listen</small>
+        <h3>Space to speak.<br /><i>Room to think.</i></h3>
+        <p>The Listening Hub — supportive listening and reflection.</p>
+      </div>
+      <div class="cl">
+        <small>02 — Create</small>
+        <h3>Stories deserve to be <i>told well.</i></h3>
+        <p>MAO Media &amp; Inspire Network — photography and editorial.</p>
+      </div>
+    </div>
+    <div class="col r">
+      <div class="cl">
+        <small>03 — Build</small>
+        <h3>Plans into <i>practical progress.</i></h3>
+        <p>MAO Contractors — renovation planning and project coordination.</p>
+      </div>
+      <div class="cl">
+        <small>Inside</small>
+        <h3 style="font-size: 24px">Selected work · Listening Hub · Contact</h3>
+        <p>Turn the page ↓</p>
+      </div>
+    </div>
+    <div class="badge">Book a<br />Listening<br />Session →</div>
+  </body>
+</html>

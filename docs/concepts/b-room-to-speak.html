@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept B: Room to Speak (hero comp)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..600;1,6..72,200..600&family=Schibsted+Grotesk:wght@400..600&display=swap" rel="stylesheet" />
+<style>
+  :root { --room:#17130f; --lamp:#f1e7d6; --dim:#a8998a; --mao:#c4141a; }
+  * { box-sizing:border-box; margin:0; }
+  html,body { background:var(--room); color:var(--lamp); font-family:"Schibsted Grotesk", sans-serif; }
+  .stage { position:relative; height:100vh; min-height:640px; overflow:hidden; }
+  .photo { position:absolute; right:0; top:0; width:46vw; height:100%; object-fit:cover; object-position:38% 50%;
+           -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 38%); mask-image:linear-gradient(90deg, transparent 0%, #000 38%);
+           filter:brightness(.62) saturate(.8) sepia(.18); }
+  .bar { position:absolute; inset:0 0 auto 0; display:flex; justify-content:space-between; padding:30px 48px; font-size:13px; color:var(--lamp); z-index:3; background:linear-gradient(#17130fcc,#17130f00); }
+  .bar b { color:var(--lamp); font-weight:500; }
+  .bar a { color:inherit; text-decoration:none; margin-left:26px; }
+  .lead { position:absolute; left:48px; top:24vh; z-index:2; }
+  h1 { font-family:Newsreader, serif; font-weight:250; font-size:12.6vw; line-height:.86; letter-spacing:-.035em; font-variation-settings:"opsz" 72; }
+  h1 em { font-style:italic; font-weight:300; }
+  .breath { display:block; width:72px; height:1px; background:var(--dim); margin:5.5vh 0 3.4vh; }
+  .lead p { max-width:38ch; font-size:17px; line-height:1.55; color:var(--dim); }
+  .lead p b { color:var(--lamp); font-weight:500; }
+  .actions { margin-top:30px; display:flex; gap:28px; align-items:center; font-size:15px; }
+  .actions a { color:var(--lamp); text-decoration:none; }
+  .actions .cta { padding:14px 20px; border:1px solid var(--lamp); }
+  .actions .cta span { color:var(--mao); }
+  .qs { position:absolute; left:48px; right:48px; bottom:34px; display:flex; justify-content:space-between; font-family:Newsreader, serif; font-style:italic; font-size:20px; color:var(--dim); z-index:2; border-top:1px solid #3a3129; padding-top:16px; }
+  .qs span b { font-family:"Schibsted Grotesk", sans-serif; font-style:normal; font-size:11px; letter-spacing:.08em; text-transform:uppercase; margin-right:10px; color:#7d6f62; }
+  @media (max-width:600px){
+    .photo { width:100%; height:52vh; top:auto; bottom:0; -webkit-mask-image:linear-gradient(0deg,#000 40%,transparent); mask-image:linear-gradient(0deg,#000 40%,transparent); }
+    .bar { padding:20px; } .bar a:not(:last-child){ display:none; }
+    .lead { left:20px; right:20px; top:15vh; } h1{ font-size:21vw; } .lead p{ font-size:15px; }
+    .qs { display:none; }
+  }
+</style>
+</head>
+<body>
+<section class="stage">
+  <img class="photo" src="img/window.jpg" alt="Segun Michael seated by a window, holding a camera, smiling." />
+  <div class="bar"><b>Segun Michael</b><span><a href="#">About</a><a href="#">Listening Hub</a><a href="#">Media</a><a href="#">Real Estate</a><a href="#">Book</a></span></div>
+  <div class="lead">
+    <h1>I&rsquo;m<br /><em>listening.</em></h1>
+    <span class="breath" aria-hidden="true"></span>
+    <p><b>Segun Michael.</b> I listen, create and bring ideas to life across conversations, media and real estate. It all starts the same way.</p>
+    <div class="actions"><a class="cta" href="#"><span>&#9679;</span>&nbsp; Book a Listening Session</a><a href="#">See the work &rarr;</a></div>
+  </div>
+  <div class="qs">
+    <span><b>Listening Hub</b>What&rsquo;s on your mind?</span>
+    <span><b>MAO Media &middot; Inspire Network</b>What&rsquo;s the story?</span>
+    <span><b>MAO Contractors</b>What could this place become?</span>
+  </div>
+</section>
+</body>
+</html>

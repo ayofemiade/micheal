@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept A: Body Language (hero comp)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@1,6..72,300..500&display=swap" rel="stylesheet" />
+<style>
+  :root { --seamless:#f7f6f3; --ink:#141210; --mao:#a70405; --muted:#5e5852; }
+  * { box-sizing:border-box; margin:0; }
+  html,body { background:var(--seamless); color:var(--ink); font-family:Archivo, sans-serif; }
+  .stage { position:relative; height:100vh; min-height:640px; overflow:hidden; }
+  .bar { position:absolute; inset:0 0 auto 0; display:flex; justify-content:space-between; align-items:center; padding:28px 40px; font-size:13px; z-index:5; font-variation-settings:"wdth" 100; }
+  .bar b { font-weight:700; letter-spacing:.01em; }
+  .bar nav { display:flex; gap:28px; }
+  .bar a { color:inherit; text-decoration:none; }
+  .bar .book { border-bottom:2px solid var(--mao); padding-bottom:2px; font-weight:600; }
+  .figure { position:absolute; right:7vw; bottom:0; height:96vh; mix-blend-mode:multiply; filter:contrast(1.04) brightness(1.03); }
+  .name { position:absolute; left:40px; top:15vh; line-height:.8; letter-spacing:-.02em; }
+  .name .w { display:block; font-weight:800; }
+  .name .segun { font-size:12.4vw; font-variation-settings:"wdth" 125; }
+  .name .michael { font-size:9.2vw; font-variation-settings:"wdth" 62; font-weight:300; margin-top:.8vw; letter-spacing:.01em; }
+  .verbs { position:absolute; left:40px; bottom:150px; display:flex; align-items:baseline; gap:2.2vw; font-size:4.4vw; line-height:1; }
+  .verbs span:nth-of-type(1){ font-variation-settings:"wdth" 62; font-weight:250; }
+  .verbs span:nth-of-type(2){ font-variation-settings:"wdth" 95; font-weight:500; }
+  .verbs span:nth-of-type(3){ font-variation-settings:"wdth" 125; font-weight:900; }
+  .verbs i { font-style:normal; color:var(--muted); font-size:1.2vw; font-variation-settings:"wdth" 100; }
+  .intro { position:absolute; left:40px; bottom:48px; display:flex; gap:40px; align-items:flex-end; }
+  .intro p { max-width:34ch; font-size:16px; line-height:1.5; font-variation-settings:"wdth" 100; }
+  .intro em { font-family:Newsreader, serif; font-style:italic; font-size:19px; }
+  .cta { background:var(--ink); color:#fff; padding:15px 22px; font-size:14px; font-weight:600; text-decoration:none; white-space:nowrap; }
+  .cta::before { content:""; display:inline-block; width:8px; height:8px; background:var(--mao); margin-right:10px; vertical-align:1px; }
+  .note { position:absolute; right:40px; bottom:48px; font-size:12px; color:var(--muted); writing-mode:vertical-rl; transform:rotate(180deg); }
+  .scene2 .f2 { right:auto; left:40vw; height:92vh; }
+  .posture { position:absolute; left:40px; top:12vh; font-size:30vw; line-height:.8; font-weight:200; font-variation-settings:"wdth" 62; letter-spacing:-.01em; }
+  @media (max-width:600px){
+    .bar { padding:18px 20px; } .bar nav a:not(.book){ display:none; }
+    .figure { right:-22vw; height:72vh; }
+    .name { left:20px; top:11vh; } .name .segun{ font-size:18.5vw; }
+    .scene2 .f2 { left:auto; right:-34vw; height:64vh; } .posture { left:20px; font-size:40vw; } .name .michael{ font-size:12.4vw; }
+    .verbs { left:20px; bottom:200px; font-size:8vw; gap:4vw; } .verbs i{ display:none; }
+    .intro { left:20px; right:20px; bottom:28px; flex-direction:column; align-items:flex-start; gap:18px; }
+    .intro p { font-size:15px; } .note{ display:none; }
+  }
+</style>
+</head>
+<body>
+<section class="stage">
+  <div class="bar"><b>Segun Michael</b><nav><a href="#">About</a><a href="#">Listening Hub</a><a href="#">Media</a><a href="#">Real Estate</a><a class="book" href="#">Book a session</a></nav></div>
+  <img class="figure" src="img/hero.jpg" alt="Segun Michael, arms crossed, smiling, in a cream mandarin-collar shirt." />
+  <h1 class="name"><span class="w segun">SEGUN</span><span class="w michael">MICHAEL</span></h1>
+  <div class="verbs" aria-label="Listen, create, build"><span>listen</span><i>/</i><span>create</span><i>/</i><span>build</span></div>
+  <div class="intro">
+    <p><em>One person, three postures.</em> I listen, create and bring ideas to life across conversations, media and real estate.</p>
+    <a class="cta" href="#">Book a Listening Session</a>
+  </div>
+  <div class="note">Scroll: the type takes his posture</div>
+</section>
+<section class="stage scene2">
+  <img class="figure f2" src="img/clasped.jpg" alt="Segun Michael seated at a table, hands clasped, listening." />
+  <h2 class="posture">listen</h2>
+  <div class="intro"><p><em>Listening Hub.</em> Space to speak. Room to think. Supportive conversation, not therapy or clinical treatment.</p><a class="cta" href="#">Book a Listening Session</a></div>
+  <div class="note">02 / 04 &nbsp; the type takes his posture</div>
+</section>
+</body>
+</html>

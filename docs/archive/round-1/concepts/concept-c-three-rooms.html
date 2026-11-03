@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Concept C — Three Rooms (static comp)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Newsreader:ital,opsz,wght@1,6..72,400&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 1440px;
+        height: 900px;
+        overflow: hidden;
+        background: #efeae0;
+        color: #1b1a17;
+        font-family: "Bricolage Grotesque", sans-serif;
+        position: relative;
+      }
+      .room {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 480px;
+      }
+      .r1 {
+        left: 0;
+        background: #d9a27e;
+      }
+      .r2 {
+        left: 480px;
+        background: #f1ece2;
+      }
+      .r3 {
+        left: 960px;
+        background: #b7bda5;
+      }
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(#1b1a1722 1px, transparent 1px),
+          linear-gradient(90deg, #1b1a1722 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .p {
+        position: absolute;
+        left: 400px;
+        top: 70px;
+        width: 640px;
+        height: 830px;
+        mix-blend-mode: multiply;
+      }
+      .p img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 6%;
+      }
+      nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        font-size: 13px;
+        font-weight: 500;
+        z-index: 5;
+      }
+      nav ul {
+        display: flex;
+        gap: 26px;
+        list-style: none;
+      }
+      nav .cta {
+        background: #1b1a17;
+        color: #f1ece2;
+        padding: 11px 20px;
+        border-radius: 99px;
+        font-weight: 700;
+      }
+      .w {
+        position: absolute;
+        top: 104px;
+        font-weight: 800;
+        font-size: 92px;
+        line-height: 0.9;
+        letter-spacing: -0.05em;
+        z-index: 3;
+      }
+      .w small {
+        display: block;
+        font-family: "DM Mono", monospace;
+        font-weight: 400;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        margin-bottom: 14px;
+      }
+      .w1 {
+        left: 40px;
+      }
+      .w2 {
+        left: 520px;
+      }
+      .w3 {
+        left: 1000px;
+      }
+      .last {
+        position: absolute;
+        left: 40px;
+        bottom: 56px;
+        font-weight: 800;
+        font-size: 150px;
+        line-height: 0.85;
+        letter-spacing: -0.055em;
+        z-index: 3;
+      }
+      .last i {
+        font-family: "Newsreader", serif;
+        font-weight: 400;
+        letter-spacing: -0.03em;
+      }
+      .sub {
+        position: absolute;
+        left: 1000px;
+        bottom: 64px;
+        width: 380px;
+        z-index: 3;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .sub b {
+        display: inline-block;
+        margin-top: 14px;
+        font-weight: 700;
+        border-bottom: 1.5px solid #1b1a17;
+      }
+      .cap {
+        position: absolute;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        z-index: 3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="room r1"></div>
+    <div class="room r2"></div>
+    <div class="room r3"><div class="grid"></div></div>
+    <div class="p"><img src="img/hero.jpg" alt="" /></div>
+    <nav>
+      <b style="font-size: 18px">Segun Michael</b>
+      <ul>
+        <li>About</li>
+        <li>Listening Hub</li>
+        <li>Media &amp; Communication</li>
+        <li>Real Estate</li>
+        <li>Contact</li>
+      </ul>
+      <span class="cta">Book a Listening Session</span>
+    </nav>
+    <div class="w w1"><small>01 · LISTEN</small>People.</div>
+    <div class="w w2"><small>02 · CREATE</small>Stories.</div>
+    <div class="w w3"><small>03 · BUILD</small>Places.</div>
+    <div class="last"><i>Possibilities.</i></div>
+    <div class="sub">
+      I’m Segun Michael. I listen, create and bring ideas to life across
+      conversations, media and real estate.<br /><b>Enter the first room →</b>
+    </div>
+    <div class="cap" style="left: 40px; top: 480px">ROOM 01 — LOW LIGHT</div>
+    <div class="cap" style="left: 520px; top: 480px; display: none">
+      ROOM 02
+    </div>
+    <div class="cap" style="left: 1000px; top: 480px">
+      ROOM 03 — PLAN &amp; SITE
+    </div>
+  </body>
+</html>

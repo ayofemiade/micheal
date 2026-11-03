@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept C: Near to Far (scroll prototype)</title>
+<!-- Prototype only. Fonts: Zodiak + Switzer (Fontshare, ITF Free Font Licence; to be self-hosted in production). -->
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@300,400,700&f[]=switzer@400,500,600&display=swap" rel="stylesheet" />
+<style>
+  :root { --paper:#f5f3ee; --blue:#1b3463; --ink:#14161a; --mao:#a70405; --bg:var(--paper); --line:var(--blue); --fg:var(--ink); }
+  * { box-sizing:border-box; margin:0; }
+  html,body { background:var(--paper); font-family:Switzer, sans-serif; color:var(--ink); }
+  .track { height:520vh; position:relative; }
+  .stage { position:sticky; top:0; height:100vh; overflow:hidden; background:var(--bg); color:var(--fg); }
+  .world { position:absolute; left:0; top:0; transform-origin:0 0; }
+  .world img { position:absolute; display:block; object-fit:cover; box-shadow:0 0 0 .5px rgba(0,0,0,.08); }
+  .world svg { position:absolute; overflow:visible; left:0; top:0; }
+  .world svg * { vector-effect:non-scaling-stroke; fill:none; stroke:var(--line); stroke-width:1.25; }
+  .world svg .faint { stroke-width:.6; opacity:.5; }
+  .face { transition:none; }
+  /* overlays */
+  .bar { position:absolute; inset:0 0 auto 0; display:flex; justify-content:space-between; align-items:center; padding:26px 44px; font-size:13px; z-index:9; }
+  .bar b { font-weight:600; }
+  .bar nav a { color:inherit; text-decoration:none; margin-left:26px; opacity:.85; }
+  .bar nav a.book { opacity:1; font-weight:600; }
+  .bar nav a.book::before { content:""; display:inline-block; width:7px; height:7px; background:var(--mao); margin-right:8px; vertical-align:1px; }
+  .chapter { position:absolute; left:44px; bottom:12vh; width:min(44vw,620px); z-index:8; will-change:opacity,transform; }
+  .scale { font-size:12px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; display:flex; gap:14px; align-items:center; margin-bottom:18px; }
+  .scale i { font-style:normal; font-variant-numeric:tabular-nums; letter-spacing:0; font-size:13px; padding:3px 7px; border:1px solid currentColor; }
+  h1, h2 { font-family:Zodiak, serif; font-weight:300; font-size:clamp(64px, 10.5vw, 168px); line-height:.86; letter-spacing:-.035em; }
+  .chapter p { font-size:17px; line-height:1.5; margin-top:22px; max-width:36ch; }
+  .chapter .actions { margin-top:26px; display:flex; gap:22px; align-items:center; font-size:15px; }
+  .cta { background:var(--ink); color:#fff; padding:14px 20px; text-decoration:none; font-weight:500; }
+  .cta.light { background:var(--paper); color:var(--blue); }
+  .link { color:inherit; }
+  .note { font-size:12px; opacity:.75; margin-top:14px; }
+  .ruler { position:absolute; right:44px; bottom:12vh; z-index:8; font-size:12px; font-variant-numeric:tabular-nums; display:grid; gap:10px; text-align:right; }
+  .ruler span { opacity:.35; transition:opacity .2s; } .ruler span.on { opacity:1; font-weight:600; }
+  .after { padding:20vh 44px; font-family:Zodiak, serif; font-size:40px; background:var(--paper); }
+  @media (max-width:640px){
+    .bar { padding:18px 20px; } .bar nav a:not(.book){ display:none; }
+    .chapter { left:20px; right:20px; width:auto; bottom:5vh; }
+    h1, h2 { font-size:15.5vw; } .chapter p { font-size:15px; }
+    .ruler { right:20px; top:70px; bottom:auto; }
+  }
+  @media (prefers-reduced-motion: reduce){ /* production: four static frames with cross-fades, no scrubbed zoom */ }
+</style>
+</head>
+<body>
+<div class="track" id="track">
+  <div class="stage" id="stage">
+    <div class="world" id="world">
+      <svg width="1" height="1" aria-hidden="true" id="drawing">
+        <!-- ground / horizon, reaching far beyond the room -->
+        <line x1="-40000" y1="1000" x2="40000" y2="1000" />
+        <g class="faint" id="grid"></g>
+        <!-- the wall: an elevation drawing, not a real building -->
+        <polyline points="-1400,1000 -1400,-800 2000,-800 2000,1000" />
+        <line x1="-1400" y1="930" x2="2000" y2="930" class="faint" />
+        <!-- dimension line (no figures: we don't invent measurements) -->
+        <line x1="-1400" y1="-930" x2="2000" y2="-930" class="faint" />
+        <line x1="-1400" y1="-960" x2="-1400" y2="-900" class="faint" /><line x1="2000" y1="-960" x2="2000" y2="-900" class="faint" />
+        <!-- window -->
+        <rect x="-1150" y="-450" width="500" height="800" /><line x1="-900" y1="-450" x2="-900" y2="350" class="faint"/><line x1="-1150" y1="-50" x2="-650" y2="-50" class="faint"/>
+        <!-- doorway -->
+        <polyline points="1520,1000 1520,40 1860,40 1860,1000" /><polyline points="1550,1000 1550,70 1830,70 1830,1000" class="faint" />
+        <!-- two chairs, facing: the room is built for a conversation -->
+        <polyline points="690,560 700,820 900,820" /><line x1="708" y1="820" x2="708" y2="1000"/><line x1="892" y1="820" x2="892" y2="1000"/>
+        <polyline points="1310,560 1300,820 1100,820" /><line x1="1292" y1="820" x2="1292" y2="1000"/><line x1="1108" y1="820" x2="1108" y2="1000"/>
+        <line x1="1000" y1="1000" x2="1000" y2="700" /><polygon points="958,700 1042,700 1026,640 974,640" />
+      </svg>
+      <!-- salon hang: Segun's portrait among genuine MAO Media prints -->
+      <img src="img/mao-bride.jpg" style="left:-245px;top:60px;width:90px;height:135px" alt="" />
+      <img src="img/mao-green.jpg" style="left:-140px;top:-30px;width:110px;height:165px" alt="" />
+      <img src="img/mao-blue.jpg" style="left:-140px;top:150px;width:110px;height:147px" alt="" />
+      <img src="img/hero.jpg" id="print" style="left:0;top:0;width:140px;height:196px;box-shadow:none" alt="Segun Michael, arms crossed, smiling." />
+      <img src="img/hero-face.jpg" class="face" id="face" style="left:38.7px;top:16.8px;width:62.3px;height:50.5px;box-shadow:none" alt="" />
+      <img src="img/mao-red.jpg" style="left:165px;top:0;width:165px;height:110px" alt="" />
+      <img src="img/mao-sofa.jpg" style="left:165px;top:125px;width:150px;height:100px" alt="" />
+      <img src="img/mao-drum.jpg" style="left:345px;top:-20px;width:90px;height:120px" alt="" />
+      <img src="img/mao-wed.jpg" style="left:330px;top:120px;width:135px;height:90px" alt="" />
+    </div>
+
+    <header class="bar"><b>Segun Michael</b><nav><a href="#">About</a><a href="#">Listening Hub</a><a href="#">Media</a><a href="#">Real Estate</a><a class="book" href="#">Book a session</a></nav></header>
+
+    <div class="chapter" data-i="0">
+      <div class="scale"><i>1:1</i> Listening Hub · human connection</div>
+      <h1>People.</h1>
+      <p>I&rsquo;m Segun Michael. I listen, create and bring ideas to life across conversations, media and real estate.</p>
+      <div class="actions"><a class="cta" href="#">Book a Listening Session</a><a class="link" href="#">Scroll to step back &darr;</a></div>
+    </div>
+    <div class="chapter" data-i="1">
+      <div class="scale"><i>1:10</i> MAO Media · Inspire Network · creative expression</div>
+      <h2>Stories.</h2>
+      <p>Pull back from one face and you find the others. Portraits, weddings and studio work, made through MAO Media.</p>
+    </div>
+    <div class="chapter" data-i="2">
+      <div class="scale"><i>1:100</i> MAO Contractors · practical execution</div>
+      <h2>Places.</h2>
+      <p>Pull back again and there&rsquo;s a room. Renovation planning and project coordination, through MAO Contractors.</p>
+      <div class="note">Line drawing for illustration. Not a real project.</div>
+    </div>
+    <div class="chapter" data-i="3">
+      <div class="scale"><i>1:&infin;</i> What comes next</div>
+      <h2>Possibilities.</h2>
+      <p>Every meaningful connection begins with a conversation.</p>
+      <div class="actions"><a class="cta light" href="#">Book a Listening Session</a><a class="link" href="#">See the work &rarr;</a></div>
+    </div>
+    <div class="ruler" aria-hidden="true"><span>1:1</span><span>1:10</span><span>1:100</span><span>1:&infin;</span></div>
+  </div>
+</div>
+<div class="after">…the page continues: each expression in depth.</div>
+
+<script>
+(() => {
+  const world = document.getElementById('world'), stage = document.getElementById('stage'), track = document.getElementById('track');
+  const face = document.getElementById('face'), drawing = document.getElementById('drawing');
+  const chapters = [...document.querySelectorAll('.chapter')], marks = [...document.querySelectorAll('.ruler span')];
+  // survey grid on the open ground (only meaningful when far away)
+  const g = document.getElementById('grid'); let s = '';
+  for (let x = -40000; x <= 40000; x += 1700) s += `<line x1="${x}" y1="1000" x2="${x}" y2="30000"/>`;
+  for (let y = 1600; y <= 30000; y += y < 4000 ? 600 : 1700) s += `<line x1="-40000" y1="${y}" x2="40000" y2="${y}"/>`;
+  g.innerHTML = s;
+
+  // Each level: a world rect to fit, and where its centre sits on screen (desktop / mobile)
+  const L = [
+    { r:[30,2,80,68],                   a:[.66,.55], am:[.5,.34] },  // 1:1  the face
+    { r:[-260,-45,740,360],             a:[.67,.42], am:[.5,.3]  },  // 1:10 the prints
+    { r:[-1500,-1000,3600,2100],        a:[.66,.48], am:[.5,.3]  },  // 1:100 the room
+    { r:[-7000,-2600,14000,7000],       a:[.64,.36], am:[.5,.3]  },  // 1:∞ open ground
+  ];
+  const lerp = (a,b,t) => a + (b-a)*t, clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const mix = (c1,c2,t) => '#' + [0,2,4].map(i => Math.round(lerp(parseInt(c1.substr(i+1,2),16), parseInt(c2.substr(i+1,2),16), t)).toString(16).padStart(2,'0')).join('');
+  function cam(i, vw, vh) {
+    const l = L[i], [x,y,w,h] = l.r, m = vw < 640, a = m ? l.am : l.a;
+    const fill = m ? (i === 0 ? 1.0 : .92) : [1.0, .62, .78, .9][i];
+    const sc = Math.min(vw*fill / w, vh*fill / h) * (m && i === 0 ? 1.0 : 1);
+    return { s: sc, cx: x + w/2, cy: y + h/2, ax: a[0], ay: a[1] };
+  }
+  function render(p) {
+    const vw = stage.clientWidth, vh = stage.clientHeight;
+    const i = Math.min(2, Math.floor(p)), t = clamp(p - i, 0, 1);
+    const A = cam(i, vw, vh), B = cam(i+1, vw, vh);
+    const sc = Math.exp(lerp(Math.log(A.s), Math.log(B.s), t));
+    const k = (1/sc - 1/A.s) / (1/B.s - 1/A.s);              // visible-width interpolation keeps the zoom anchored
+    const cx = lerp(A.cx, B.cx, k), cy = lerp(A.cy, B.cy, k), ax = lerp(A.ax, B.ax, k), ay = lerp(A.ay, B.ay, k);
+    world.style.transform = `translate(${ax*vw - cx*sc}px, ${ay*vh - cy*sc}px) scale(${sc})`;
+    face.style.opacity = clamp((sc - 6) / 6, 0, 1);
+    drawing.style.opacity = clamp((p - 1.15) / .45, 0, 1);              // the room is only drawn once you step back into it
+    const e = clamp((p - 2.4) / .35, 0, 1), inv = e * e * (3 - 2 * e);                    // cyanotype: paper → Prussian blue
+    const near = clamp(1 - p, 0, 1);                                   // at 1:1 the page takes the white of his studio backdrop
+    stage.style.setProperty('--bg', inv > 0 ? mix('#f5f3ee', '#1b3463', inv) : mix('#f5f3ee', '#fafafa', near));
+    stage.style.setProperty('--line', mix('#1b3463', '#f5f3ee', inv));
+    stage.style.setProperty('--fg', mix('#14161a', '#f5f3ee', inv));
+    chapters.forEach((c, j) => { const d = p - j, o = clamp(1 - Math.abs(d) * 2.6, 0, 1);
+      c.style.opacity = o; c.style.transform = `translateY(${-d*40}px)`; c.style.pointerEvents = o > .5 ? 'auto' : 'none'; c.style.visibility = o < .01 ? 'hidden' : 'visible'; });
+    marks.forEach((m, j) => m.classList.toggle('on', Math.round(p) === j));
+  }
+  const q = new URLSearchParams(location.search);
+  if (q.has('p')) { render(parseFloat(q.get('p'))); return; }       // fixed frame (used for the storyboard captures)
+  let target = 0, cur = 0;
+  const onScroll = () => { const r = track.getBoundingClientRect(); target = clamp(-r.top / (track.offsetHeight - innerHeight), 0, 1) * 3; };
+  addEventListener('scroll', onScroll, { passive:true }); addEventListener('resize', () => render(cur));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function tick(){ cur = reduce ? Math.round(target) : cur + (target - cur) * .12; render(cur); requestAnimationFrame(tick); })();
+})();
+</script>
+</body>
+</html>

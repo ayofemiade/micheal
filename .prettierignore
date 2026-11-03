@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Coverage & test output
+coverage/
+
+# Lockfiles & generated files
+package-lock.json
+next-env.d.ts
+
+# Local asset archives and agent workspace metadata
+.agent/
+.claude/
+potrait/
+website gallery/
+
