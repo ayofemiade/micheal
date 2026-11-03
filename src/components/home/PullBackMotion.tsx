@@ -13,7 +13,7 @@ const LAST = 3;
 /**
  * Drives the pull-back camera from native scroll (rAF scrub, no library).
  * - transform-only: one transform for the photographs, one for the drawing
- * - reduced motion: the camera cuts between the four distances, no scrub
+ * - reduced motion: no camera travel; each distance dissolves into the next
  * - keyboard: focusing anything in a chapter moves the camera to it
  */
 export function PullBackMotion() {
@@ -27,6 +27,7 @@ export function PullBackMotion() {
     const veil = stage?.querySelector<HTMLElement>("[data-veil]");
     if (!track || !stage || !photos || !drawing || !faceEl || !exposure) return;
     const chapterEls = [...stage.querySelectorAll<HTMLElement>("[data-chapter]")];
+    const prints = [...photos.querySelectorAll<HTMLElement>("[data-print]")];
     const rulerBtns = [...stage.querySelectorAll<HTMLButtonElement>(".pullback-ruler [data-goto]")];
     const root = document.documentElement;
 
@@ -34,12 +35,13 @@ export function PullBackMotion() {
     let H = 0;
     let cam0 = camera(0, 1, 1);
     let current = -1;
-    let idle: number | undefined;
     // The header turns light only while the exposed stage is actually behind it.
     let dark = false;
     let underHeader = true;
     const applyTone = () => {
-      root.dataset.tone = dark && underHeader ? "dark" : "light";
+      // Only on change: rewriting <html data-tone> re-checks every [data-tone] selector.
+      const tone = dark && underHeader ? "dark" : "light";
+      if (root.dataset.tone !== tone) root.dataset.tone = tone;
     };
     const reduce = prefersReducedMotion();
 
@@ -49,32 +51,65 @@ export function PullBackMotion() {
       cam0 = camera(0, W, H);
     };
 
-    const render = (raw: number) => {
-      const p = reduce ? Math.round(raw) : raw;
-      const cam = camera(p, W, H);
+    // Write a style only when its value changes. Rewriting identical values every
+    // frame (colour variables especially) forced a style recalc of the whole
+    // stage, including every line of the drawing: the main cost on phones.
+    const written = new Map<string, string>();
+    const put = (key: string, value: string, apply: (v: string) => void) => {
+      if (written.get(key) === value) return;
+      written.set(key, value);
+      apply(value);
+    };
+    const op = (v: number) => v.toFixed(3);
+    if (reduce) exposure.style.clipPath = "none";
+
+    const render = (p: number) => {
+      // Reduced motion: the camera never travels. It holds each distance and
+      // the scene dissolves out and back in at the next one, so every scroll
+      // still visibly does something (rounding alone left four "dead" wheel
+      // notches and then a cut).
+      const pc = reduce ? Math.round(p) : p;
+      const scene = reduce ? smoothstep(0.08, 0.42, Math.abs(p - Math.floor(p) - 0.5)) : 1;
+
+      const cam = camera(pc, W, H);
       const r = cam.s / cam0.s;
-      photos.style.transform = `translate3d(${cam.tx - cam0.tx * r}px, ${cam.ty - cam0.ty * r}px, 0) scale(${r})`;
-      drawing.style.transform = `translate3d(${cam.tx}px, ${cam.ty}px, 0) scale(${cam.s})`;
-      faceEl.style.opacity = String(smoothstep(0.35, 0.8, r));
-      drawing.style.opacity = String(smoothstep(1.15, 1.6, p));
+      put("photos", `translate3d(${(cam.tx - cam0.tx * r).toFixed(2)}px, ${(cam.ty - cam0.ty * r).toFixed(2)}px, 0) scale(${r.toFixed(5)})`, (v) => (photos.style.transform = v));
+      put("photosO", op(scene), (v) => (photos.style.opacity = v));
+      put("face", op(smoothstep(0.35, 0.8, r)), (v) => (faceEl.style.opacity = v));
+      // The other prints arrive as the camera pulls back. At 1:1 they are
+      // off-screen on most displays, but an ultrawide frame caught the edge of one, hugely magnified.
+      put("prints", op(1 - smoothstep(0.75, 0.97, r)), (v) => prints.forEach((el) => (el.style.opacity = v)));
+
+      const drawO = smoothstep(1.15, 1.6, pc) * scene;
+      put("drawO", op(drawO), (v) => {
+        drawing.style.opacity = v;
+        drawing.style.visibility = drawO > 0 ? "visible" : "hidden";
+      });
+      // Repainting the drawing is costly; skip it entirely while it is invisible.
+      if (drawO > 0) put("draw", `translate3d(${cam.tx.toFixed(2)}px, ${cam.ty.toFixed(2)}px, 0) scale(${cam.s.toFixed(5)})`, (v) => (drawing.style.transform = v));
 
       // studio white → paper; then the cyanotype exposure rises from the horizon
-      const exposed = smoothstep(2.35, 2.85, p);
+      // Reduced motion fades the blue instead of wiping it, and only after the scene has
+      // dissolved: fading paper into blue under the photos read as a muddy grey.
+      const exposed = reduce ? smoothstep(2.5, 2.85, p) : smoothstep(2.35, 2.85, p);
       const flip = smoothstep(2.55, 2.7, p);
-      stage.style.setProperty("--stage-bg", mixHex(STUDIO, PAPER, Math.min(1, p)));
-      stage.style.setProperty("--stage-fg", mixHex(INK, PAPER, flip));
-      stage.style.setProperty("--stage-line", mixHex(CYAN, PAPER, flip));
-      exposure.style.clipPath = `inset(${((1 - exposed) * 100).toFixed(2)}% 0 0 0)`;
-      if (veil) veil.style.opacity = String(Math.max(0, 1 - p * 2.6));
+      put("bg", mixHex(STUDIO, PAPER, Math.min(1, p)), (v) => stage.style.setProperty("--stage-bg", v));
+      put("fg", mixHex(INK, PAPER, flip), (v) => stage.style.setProperty("--stage-fg", v));
+      put("line", mixHex(CYAN, PAPER, flip), (v) => stage.style.setProperty("--stage-line", v));
+      if (reduce) put("exp", op(exposed), (v) => (exposure.style.opacity = v));
+      else put("exp", `inset(${((1 - exposed) * 100).toFixed(2)}% 0 0 0)`, (v) => (exposure.style.clipPath = v));
+      if (veil) put("veil", op(Math.max(0, 1 - p * 2.6)), (v) => (veil.style.opacity = v));
       dark = flip > 0.5;
       applyTone();
 
       chapterEls.forEach((el, j) => {
         const d = p - j;
         const o = Math.max(0, 1 - Math.abs(d) * 2.6);
-        el.style.opacity = String(o);
-        el.style.transform = reduce ? "" : `translate3d(0, ${-d * 40}px, 0)`;
-        el.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        put(`c${j}`, op(o), (v) => {
+          el.style.opacity = v;
+          el.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        });
+        if (!reduce && o > 0) put(`ct${j}`, `translate3d(0, ${(-d * 40).toFixed(1)}px, 0)`, (v) => (el.style.transform = v));
       });
 
       const nearest = Math.round(p);
@@ -84,11 +119,6 @@ export function PullBackMotion() {
           j === nearest ? b.setAttribute("aria-current", "step") : b.removeAttribute("aria-current"),
         );
       }
-
-      // Rasterise with will-change only while moving, then let the browser re-render crisply.
-      photos.classList.add("is-moving");
-      window.clearTimeout(idle);
-      idle = window.setTimeout(() => photos.classList.remove("is-moving"), 160);
     };
 
     // Scroll → progress, eased toward the target each frame (a "scrub").
@@ -100,9 +130,13 @@ export function PullBackMotion() {
     let last = 0;
     const header = document.querySelector("header");
 
+    // The sticky span is track minus stage. Not innerHeight: that changes every
+    // time a phone's address bar slides in or out, which made the camera jump.
+    const spanOf = () => track.offsetHeight - stage.offsetHeight;
+
     const readScroll = () => {
       const rect = track.getBoundingClientRect();
-      const span = track.offsetHeight - window.innerHeight;
+      const span = spanOf();
       target = span > 0 ? Math.max(0, Math.min(1, -rect.top / span)) * LAST : 0;
       const next = rect.top <= 0 && rect.bottom > (header?.offsetHeight ?? 72);
       if (next !== underHeader) {
@@ -114,8 +148,8 @@ export function PullBackMotion() {
     const tick = (now: number) => {
       const dt = last ? Math.min(64, now - last) : 16.7;
       last = now;
-      // ~0.7 s catch-up, independent of frame rate
-      const k = reduce ? 1 : 1 - Math.pow(1 - 0.12, dt / 16.7);
+      // ~0.7 s catch-up, independent of frame rate (also smooths the reduced-motion dissolve)
+      const k = 1 - Math.pow(1 - 0.12, dt / 16.7);
       cur += (target - cur) * k;
       if (Math.abs(target - cur) < 0.0005) cur = target;
       render(cur);
@@ -140,7 +174,7 @@ export function PullBackMotion() {
 
     const goTo = (i: number, instant = false) => {
       const top = track.getBoundingClientRect().top + window.scrollY;
-      const span = track.offsetHeight - window.innerHeight;
+      const span = spanOf();
       window.scrollTo({ top: top + (span * i) / LAST, behavior: reduce || instant ? "auto" : "smooth" });
       if (instant) {
         // Skip the catch-up when focus moves the camera.
@@ -172,7 +206,6 @@ export function PullBackMotion() {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      window.clearTimeout(idle);
       stage.removeEventListener("click", onClick);
       stage.removeEventListener("focusin", onFocus);
       delete root.dataset.tone;

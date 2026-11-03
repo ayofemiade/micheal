@@ -132,6 +132,29 @@ Final page weight is 565 KB, including 196 KB of JavaScript, 80 KB of fonts and 
 
 **Needs a redeploy** to reach the live site.
 
+## 9b. Post-launch fix: "it jumps straight to Stories"
+
+**Report.** On Segun's laptop, scrolling from the hero did nothing for about five wheel notches, then cut to Stories. It worked on ours.
+
+**Cause, reproduced on the live site.** His computer asks websites to reduce motion. Windows does this when Settings → Accessibility → Visual effects → *Animation effects* is off. The camera honoured that by rounding progress to whole distances, so wheel notches 1–4 changed nothing and notch 5 cut. With the normal setting, every notch zooms. Measured on the live site at 1536×730 with 100 px notches:
+
+| Notch | 1 | 2 | 3 | 4 | 5 |
+| :-- | :-: | :-: | :-: | :-: | :-: |
+| Normal: photo scale | 0.76 | 0.57 | 0.43 | 0.33 | 0.24 |
+| Reduced (before): photo scale | 1.00 | 1.00 | 1.00 | 1.00 | **0.10 (cut)** |
+
+**Fix.** With reduced motion the camera still never travels (the zoom is the kind of motion that setting exists to stop). Instead, each distance now dissolves out and the next dissolves in, eased, so every notch visibly does something. The blue at 1:∞ fades in after the dissolve rather than wiping.
+
+**Phone fixes made at the same time:**
+
+- **Address bar.** The stage was `100svh`, so a strip of page showed under it when the address bar slid away. It is now `100lvh`, and the copy is lifted by `100lvh − 100svh`. Camera progress is measured against the stage height, not `innerHeight`, which changes as the bar moves.
+- **Rendering.** Before, one huge photo layer was promoted and demoted at every pause, forcing re-rasterisation. Now every photograph is a permanent layer of its own. The decorative box-shadow is removed so the browser can composite each image directly.
+- **Ground grid.** Its layer measured 80,002 × 30,804 CSS px. It is trimmed to just past the widest frame (the line positions are unchanged), and the drawing is hidden while invisible.
+- **Idle writes.** Styles are written only when they change (colour variables, `<html data-tone>`, the header's solid state). Invalidation tracing confirms only the necessary transform and opacity writes remain.
+- **Ultrawide (3440 px).** At 1:1 the frame caught the edge of a neighbouring print, hugely magnified. The other prints now fade in as the camera pulls back.
+
+**Limits of this verification.** Headless Edge does not measure GPU rasterisation or memory, so the layer changes are reasoned from how browsers composite, not measured. Main-thread time was already about 1 ms per frame at phone speed. The address-bar behaviour cannot be emulated on desktop. A real-phone check is still needed.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:

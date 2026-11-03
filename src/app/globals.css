@@ -169,7 +169,8 @@ body {
 
 .pullback-track {
   position: relative;
-  height: 100svh;
+  height: 100vh;
+  height: 100lvh;
 }
 :root.js .pullback-track {
   height: 430svh;
@@ -180,10 +181,17 @@ body {
   }
 }
 
+/*
+ * The stage fills the LARGE viewport (address bar hidden), so no strip of page
+ * shows beneath it when a phone's toolbar slides away. Copy anchored to the
+ * bottom adds (100lvh - 100svh) so it stays clear of the toolbar when shown.
+ */
 .pullback-stage {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: 100vh;
+  height: 100lvh;
+  --toolbar: calc(100lvh - 100svh);
   overflow: hidden;
   container-type: size;
   background: var(--stage-bg, var(--color-studio));
@@ -201,13 +209,17 @@ body {
   }
 }
 
+/*
+ * Every photograph is its own permanent GPU layer. Plain images with no
+ * decoration are composited directly from the decoded file, so the camera can
+ * scale them without repainting. (One big layer toggled on and off had to be
+ * re-rasterised at each pause: the blank or blurry flashes on phones.)
+ */
 .pullback-photos {
   position: absolute;
   inset: 0;
   transform-origin: 0 0;
-}
-.pullback-photos.is-moving {
-  will-change: transform;
+  will-change: transform, opacity;
 }
 .pullback-photos > * {
   position: absolute;
@@ -217,9 +229,7 @@ body {
   height: calc(var(--h) * var(--s0));
   max-width: none;
   object-fit: cover;
-}
-.pullback-photos .print-frame {
-  box-shadow: 0 0 0 1px #14161a14;
+  will-change: transform;
 }
 
 /* The cyanotype exposure: blue rises from the horizon at 1:∞ */
@@ -268,9 +278,12 @@ body {
 .pullback-chapter {
   position: absolute;
   left: var(--gutter);
-  bottom: 11svh;
+  bottom: calc(11svh + var(--toolbar));
   width: min(44cqw, 40rem);
   z-index: 2;
+}
+:root.js .pullback-chapter {
+  will-change: transform, opacity;
 }
 .pullback-chapter[data-i="1"],
 .pullback-chapter[data-i="2"],
@@ -288,14 +301,14 @@ body {
     left: var(--gutter);
     right: var(--gutter);
     width: auto;
-    bottom: 4.5svh;
+    bottom: calc(4.5svh + var(--toolbar));
   }
 }
 
 .pullback-ruler {
   position: absolute;
   right: var(--gutter);
-  bottom: 11svh;
+  bottom: calc(11svh + var(--toolbar));
   z-index: 3;
 }
 @container (max-width: 639px) or (max-aspect-ratio: 1/1) {

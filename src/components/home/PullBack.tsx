@@ -37,8 +37,8 @@ export function PullBack() {
                 width={p.width}
                 height={p.height}
                 sizes="(max-width: 639px) 240px, 420px"
-                className="print-frame"
                 style={place(p)}
+                data-print
                 // Off-screen at 1:1 but needed the moment the camera moves: never lazy.
                 loading="eager"
                 fetchPriority="low"

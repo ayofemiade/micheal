@@ -24,11 +24,14 @@ export function Header() {
   const [solid, setSolid] = useState(false);
   useEffect(() => {
     let raf = 0;
+    let last: boolean | undefined;
     const update = () => {
       raf = 0;
       const hero = document.getElementById("pullback");
       const limit = hero ? hero.getBoundingClientRect().bottom : 0;
-      setSolid(limit <= (document.querySelector("header")?.offsetHeight ?? 72));
+      const next = limit <= (document.querySelector("header")?.offsetHeight ?? 72);
+      // Only touch React when the state flips, not on every scrolled frame.
+      if (next !== last) setSolid((last = next));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
