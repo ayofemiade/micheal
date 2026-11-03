@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { chapters, face, maoPrints, portrait } from "@/data/home";
+import { chapters, face, maoPrints, placePrint, portrait } from "@/data/home";
 import { siteConfig } from "@/data/site";
 import { FACE_RECT, PRINT_RECT } from "./scene";
 import { GroundGrid, RoomDrawing } from "./RoomDrawing";
@@ -44,6 +44,18 @@ export function PullBack() {
                 fetchPriority="low"
               />
             ))}
+            <Image
+              src={placePrint.src}
+              alt=""
+              width={placePrint.width}
+              height={placePrint.height}
+              sizes="(max-width: 639px) 240px, 480px"
+              style={place(placePrint)}
+              data-print
+              loading="eager"
+              fetchPriority="low"
+            />
+
             <Image
               src={portrait.src}
               alt={portrait.alt}

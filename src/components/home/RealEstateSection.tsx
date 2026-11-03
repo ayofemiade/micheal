@@ -1,15 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { realEstate } from "@/data/home";
-import { DrawOn } from "@/components/motion/DrawOn";
-import { RoomDrawing } from "./RoomDrawing";
 
 /**
- * 04: Real Estate, at 1:100. No property photographs exist, so none are
- * faked: the room is a labelled line drawing. Segun stands beside it, on the
- * same floor line, not composited into it.
+ * 04: Real Estate, at 1:100. Real work, not an illustration: one MAO
+ * Contractors kitchen, before and after, standing on the same floor line as
+ * Segun. (The line-drawn room still appears in the hero at 1:100.)
  */
 export function RealEstateSection() {
+  const { before, after, caption } = realEstate.project;
   return (
     <section id="real-estate" aria-labelledby="re-title" className="bg-paper border-rule border-t pt-24 pb-24 sm:pt-32 lg:pt-40 lg:pb-36">
       <div className="shell grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -32,17 +31,46 @@ export function RealEstateSection() {
       </div>
 
       <div className="shell mt-16 grid grid-cols-12 items-end gap-x-4 sm:mt-20 lg:gap-x-8">
-        <figure className="text-cyan col-span-12 sm:col-span-9">
-          <DrawOn
-            viewBox="-1520 -1010 3640 2014"
-            label="Line drawing of a room arranged for a conversation: two chairs facing each other, a lamp, a window and a doorway."
-            className="room-drawing block h-auto w-full"
-          >
-            <RoomDrawing />
-          </DrawOn>
+        {/* One floor line: before → after → the person who coordinated it */}
+        <figure className="col-span-12 lg:col-span-9">
+          <div className="grid grid-cols-12 items-end gap-x-4 gap-y-8 lg:grid-cols-9 lg:gap-x-8">
+            <div className="col-span-7 sm:col-span-5 lg:col-span-3">
+              <p className="t-scale text-ink-2 mb-3" aria-hidden="true">Before</p>
+              <div className="relative aspect-[3/2] overflow-hidden">
+                <Image
+                  loading="eager"
+                  fetchPriority="low"
+                  src={before.src}
+                  alt={before.alt}
+                  fill
+                  sizes="(max-width: 639px) 60vw, (max-width: 1023px) 42vw, 22vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+            <div className="col-span-12 sm:col-span-7 lg:col-span-6">
+              <p className="t-scale text-ink-2 mb-3" aria-hidden="true">After</p>
+              <div className="relative aspect-[3/2] overflow-hidden">
+                <Image
+                  loading="eager"
+                  fetchPriority="low"
+                  src={after.src}
+                  alt={after.alt}
+                  fill
+                  sizes="(max-width: 639px) 100vw, (max-width: 1023px) 58vw, 46vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+          <figcaption className="text-ink-2 mt-4 text-sm">{caption}</figcaption>
         </figure>
-        <div className="relative col-span-6 col-start-7 mt-10 aspect-[4/5] overflow-hidden sm:col-span-3 sm:col-start-auto sm:mt-0">
-          <Image loading="eager" fetchPriority="low"
+
+        {/* Lifted by the caption's height (mt-4 + one 20px line) so all three share the floor line */}
+        <div className="relative col-span-6 col-start-7 mt-12 aspect-[4/5] overflow-hidden sm:col-span-4 sm:col-start-9 lg:col-span-3 lg:col-start-auto lg:mt-0 lg:mb-9">
+          <Image
+            loading="eager"
+            fetchPriority="low"
             src={realEstate.photo.src}
             alt={realEstate.photo.alt}
             fill
@@ -50,7 +78,6 @@ export function RealEstateSection() {
             className="object-cover object-[50%_18%]"
           />
         </div>
-        <p className="text-ink-2 col-span-12 mt-4 text-xs">{realEstate.note}</p>
       </div>
     </section>
   );

@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Real-estate originals: only the web derivatives in public/ are published
+/real estate/
+# Address-named source photos: never publish (anything in public/ is served)
+/public/real estate/

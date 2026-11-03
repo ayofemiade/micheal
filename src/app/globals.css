@@ -318,26 +318,6 @@ body {
   }
 }
 
-/* ---------- The room, at 1:100 (stroke in user units: ≈1.3px on desktop) ---------- */
-.room-drawing {
-  --sw: 4.5;
-}
-.room-drawing * {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: var(--sw);
-  stroke-linecap: square;
-}
-.room-drawing .faint {
-  stroke-width: calc(var(--sw) * 0.55);
-  opacity: 0.55;
-}
-@media (max-width: 639px) {
-  .room-drawing {
-    --sw: 9;
-  }
-}
-
 /* ==========================================================================
    The arrival: studio white held until the essentials are ready.
    Only with JS; skipped when <html> already has .arrived (repeat visit).

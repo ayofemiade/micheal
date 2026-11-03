@@ -155,6 +155,34 @@ Final page weight is 565 KB, including 196 KB of JavaScript, 80 KB of fonts and 
 
 **Limits of this verification.** Headless Edge does not measure GPU rasterisation or memory, so the layer changes are reasoned from how browsers composite, not measured. Main-thread time was already about 1 ms per frame at phone speed. The address-bar behaviour cannot be emulated on desktop. A real-phone check is still needed.
 
+## 9c. Real Estate: real work replaces the illustration
+
+**The kitchen pair.** Of five supplied property photographs, the gutted kitchen and the finished kitchen are the same room. The U-run, the double window with its scalloped valance, the hood position, the peninsula and the cabinet carcasses all match. The client confirmed it is a **MAO Contractors renovation** (2026-11-03).
+
+**What was not used, and why:**
+- The snow-covered house: it carries a TriadMLS watermark.
+- The open-plan kitchen and the manufactured home: these are 768 px listing copies, so their rights and quality are both doubtful.
+
+**Layout.** In the section, the line drawing and its "not a real project" note are replaced by Before (small) → After (large) → Segun, all on one floor line. The portrait is lifted by the caption's height so all three bottoms align (measured equal at 1024, 1440 and 1920). Below 1024 px they stack. The room drawing remains in the hero at 1:100.
+
+**Caption.** "One kitchen, before and after. A MAO Contractors renovation." The alt text describes only what is visible. There is no address, date or cost.
+
+**Images.**
+- Originals are in `/real estate` (git-ignored).
+- Derivatives are `re-before` (cropped to 3:2, which also removes a dark screen-overlay bar) and `re-after`.
+- Rebuild only these with `node scripts/optimize-images.mjs re-`.
+
+**In the hero.** The finished kitchen also hangs as a print on the drawn room's wall at 1:100. It sits above the chairs, at world rect (700, −60, 600 × 400), between the MAO prints and the door. The 1:10 view ends near x 635 on every aspect, so it arrives only with the room. Measured visibility of the print:
+
+| Screen | 1:1 | 1:10 | 1:100 | 1:∞ |
+| :-- | :-: | :-: | :-: | :-: |
+| 375 px wide | hidden | hidden | 59 px | 15 px |
+| 3440 px wide | hidden | hidden | 321 px | 111 px |
+
+It is decorative there (alt ""), because the Real Estate section shows it with full alt text. The Places note now reads: "The room is drawn for illustration. The kitchen is a real MAO Contractors renovation."
+
+**Privacy.** The supplied folder `public/real estate/` names the files by street address. Anything in `public/` would be served at a public URL, so that folder is git-ignored and never deployed.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:

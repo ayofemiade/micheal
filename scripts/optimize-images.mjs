@@ -42,7 +42,16 @@ const jobs = [
   ["website gallery/img_9800-copyc-2c.jpg", "mao-bride.jpg", 1050],
   ["website gallery/img_9812c.jpg", "mao-headwrap.jpg", 774],
   ["website gallery/11-2c.jpg", "mao-gele.jpg", 1050],
+  // MAO Contractors: one kitchen renovation (confirmed as MAO's work, 2026-11-03).
+  // Originals live in /real estate, which is git-ignored: only these derivatives ship.
+  // The before photo is a phone shot: cropped to the after photo's 3:2, which also
+  // drops a dark screen-overlay bar along its bottom edge (rows 686+).
+  ["real estate/kitchen-before.jpg", "re-before.jpg", 952, { left: 0, top: 48, width: 952, height: 635 }],
+  ["real estate/kitchen-after.jpg", "re-after.jpg", 2400],
 ];
+
+/** Optional filter: `node scripts/optimize-images.mjs re-` rebuilds only matching outputs. */
+const only = process.argv[2];
 
 /**
  * Static responsive sizes, served as plain files from the CDN (see
@@ -64,9 +73,11 @@ async function sizes(input, name, quality = 78) {
   }
 }
 
-for (const [src, name, edge] of jobs) {
-  const master = await sharp(path.join(root, src))
-    .rotate()
+for (const [src, name, edge, crop] of jobs) {
+  if (only && !name.startsWith(only)) continue;
+  let pipeline = sharp(path.join(root, src)).rotate();
+  if (crop) pipeline = sharp(await pipeline.extract(crop).toBuffer());
+  const master = await pipeline
     .resize(edge, edge, { fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 86, mozjpeg: true })
     .toBuffer({ resolveWithObject: true });
@@ -76,7 +87,7 @@ for (const [src, name, edge] of jobs) {
 }
 
 // The 1:1 face layer: an exact crop of the print, at high resolution.
-{
+if (!only || "face.jpg".startsWith(only)) {
   const srcPath = path.join(root, "potrait/IMG_2543c.jpg");
   const { width } = await sharp(srcPath).metadata();
   const k = width / PRINT_WORLD_WIDTH;

@@ -57,6 +57,15 @@ export const maoPrints: readonly ScenePrint[] = [
   { id: "couple", src: img("mao-couple"), width: 1067, height: 1600, x: 480, y: 10, w: 90, h: 135, caption: "Wedding portrait", alt: "A groom embracing a bride in a white lace gown in a garden." },
 ];
 
+/**
+ * The finished MAO Contractors kitchen, hung on the drawn room's wall above the
+ * chairs (world units; the room spans x −1400…2000, floor at y 1000). Stays out
+ * of frame at 1:1 and 1:10 on every aspect (the 1:10 view ends near x 635), so
+ * it arrives with the room at 1:100. Shown in full, with alt text, in the
+ * Real Estate section, so it is decorative here (alt "").
+ */
+export const placePrint = { src: img("re-after"), width: 2400, height: 1600, x: 700, y: -60, w: 600, h: 400 };
+
 export const chapters = [
   {
     ratio: "1:1",
@@ -74,7 +83,7 @@ export const chapters = [
     label: "MAO Contractors · practical execution",
     word: "Places.",
     body: "Step back again and there’s a room. Renovation planning and project coordination, through MAO Contractors.", // pending
-    note: "Line drawing for illustration. Not a real project.",
+    note: "The room is drawn for illustration. The kitchen is a real MAO Contractors renovation.",
   },
   {
     ratio: "1:∞",
@@ -118,7 +127,23 @@ export const realEstate = {
   } satisfies Photo,
   heading: "The same attention, at the scale of a room.", // pending
   body: "Through MAO Contractors, Segun works on renovation planning and project coordination.",
-  note: "Line drawing for illustration. Not a real project.",
+  // A MAO Contractors renovation (confirmed by the client, 2026-11-03). Captions
+  // describe only what the photographs show; no address, dates or costs.
+  project: {
+    before: {
+      src: img("re-before"),
+      alt: "The kitchen before renovation: cabinet doors removed, bare shelving, a floral wallpaper border and a worn patterned vinyl floor.",
+      width: 952,
+      height: 635,
+    } satisfies Photo,
+    after: {
+      src: img("re-after"),
+      alt: "The same kitchen after renovation: cabinets refinished in dark brown with their doors refitted, a marble-effect splashback, a pale wood-effect floor and wide windows onto trees.",
+      width: 2400,
+      height: 1600,
+    } satisfies Photo,
+    caption: "One kitchen, before and after. A MAO Contractors renovation.",
+  },
 };
 
 export const closing = {
