@@ -106,7 +106,46 @@ Final page weight is 565 KB, including 196 KB of JavaScript, 80 KB of fonts and 
 - During the 1:100 → 1:∞ wipe, the ruler's text crosses the blue edge in dark ink for a fraction of a second.
 - In development only, `next/image` warns that scene prints have CSS-modified sizes. Both dimensions are set deliberately; production shows no warnings.
 
-## 9. Run it
+## 9. Post-launch fix: "some parts are not loading well"
+
+**Report.** After the site went live (micheal-ebon.vercel.app), Segun said some parts weren't loading, and scrolling straight after arrival showed an unloaded scene.
+
+**Causes (measured on the live site and with a throttled browser):**
+
+1. **On-demand image optimisation.** Every image size and format was a separate Vercel request taking 0.5–1.5 s, and cold variants were encoded to AVIF on the spot (`x-vercel-cache: MISS`). A first visit asked for dozens of them.
+2. **The hero camera waited for GSAP,** which loaded at browser idle. Scrolling before then did nothing.
+3. **Hero prints defaulted to lazy loading.** They start off-screen, so they began loading mid-zoom.
+4. **The room drawing hid itself while GSAP loaded,** leaving a blank figure on slow connections.
+
+**Fixes:**
+
+- **Static images.** `scripts/optimize-images.mjs` now pre-builds WebP at 480/800/1200/1600/2400 px, and a custom loader (`src/lib/image-loader.ts`) serves them as plain CDN files. Nothing is encoded on request.
+- **Camera on native scroll.** `PullBackMotion` uses a rAF scrub with no library, so it's live as soon as the page hydrates. GSAP is now only used below the fold.
+- **Everything loads up front.** All homepage images are `loading="eager"`, and the below-the-fold ones are `fetchPriority="low"`. After any scroll on a throttled connection, 24 of 24 images were loaded.
+- **Animations never hide content while waiting.** `DrawOn` and `LineReveal` only hide their content once the animation can run, and not at all if it's already on screen.
+- **The arrival** (`components/home/Arrival.tsx`): a studio-white screen that blocks scrolling until fonts and all 11 hero images are decoded, then lifts.
+  - Capped at 3 s from navigation start, with a CSS-only failsafe at the same time.
+  - Skipped on repeat visits in the session; never shown without JS; holding pages unaffected (lock scoped with `:has()`).
+  - Measured: lifts at **0.5 s** on a fast connection and **3.0 s** on throttled slow-4G, with everything decoded.
+
+**Cost.** Page weight rose from 565 KB to about 1.2 MB, because all photographs now load up front. Lighthouse mobile: 83–91 (LCP 2.9–3.9 s simulated, TBT 240 ms). Desktop: 99.
+
+**Needs a redeploy** to reach the live site.
+
+## 10. ⚠ The GitHub repository is public
+
+`github.com/ayofemiade/micheal` is public and contains:
+
+| Content | Problem |
+| :-- | :-- |
+| Segun's family photographs (`potrait/IMG_2010`–`2025`, `website gallery/IMG_1947`–`1971`) | The brief forbids publishing unapproved family information |
+| Photographs of children (`IMG_8238`, `IMG_8266`, `14.jpg`) | No approval for publication |
+| Full-resolution originals of all client photography | The website only publishes a curated selection |
+| Zodiak / Switzer font files | The ITF Free Font License forbids redistribution |
+
+**Recommended:** make the repository private (GitHub → Settings → Danger zone); Vercel keeps deploying from a private repo. Making it private does not remove copies already cloned or cached. If that matters, the files must also be purged from git history.
+
+## 11. Run it
 
 ```bash
 node scripts/optimize-images.mjs   # only if source photos change

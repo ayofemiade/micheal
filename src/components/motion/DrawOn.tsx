@@ -14,15 +14,18 @@ export function DrawOn({ className, viewBox, label, children }: { className?: st
     const svg = ref.current;
     if (!svg || prefersReducedMotion()) return;
     const shapes = [...svg.querySelectorAll<SVGGeometryElement>("line,polyline,polygon,rect,path")];
-    shapes.forEach((s) => {
-      s.setAttribute("pathLength", "1");
-      s.style.strokeDasharray = "1";
-      s.style.strokeDashoffset = "1";
-    });
     let revert = () => {};
     let cancelled = false;
     loadGsap().then(({ gsap }) => {
       if (cancelled) return;
+      // Hide the lines only once the animation can actually run; never leave the drawing blank.
+      // If it's already on screen by now, just leave it drawn.
+      if (svg.getBoundingClientRect().top < window.innerHeight * 0.75) return;
+      shapes.forEach((s) => {
+        s.setAttribute("pathLength", "1");
+        s.style.strokeDasharray = "1";
+        s.style.strokeDashoffset = "1";
+      });
       const ctx = gsap.context(() => {
         gsap.to(shapes, {
           strokeDashoffset: 0,

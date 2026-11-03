@@ -42,7 +42,7 @@ export function RealEstateSection() {
           </DrawOn>
         </figure>
         <div className="relative col-span-6 col-start-7 mt-10 aspect-[4/5] overflow-hidden sm:col-span-3 sm:col-start-auto sm:mt-0">
-          <Image
+          <Image loading="eager" fetchPriority="low"
             src={realEstate.photo.src}
             alt={realEstate.photo.alt}
             fill

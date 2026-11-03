@@ -13,7 +13,7 @@ export function ListeningSection() {
     <section id="listening-hub" aria-labelledby="lh-title" className="bg-studio relative">
       <div className="grid lg:min-h-[100svh] lg:grid-cols-12">
         <div className="relative aspect-[4/5] overflow-hidden sm:aspect-[5/4] lg:order-2 lg:col-span-7 lg:aspect-auto lg:[mask-image:linear-gradient(to_right,transparent,#000_14%)]">
-          <Image
+          <Image loading="eager" fetchPriority="low"
             src={listening.photo.src}
             alt={listening.photo.alt}
             fill

@@ -6,6 +6,7 @@ import { siteConfig } from "@/data/site";
 import { FACE_RECT, PRINT_RECT } from "./scene";
 import { GroundGrid, RoomDrawing } from "./RoomDrawing";
 import { PullBackMotion } from "./PullBackMotion";
+import { Arrival } from "./Arrival";
 
 const place = (r: { x: number; y: number; w: number; h: number }) =>
   ({ "--x": r.x, "--y": r.y, "--w": r.w, "--h": r.h }) as CSSProperties;
@@ -38,6 +39,8 @@ export function PullBack() {
                 sizes="(max-width: 639px) 240px, 420px"
                 className="print-frame"
                 style={place(p)}
+                // Off-screen at 1:1 but needed the moment the camera moves: never lazy.
+                loading="eager"
                 fetchPriority="low"
               />
             ))}
@@ -128,6 +131,7 @@ export function PullBack() {
         </div>
       </div>
       <PullBackMotion />
+      <Arrival />
     </section>
   );
 }

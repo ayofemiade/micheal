@@ -325,6 +325,78 @@ body {
   }
 }
 
+/* ==========================================================================
+   The arrival: studio white held until the essentials are ready.
+   Only with JS; skipped when <html> already has .arrived (repeat visit).
+   ========================================================================== */
+.arrival {
+  display: none;
+}
+:root.js .arrival {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 var(--gutter) 11svh;
+  background: var(--color-studio);
+  color: var(--color-ink);
+  clip-path: inset(0 0 0 0);
+  transition:
+    clip-path 0.95s var(--ease-camera),
+    visibility 0s linear 0.95s;
+}
+:root.js.arrived .arrival {
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+}
+/* Fail-safe if JS never marks arrival (error, blocked script): leave anyway. */
+:root.js:not(.arrived) .arrival {
+  animation: arrival-failsafe 0.5s ease 3s forwards;
+}
+@keyframes arrival-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+/* No scrolling into a half-loaded scene, with the same fail-safe. */
+/* Scoped with :has() so only the homepage (the one page with an arrival) is held. */
+:root.js:not(.arrived):has(.arrival) {
+  overflow: hidden;
+  animation: arrival-unlock 0s linear 3s forwards;
+}
+@keyframes arrival-unlock {
+  to {
+    overflow: visible;
+  }
+}
+.arrival-track {
+  display: block;
+  width: min(16rem, 60vw);
+  height: 1px;
+  margin-top: 1rem;
+  background: var(--color-rule);
+  overflow: hidden;
+}
+.arrival-bar {
+  display: block;
+  height: 100%;
+  background: var(--color-ink);
+  transform: scaleX(0.04);
+  transform-origin: 0 50%;
+  transition: transform 0.4s var(--ease-camera);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.js .arrival {
+    transition: opacity 0.3s linear, visibility 0s linear 0.3s !important;
+  }
+  :root.js.arrived .arrival {
+    clip-path: none;
+    opacity: 0;
+  }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

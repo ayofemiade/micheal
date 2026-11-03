@@ -31,7 +31,7 @@ export function MediaSection() {
         </div>
         <figure className="relative lg:col-span-7 lg:-mr-[var(--gutter)]">
           <div className="relative aspect-[3/2] overflow-hidden">
-            <Image
+            <Image loading="eager" fetchPriority="low"
               src={media.photo.src}
               alt={media.photo.alt}
               fill
@@ -67,7 +67,7 @@ export function MediaSection() {
                 className="relative overflow-hidden shadow-[0_0_0_1px_var(--color-rule)] transition-transform duration-500 ease-[var(--ease-camera)] group-hover:-translate-y-2"
                 style={{ height: `calc(${h} * clamp(14rem, 44svh, 28rem))`, aspectRatio: `${p.width} / ${p.height}` }}
               >
-                <Image src={p.src} alt={p.alt} fill sizes="(max-width: 639px) 80vw, 520px" className="object-cover" />
+                <Image loading="eager" fetchPriority="low" src={p.src} alt={p.alt} fill sizes="(max-width: 639px) 80vw, 520px" className="object-cover" />
               </div>
               <figcaption className="text-ink-2 mt-3 text-sm">{p.caption}</figcaption>
             </figure>

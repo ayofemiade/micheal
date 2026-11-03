@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { loadGsap, prefersReducedMotion } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/gsap";
 import { camera, mixHex, smoothstep } from "./scene";
 
 const STUDIO = "#fafafa";
@@ -11,7 +11,7 @@ const CYAN = "#1b3463";
 const LAST = 3;
 
 /**
- * Drives the pull-back camera from native scroll (GSAP ScrollTrigger, scrubbed).
+ * Drives the pull-back camera from native scroll (rAF scrub, no library).
  * - transform-only: one transform for the photographs, one for the drawing
  * - reduced motion: the camera cuts between the four distances, no scrub
  * - keyboard: focusing anything in a chapter moves the camera to it
@@ -91,12 +91,62 @@ export function PullBackMotion() {
       idle = window.setTimeout(() => photos.classList.remove("is-moving"), 160);
     };
 
-    let jump: ((i: number) => void) | null = null;
+    // Scroll → progress, eased toward the target each frame (a "scrub").
+    // Native scroll and rAF only, so the camera works the moment the page
+    // hydrates; it does not wait for any animation library to download.
+    let target = 0;
+    let cur = 0;
+    let raf = 0;
+    let last = 0;
+    const header = document.querySelector("header");
+
+    const readScroll = () => {
+      const rect = track.getBoundingClientRect();
+      const span = track.offsetHeight - window.innerHeight;
+      target = span > 0 ? Math.max(0, Math.min(1, -rect.top / span)) * LAST : 0;
+      const next = rect.top <= 0 && rect.bottom > (header?.offsetHeight ?? 72);
+      if (next !== underHeader) {
+        underHeader = next;
+        applyTone();
+      }
+    };
+
+    const tick = (now: number) => {
+      const dt = last ? Math.min(64, now - last) : 16.7;
+      last = now;
+      // ~0.7 s catch-up, independent of frame rate
+      const k = reduce ? 1 : 1 - Math.pow(1 - 0.12, dt / 16.7);
+      cur += (target - cur) * k;
+      if (Math.abs(target - cur) < 0.0005) cur = target;
+      render(cur);
+      if (cur !== target) raf = requestAnimationFrame(tick);
+      else {
+        raf = 0;
+        last = 0;
+      }
+    };
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const onScroll = () => {
+      readScroll();
+      kick();
+    };
+    const onResize = () => {
+      measure();
+      readScroll();
+      render(cur);
+    };
+
     const goTo = (i: number, instant = false) => {
       const top = track.getBoundingClientRect().top + window.scrollY;
       const span = track.offsetHeight - window.innerHeight;
       window.scrollTo({ top: top + (span * i) / LAST, behavior: reduce || instant ? "auto" : "smooth" });
-      if (instant) jump?.(i);
+      if (instant) {
+        // Skip the catch-up when focus moves the camera.
+        target = cur = i;
+        render(cur);
+      }
     };
 
     const onClick = (e: MouseEvent) => {
@@ -112,55 +162,16 @@ export function PullBackMotion() {
     stage.addEventListener("focusin", onFocus);
 
     measure();
-    render(0);
-
-    let cleanup = () => {};
-    let cancelled = false;
-    loadGsap().then(({ gsap, ScrollTrigger }) => {
-      if (cancelled) return;
-      const state = { p: 0 };
-      const tween = gsap.to(state, {
-        p: LAST,
-        ease: "none",
-        onUpdate: () => render(state.p),
-        scrollTrigger: {
-          trigger: track,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: reduce ? true : 0.7,
-          invalidateOnRefresh: true,
-          onRefresh: () => {
-            measure();
-            render(state.p);
-          },
-        },
-      });
-      // Skip the scrub's catch-up when focus moves the camera.
-      jump = (i) => {
-        tween.progress(i / LAST);
-        render(state.p);
-      };
-      const header = document.querySelector("header");
-      const tone = ScrollTrigger.create({
-        trigger: track,
-        start: "top top",
-        end: () => `bottom top+=${header?.offsetHeight ?? 72}`,
-        onToggle: (self) => {
-          underHeader = self.isActive;
-          applyTone();
-        },
-      });
-      cleanup = () => {
-        tween.scrollTrigger?.kill();
-        tween.kill();
-        tone.kill();
-      };
-      ScrollTrigger.refresh();
-    });
+    readScroll();
+    cur = target; // a reload mid-page starts where the visitor is, without a sweep
+    render(cur);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
 
     return () => {
-      cancelled = true;
-      cleanup();
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
       window.clearTimeout(idle);
       stage.removeEventListener("click", onClick);
       stage.removeEventListener("focusin", onFocus);

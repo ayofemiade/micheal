@@ -14,7 +14,7 @@ export function ClosingSection() {
       <div className="grid lg:min-h-[100svh] lg:grid-cols-12">
         <div className="relative aspect-[4/5] overflow-hidden lg:col-span-7 lg:aspect-auto">
           <PushIn className="absolute inset-0">
-            <Image
+            <Image loading="eager" fetchPriority="low"
               src={closing.photo.src}
               alt={closing.photo.alt}
               fill

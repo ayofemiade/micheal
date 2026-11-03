@@ -44,15 +44,35 @@ const jobs = [
   ["website gallery/11-2c.jpg", "mao-gele.jpg", 1050],
 ];
 
+/**
+ * Static responsive sizes, served as plain files from the CDN (see
+ * src/lib/image-loader.ts). Pre-building them means no image is ever encoded
+ * on demand, so the first visitor gets the same speed as the hundredth.
+ * Keep in sync with WIDTHS in src/lib/image-loader.ts and next.config.ts.
+ */
+const WIDTHS = [480, 800, 1200, 1600, 2400];
+
 await mkdir(out, { recursive: true });
 
+async function sizes(input, name, quality = 78) {
+  const base = name.replace(/\.jpg$/, "");
+  for (const w of WIDTHS) {
+    await sharp(input)
+      .resize({ width: w, withoutEnlargement: true })
+      .webp({ quality, effort: 5 })
+      .toFile(path.join(out, `${base}-${w}.webp`));
+  }
+}
+
 for (const [src, name, edge] of jobs) {
-  const info = await sharp(path.join(root, src))
+  const master = await sharp(path.join(root, src))
     .rotate()
     .resize(edge, edge, { fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 86, mozjpeg: true })
-    .toFile(path.join(out, name));
-  console.log(`${name.padEnd(18)} ${info.width}×${info.height}`);
+    .toBuffer({ resolveWithObject: true });
+  await sharp(master.data).toFile(path.join(out, name)); // master (also used for Open Graph)
+  await sizes(master.data, name);
+  console.log(`${name.padEnd(18)} ${master.info.width}×${master.info.height}`);
 }
 
 // The 1:1 face layer: an exact crop of the print, at high resolution.
@@ -66,11 +86,13 @@ for (const [src, name, edge] of jobs) {
     width: Math.round(FACE_RECT.w * k),
     height: Math.round(FACE_RECT.h * k),
   };
-  const info = await sharp(srcPath)
+  const face = await sharp(srcPath)
     .rotate()
     .extract(region)
     .resize(2400)
     .jpeg({ quality: 86, mozjpeg: true })
-    .toFile(path.join(out, "face.jpg"));
-  console.log(`face.jpg           ${info.width}×${info.height}  (crop ${JSON.stringify(region)})`);
+    .toBuffer({ resolveWithObject: true });
+  await sharp(face.data).toFile(path.join(out, "face.jpg"));
+  await sizes(face.data, "face.jpg", 82); // the 1:1 face is seen closest: a little more quality
+  console.log(`face.jpg           ${face.info.width}×${face.info.height}  (crop ${JSON.stringify(region)})`);
 }

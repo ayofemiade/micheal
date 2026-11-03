@@ -28,6 +28,8 @@ export function LineReveal({
     let cancelled = false;
     loadGsap().then(({ gsap, SplitText }) => {
       if (cancelled) return;
+      // Already being read? Don't hide it just to animate it back in.
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.82) return;
       const ctx = gsap.context(() => {
         SplitText.create(el, {
           type: "lines",

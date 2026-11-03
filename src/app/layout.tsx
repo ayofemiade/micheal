@@ -55,8 +55,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-/** Marks JS as available before first paint, so scroll scenes size correctly without layout shift. */
-const jsFlag = `document.documentElement.classList.add('js')`;
+/**
+ * Before first paint: mark JS as available (scroll scenes size correctly
+ * without layout shift), and skip the arrival screen on repeat visits.
+ */
+const jsFlag = `(function(d){d.classList.add('js');try{if(sessionStorage.getItem('sm-arrived'))d.classList.add('arrived')}catch(e){}})(document.documentElement)`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
