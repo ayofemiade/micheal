@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { maoPrints, media } from "@/data/home";
+import { maoPrints, media, SIZES } from "@/data/home";
 import { WallControls } from "./WallControls";
 
 /** Hang heights for the salon wall (share of the wall height): varied, never a grid. */
@@ -67,7 +67,7 @@ export function MediaSection() {
                 className="relative overflow-hidden shadow-[0_0_0_1px_var(--color-rule)] transition-transform duration-500 ease-[var(--ease-camera)] group-hover:-translate-y-2"
                 style={{ height: `calc(${h} * clamp(14rem, 44svh, 28rem))`, aspectRatio: `${p.width} / ${p.height}` }}
               >
-                <Image loading="eager" fetchPriority="low" src={p.src} alt={p.alt} fill sizes="(max-width: 639px) 80vw, 520px" className="object-cover" />
+                <Image loading="eager" fetchPriority="low" src={p.src} alt={p.alt} fill sizes={SIZES.maoPrint} className="object-cover" />
               </div>
               <figcaption className="text-ink-2 mt-3 text-sm">{p.caption}</figcaption>
             </figure>

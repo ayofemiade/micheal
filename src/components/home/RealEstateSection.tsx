@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { realEstate } from "@/data/home";
+import { realEstate, SIZES } from "@/data/home";
 
 /**
  * 04: Real Estate, at 1:100. Real work, not an illustration: one MAO
@@ -57,7 +57,7 @@ export function RealEstateSection() {
                   src={after.src}
                   alt={after.alt}
                   fill
-                  sizes="(max-width: 639px) 100vw, (max-width: 1023px) 58vw, 46vw"
+                  sizes={SIZES.kitchen}
                   className="object-cover"
                 />
               </div>

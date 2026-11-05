@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { chapters, face, maoPrints, placePrint, portrait } from "@/data/home";
+import { chapters, face, maoPrints, placePrint, portrait, SIZES } from "@/data/home";
 import { siteConfig } from "@/data/site";
 import { FACE_RECT, PRINT_RECT } from "./scene";
 import { GroundGrid, RoomDrawing } from "./RoomDrawing";
@@ -36,7 +36,7 @@ export function PullBack() {
                 alt=""
                 width={p.width}
                 height={p.height}
-                sizes="(max-width: 639px) 240px, 420px"
+                sizes={SIZES.maoPrint}
                 style={place(p)}
                 data-print
                 // Off-screen at 1:1 but needed the moment the camera moves: never lazy.
@@ -49,7 +49,7 @@ export function PullBack() {
               alt=""
               width={placePrint.width}
               height={placePrint.height}
-              sizes="(max-width: 639px) 240px, 480px"
+              sizes={SIZES.kitchen}
               style={place(placePrint)}
               data-print
               loading="eager"

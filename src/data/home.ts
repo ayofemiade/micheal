@@ -29,6 +29,17 @@ export interface ScenePrint extends Photo {
 
 const img = (name: string) => `/images/home/${name}.jpg`;
 
+/**
+ * `sizes` for photographs shown twice on the page (a hero print and again in a
+ * section). Both places must use the same string, so the browser picks the same
+ * file for both and downloads it once (mismatched sizes downloaded every MAO
+ * frame twice on phones: ~560 KB extra on 3x screens).
+ */
+export const SIZES = {
+  maoPrint: "(max-width: 639px) 80vw, 520px",
+  kitchen: "(max-width: 639px) 100vw, (max-width: 1023px) 58vw, 46vw",
+} as const;
+
 export const portrait: Photo = {
   src: img("portrait"),
   alt: "Segun Michael, arms crossed, smiling, in a cream mandarin-collar shirt against a white studio backdrop.",

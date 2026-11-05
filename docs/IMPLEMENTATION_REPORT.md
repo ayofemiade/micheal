@@ -183,6 +183,28 @@ It is decorative there (alt ""), because the Real Estate section shows it with f
 
 **Privacy.** The supplied folder `public/real estate/` names the files by street address. Anything in `public/` would be served at a public URL, so that folder is git-ignored and never deployed.
 
+## 9d. Load speed: every photograph once
+
+**Finding.** On phones, every MAO frame and the kitchen photo downloaded twice. The hero print and the section copy used different `sizes`, so the browser picked a different file for each. The hero took `mao-blue-800` and the Stories wall took `mao-blue-1200`, and the same split happened for all ten photographs. 100%-zoom desktops had the same split.
+
+**Fix.** One shared `SIZES` constant in `src/data/home.ts` is used by both places, so the second use is served from memory.
+
+**Measured.** Local production build, cache disabled. Slow 4G is 1.6 Mbps with 150 ms latency, plus 4× CPU slowdown on the phone. Each figure is the median of 3 runs.
+
+| | Before | After |
+| :-- | --: | --: |
+| Phone 3x: image files / weight | 27 / 1,811 KB | 17 / 1,295 KB |
+| Phone 2x: image files / weight | 27 / 961 KB | 17 / 715 KB |
+| Laptop 1536 px: image weight | 1,026 KB | 992 KB |
+| Phone, slow 4G: portrait painted (LCP) | 2.3 s | 2.4 s |
+| Phone, slow 4G: every image in | 10.6 s | 8.1 s |
+
+The hero prints now finish about 1.8 s later on a slow phone. They download at the size the Stories wall needs instead of as an extra small copy first.
+
+**Tried and dropped.** I tested a strict queue: the portrait first, then the hero prints, then the sections. It was slower: the arrival lifted at 6.8 s instead of 4.7 s. The browser already fetches the portrait first, because of the preload and `fetchPriority`, and the queue only removed parallel downloading.
+
+**Hosting checked.** The HTML and images are served from Vercel's edge cache (images cached for 1 week, fonts for 1 year). The page responds in about 0.46 s from London. A first visit after the edge cache has gone cold is slower, and that cannot be changed from the code.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:
