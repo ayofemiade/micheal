@@ -11,11 +11,14 @@ export const siteConfig = {
   /** Approved positioning sentence. */
   positioning:
     "I’m Segun Michael. I listen, create and bring ideas to life across conversations, media and real estate.",
-  /**
-   * The booking journey does not exist yet. Until it does, booking CTAs go to
-   * the Listening Hub holding page. Every CTA reads from here.
-   */
+  /** Site-wide "book" links lead to the Listening Hub page, which explains it first. */
   bookingHref: "/listening-hub",
+  /**
+   * The real booking calendar: the one destination of both buttons on the
+   * Listening Hub page. Set NEXT_PUBLIC_BOOKING_URL (see .env.example) and
+   * rebuild. Booking and general enquiries are separate: never point this at Contact.
+   */
+  bookingCalendarUrl: process.env.NEXT_PUBLIC_BOOKING_URL || null,
   copyrightYear: 2026,
   credit: "MoyoCode Technologies",
 } as const;
@@ -30,7 +33,6 @@ export const navItems: readonly NavItem[] = [
 
 /** Routes linked but not built yet. They render an honest holding page. */
 export const holdingPages: Record<string, string> = {
-  "listening-hub": "Listening Hub",
   "media-communication": "Media & Communication",
   "real-estate": "Real Estate",
   contact: "Contact",

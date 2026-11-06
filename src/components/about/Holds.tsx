@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { about } from "@/data/about";
 import { LineReveal } from "@/components/motion/LineReveal";
+import { Camera } from "./Camera";
 
-const { holdsIntro, space, camera, together } = about;
+const { holdsIntro, space, together } = about;
 
 function Go({ link }: { link: { label: string; href: string } }) {
   return (
@@ -13,16 +14,27 @@ function Go({ link }: { link: { label: string; href: string } }) {
   );
 }
 
+function Paragraphs({ items }: { items: readonly string[] }) {
+  return (
+    <div className="holds-paras">
+      {items.map((p) => (
+        <p key={p}>{p}</p>
+      ))}
+    </div>
+  );
+}
+
 /**
- * 03: One verb, three objects. Each composition is what it says: space is
- * nearly empty, the camera fills the frame, and the folded arms close the
- * layout around themselves.
+ * 03: One verb, three objects. The large words are the page's voice; his own
+ * headings and paragraphs sit beneath them, verbatim. Each composition is what
+ * it says: space is open, the camera fills the frame, and the folded arms close
+ * the layout around themselves.
  */
 export function Holds() {
   return (
     <section aria-labelledby="holds-title">
       <div className="bg-studio shell holds-intro">
-        <h2 id="holds-title" className="t-statement max-w-[12ch]">
+        <h2 id="holds-title" className="holds-pivot">
           {holdsIntro}
         </h2>
       </div>
@@ -34,8 +46,9 @@ export function Holds() {
             {space.word}
           </LineReveal>
           <div className="space-copy">
-            <p className="t-scale">{space.label}</p>
-            <p className="text-ink-2 mt-4 text-lg leading-relaxed">{space.body}</p>
+            <h4 className="holds-sub">{space.heading}</h4>
+            <p className="holds-lead">{space.lead}</p>
+            <Paragraphs items={[space.body]} />
             <Go link={space.link} />
             <p className="border-rule text-ink-2 mt-8 border-t pt-4 text-sm leading-relaxed">{space.notice}</p>
           </div>
@@ -45,20 +58,7 @@ export function Holds() {
         </div>
       </article>
 
-      {/* Holds a camera: no room at all. */}
-      <article aria-labelledby="holds-camera" className="camera">
-        <div className="camera-photo">
-          <Image src={camera.photo.src} alt={camera.photo.alt} fill sizes="(max-width: 1023px) 100vw, 62vw" className="camera-img" />
-        </div>
-        <div className="camera-copy">
-          <LineReveal as="h3" id="holds-camera" className="holds-word">
-            {camera.word}
-          </LineReveal>
-          <p className="t-scale mt-6">{camera.label}</p>
-          <p className="mt-4 text-lg leading-relaxed">{camera.body}</p>
-          <Go link={camera.link} />
-        </div>
-      </article>
+      <Camera />
 
       {/* Holds it together: the arms cross, and the words close around them. */}
       <article aria-labelledby="holds-together" className="together">
@@ -73,8 +73,8 @@ export function Holds() {
               </span>
             ))}
           </LineReveal>
-          <p className="t-scale mt-7">{together.label}</p>
-          <p className="text-ink-2 mt-4 max-w-[32ch] text-lg leading-relaxed">{together.body}</p>
+          <h4 className="holds-sub mt-7">{together.heading}</h4>
+          <Paragraphs items={together.body} />
           <Go link={together.link} />
         </div>
       </article>

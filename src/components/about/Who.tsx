@@ -4,9 +4,8 @@ import { about } from "@/data/about";
 const { who } = about;
 
 /**
- * 02: You look back, and he is looking at you. Almost nothing but his eyes,
- * edge to edge, then his name and his own sentence. Segun's words slot in here
- * when he supplies them (`ownWords`).
+ * 02: You look back, and he begins to speak. Almost nothing but his eyes, edge
+ * to edge, then his name and, from here on, his own first-person words.
  */
 export function Who() {
   return (
@@ -18,11 +17,9 @@ export function Who() {
         <h2 id="who-title" className="who-name">
           {who.name}
         </h2>
-        <div className="who-words">
-          <p className="who-positioning">{who.positioning}</p>
-          <p className="text-ink-2 mt-6 max-w-[34ch] text-lg leading-relaxed">{who.aside}</p>
-          {who.ownWords && <blockquote className="who-own">{who.ownWords}</blockquote>}
-        </div>
+        <p className="who-label t-scale">{who.heading}</p>
+        <p className="who-story">{who.story}</p>
+        <p className="who-path t-statement">{who.path}</p>
       </div>
     </section>
   );

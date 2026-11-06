@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { navItems, siteConfig } from "@/data/site";
+import { BookingLink } from "./BookingLink";
 
 /**
  * Quiet, fixed, and always offering the one action. Colour follows the page:
@@ -84,17 +85,17 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link href={siteConfig.bookingHref} className="flex items-center gap-2 font-semibold">
+          <BookingLink className="flex items-center gap-2 font-semibold">
             <span aria-hidden="true" className="bg-mao size-[7px] [:root[data-tone=dark]_&]:bg-paper" />
             Book a session
-          </Link>
+          </BookingLink>
         </nav>
 
         <div className="relative z-10 flex items-center gap-5 text-sm md:hidden">
-          <Link href={siteConfig.bookingHref} className="flex items-center gap-2 font-semibold">
+          <BookingLink className="flex items-center gap-2 font-semibold" onClick={() => setOpenOn(null)}>
             <span aria-hidden="true" className="bg-mao size-[7px] [:root[data-tone=dark]_&]:bg-paper group-data-open/h:bg-mao" />
             Book
-          </Link>
+          </BookingLink>
           <button
             ref={toggleRef}
             type="button"
@@ -128,9 +129,9 @@ export function Header() {
             ))}
           </ul>
         </nav>
-        <Link href={siteConfig.bookingHref} className="cta mt-10 self-start">
+        <BookingLink className="cta mt-10 self-start" onClick={() => setOpenOn(null)}>
           Book a Listening Session
-        </Link>
+        </BookingLink>
       </div>
     </header>
   );

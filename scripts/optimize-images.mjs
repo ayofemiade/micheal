@@ -220,6 +220,55 @@ if (!only || "about-lowered.jpg".startsWith(only)) {
   await aboutImage(await sharp(moved).extract({ left: 48, top: 0, width: 2400, height: 1600 }).toBuffer(), "about-lowered.jpg");
 }
 
+/**
+ * Listening Hub. hub-table: the studio white is lifted to pure white, then the
+ * whole frame is multiplied by the page's paper, so he sits in the page's warm
+ * room with no box around him. hub-window: daylight, the camera cropped away.
+ */
+if (!only || "hub-table.jpg".startsWith(only)) {
+  const lifted = await sharp(path.join(root, "potrait/IMG_2518.jpg")).rotate().linear(255 / 238, 0).toBuffer({ resolveWithObject: true });
+  const { width: tw, height: th } = lifted.info;
+  const warm = await sharp(lifted.data)
+    .composite([{ input: { create: { width: tw, height: th, channels: 3, background: "#f5f3ee" } }, blend: "multiply" }])
+    .toBuffer();
+  await aboutImage(warm, "hub-table.jpg");
+}
+/** hub-reach: the same warm treatment, in colour. He sits in the page with no box. */
+if (!only || "hub-reach.jpg".startsWith(only)) {
+  const lifted = await sharp(path.join(root, "potrait/IMG_2555.jpg")).rotate().linear(255 / 238, 0).toBuffer({ resolveWithObject: true });
+  const warm = await sharp(lifted.data)
+    .composite([{ input: { create: { width: lifted.info.width, height: lifted.info.height, channels: 3, background: "#f5f3ee" } }, blend: "multiply" }])
+    .toBuffer();
+  await aboutImage(warm, "hub-reach.jpg");
+}
+
+/** A true cyanotype: every tone mapped from Prussian blue to paper. */
+if (!only || "hub-print.jpg".startsWith(only)) {
+  const file = path.join(root, "potrait/IMG_2518.jpg");
+  const { width: W, height: H } = await sharp(file).rotate().metadata();
+  const { data, info } = await sharp(file)
+    .rotate()
+    .extract({ left: 0, top: Math.round(0.52 * H), width: W, height: Math.round(0.48 * H) })
+    .resize({ width: 2400 })
+    .greyscale()
+    .extractChannel(0)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const blue = [0x1b, 0x34, 0x63];
+  const paper = [0xf5, 0xf3, 0xee];
+  const print = Buffer.alloc(info.width * info.height * 3);
+  for (let i = 0; i < data.length; i++) {
+    const v = data[i] / 255;
+    for (let c = 0; c < 3; c++) print[i * 3 + c] = Math.round(blue[c] + (paper[c] - blue[c]) * v);
+  }
+  await aboutImage(await sharp(print, { raw: { width: info.width, height: info.height, channels: 3 } }).png().toBuffer(), "hub-print.jpg");
+}
+if (!only || "hub-window.jpg".startsWith(only)) {
+  const file = path.join(root, "potrait/IMG_1980c.jpg");
+  const { width: W, height: H } = await sharp(file).metadata();
+  await aboutImage(await sharp(file).extract({ left: Math.round(0.45 * W), top: Math.round(0.1 * H), width: Math.round(0.42 * W), height: Math.round(0.74 * H) }).toBuffer(), "hub-window.jpg");
+}
+
 // The 1:1 face layer: an exact crop of the print, at high resolution.
 if (!only || "face.jpg".startsWith(only)) {
   const { width } = await sharp(PORTRAIT_SRC).metadata();

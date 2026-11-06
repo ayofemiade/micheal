@@ -1,0 +1,566 @@
+/* ==========================================================================
+   Listening Hub: "Making room". Loaded by this route only.
+   All on warm paper: no studio white, no dark ground, nothing clinical.
+   This page is deliberately still: no pinned scenes, nothing scroll-driven.
+   ========================================================================== */
+
+/* ---------- 01 The other chair ---------- */
+.hub-hero {
+  position: relative;
+  height: 100svh;
+  min-height: 30rem;
+  overflow: hidden;
+  container-type: size;
+  background: var(--color-paper);
+}
+.hub-eyebrow {
+  position: absolute;
+  left: var(--gutter);
+  top: calc(var(--header-h) + 2.4cqh);
+}
+/* He is 84cqh wide, with his head (not the frame) on the centre line; his eyes sit 31cqh down, his ears 13cqh either side. */
+.hub-chair {
+  position: absolute;
+  left: 50%;
+  top: 2cqh;
+  width: 84cqh;
+  height: 118cqh;
+  transform: translateX(calc(-50% - 3.8cqh));
+  /* The room's edges fall away, and the table runs out into the page. */
+  mask-image:
+    linear-gradient(to right, transparent, #000 13%, #000 80%, transparent),
+    linear-gradient(to bottom, #000 74%, transparent 96%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+.hub-chair-img {
+  object-fit: cover;
+}
+.hub-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  --line: min((100cqw - 32cqh - 2 * var(--gutter)) / 14.6, 13.5cqh, 9.5rem);
+  font-size: var(--line);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.hub-speak,
+.hub-think {
+  position: absolute;
+  z-index: 1;
+  top: calc(31cqh - 0.5em);
+  white-space: nowrap;
+  animation: hub-part 1.5s var(--ease-camera) 0.15s both;
+}
+/* The two sentences open apart: the page making room. */
+.hub-speak {
+  right: calc(50cqw + 16cqh);
+  --from: 6cqw;
+}
+.hub-think {
+  left: calc(50cqw + 16cqh);
+  --from: -6cqw;
+}
+@keyframes hub-part {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--from), 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hub-lead {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 7cqh;
+  width: min(100cqw / 2 - 40cqh - var(--gutter), 30rem);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.25rem, 3.7cqh, 2.25rem);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.hub-action {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 7cqh;
+  width: max(100cqw / 2 - 42cqh - var(--gutter), 15rem);
+  max-width: 24rem;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+.hub-action .cta {
+  margin-left: auto;
+  white-space: nowrap;
+}
+/* The calendar is not connected yet: the button at rest, and never a fake link. */
+.hub-resting {
+  width: fit-content;
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* The waiting note under either button. */
+.hub-wait {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* ---------- 02 He comes closer: one spread, three levels ---------- */
+.hub-thoughts {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-paper);
+  padding-top: clamp(3.5rem, 10svh, 6rem);
+}
+.hub-offer,
+.hub-recognition {
+  padding-inline: var(--gutter);
+}
+.hub-offer {
+  max-width: 52ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.55;
+  text-wrap: pretty;
+  box-sizing: content-box;
+}
+.hub-recognition {
+  margin-top: 1.75rem;
+  max-width: 21em;
+  box-sizing: content-box;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 7vw, 3rem);
+  letter-spacing: -0.02em;
+  line-height: 1.14;
+  text-wrap: pretty;
+}
+/* Stacked: the photograph runs edge to edge, so both arms leave the screen. */
+.hub-reach {
+  position: relative;
+  margin-top: 1rem;
+  aspect-ratio: 1 / 1.16;
+  overflow: hidden;
+}
+.hub-reach::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Only on his arms: above them the backdrop stays clean paper. */
+  background: linear-gradient(to top, #2a1d1af0, #2a1d1ab8 26%, #2a1d1a00 46%);
+}
+.hub-reach-img {
+  object-fit: cover;
+  object-position: 50% 62%;
+}
+/* Anchored to the foot of the photograph, however many lines it runs to. */
+.hub-heard {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 0 var(--gutter) 2rem;
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 12vw, 6rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+}
+/* Wide screens: the whole thing on one screen. */
+@media (min-width: 760px) and (min-aspect-ratio: 1/1) {
+  /* Exactly the space under the fixed header. */
+  .hub-thoughts {
+    min-height: calc(100svh - var(--header-h));
+    display: flex;
+    flex-direction: column;
+    padding-block: clamp(1.75rem, 7svh, 6rem) clamp(1.75rem, 6svh, 5rem);
+  }
+  .hub-offer,
+  .hub-recognition,
+  .hub-heard {
+    position: relative;
+    z-index: 1;
+    padding-inline: var(--gutter) 0;
+  }
+  .hub-recognition {
+    margin-top: clamp(1rem, 4svh, 3rem);
+    font-size: min(2.9vw, 6svh, 3.25rem);
+    max-width: min(19em, 100vw - 92svh);
+  }
+  /* Flush to the edge: his left arm leaves the screen, his right dissolves toward the words. */
+  .hub-reach {
+    position: absolute;
+    top: -8%;
+    right: 0;
+    margin: 0;
+    height: 118%;
+    aspect-ratio: 5 / 7;
+    mask-image: linear-gradient(to right, transparent, #000 26%);
+  }
+  .hub-reach::after {
+    display: none;
+  }
+  .hub-reach-img {
+    object-position: 50% 50%;
+  }
+  .hub-heard {
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin-top: auto;
+    padding-top: 2rem;
+    padding-bottom: 0;
+    color: var(--color-ink);
+    font-size: min(5.9vw, 11.8svh, 7.5rem);
+    line-height: 0.98;
+    max-width: 8.6em;
+    box-sizing: content-box;
+  }
+}
+
+/* ---------- 03 A conversation shaped around you ---------- */
+.hub-shaped {
+  background: #dfe2e6;
+  padding-block: clamp(4rem, 13svh, 9rem);
+}
+.hub-shaped-head {
+  display: grid;
+  gap: 1rem;
+}
+.hub-shaped-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 6.4vw, 9rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+}
+.hub-shaped-intro {
+  max-width: 30ch;
+  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+  line-height: 1.45;
+}
+.hub-options {
+  margin-top: clamp(3rem, 10svh, 6rem);
+  border-top: 1px solid var(--color-ink);
+}
+.hub-options li {
+  padding-block: clamp(1.25rem, 2.6vw, 3rem);
+  border-bottom: 1px solid #14161a40;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.625rem, 4vw, 5.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+@media (min-width: 1024px) {
+  .hub-shaped-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: end;
+  }
+  .hub-shaped-title {
+    grid-column: 1 / 10;
+  }
+  .hub-shaped-intro {
+    grid-column: 10 / -1;
+    padding-bottom: 0.4em;
+  }
+}
+
+/* ---------- 04 The pause: the empty space is the pause ---------- */
+.hub-pause {
+  background: #3d5688;
+  color: var(--color-paper);
+  min-height: 112svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5rem;
+  padding-block: clamp(4rem, 13svh, 9rem) clamp(3.5rem, 11svh, 8rem);
+}
+.hub-pause-first {
+  max-width: 34ch;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.9vw, 3.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+.hub-pause-second {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: min(10.4vw, 14rem);
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+/* ---------- 05 My role ---------- */
+.hub-role {
+  position: relative;
+  background: #264272;
+  color: var(--color-paper);
+}
+.hub-role-photo {
+  position: relative;
+  aspect-ratio: 1 / 1.08;
+  overflow: hidden;
+}
+/* The bottom of the portrait goes into the dusk. */
+.hub-role-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, #264272, #26427200 32%);
+}
+.hub-role-copy {
+  position: relative;
+  z-index: 1;
+  margin-top: -5.5rem;
+  padding-block: 0 4.5rem;
+}
+.hub-partner {
+  margin-top: 1rem;
+}
+.hub-partner-big {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 7.2vw, 10rem);
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+}
+.hub-partner-how {
+  display: block;
+  margin-top: 0.8em;
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.6vw, 3.25rem);
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+}
+.hub-role-body {
+  margin-top: 1.5rem;
+  max-width: 50ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.6;
+}
+@media (min-width: 1024px) {
+  .hub-role {
+    min-height: max(112svh, 62vw);
+    display: flex;
+    align-items: flex-end;
+  }
+  /* Tall against the dusk; his face stays clear above the sentence. */
+  .hub-role-photo {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 50vw;
+    aspect-ratio: auto;
+  }
+  .hub-role-photo::after {
+    background:
+      linear-gradient(to bottom, #264272, #26427200 16%),
+      linear-gradient(to right, #264272, #26427200 30%),
+      linear-gradient(to top, #264272, #26427200 40%);
+  }
+  .hub-role-copy {
+    margin-top: 0;
+    padding-block: 0 clamp(4rem, 13svh, 9rem);
+    width: 100%;
+  }
+  .hub-partner-big {
+    max-width: 6.4em;
+  }
+  .hub-partner-how,
+  .hub-role-body {
+    max-width: 42vw;
+  }
+}
+
+/* ---------- 06 Book a session ---------- */
+.hub-book {
+  position: relative;
+  background: var(--color-cyan);
+  color: var(--color-paper);
+  scroll-margin-top: var(--header-h);
+}
+.hub-book-grid {
+  display: grid;
+  gap: 2.75rem;
+  padding-block: clamp(4rem, 15svh, 10rem) clamp(4rem, 13svh, 9rem);
+}
+.hub-book-how {
+  margin-top: 1.75rem;
+  max-width: 44ch;
+  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+  line-height: 1.55;
+}
+.hub-print {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+.hub-terms {
+  display: grid;
+  gap: 0 2rem;
+  border-top: 1px solid var(--color-paper);
+}
+.hub-terms > div {
+  display: grid;
+  align-content: start;
+  gap: 0.625rem;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid #f5f3ee40;
+}
+.hub-terms dd {
+  max-width: 48ch;
+  line-height: 1.55;
+}
+@media (min-width: 1024px) {
+  .hub-book-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    row-gap: 4rem;
+    align-items: center;
+  }
+  .hub-book-main {
+    grid-column: 1 / 7;
+  }
+  .hub-print {
+    grid-column: 7 / -1;
+    margin-right: calc(-1 * var(--gutter));
+  }
+  .hub-terms {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+  .hub-terms > div {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* ---------- Phones and tall screens: above and below him ---------- */
+@media (max-width: 639px), (max-aspect-ratio: 1/1) {
+  .hub-hero {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100svh;
+    padding-bottom: 2rem;
+    container-type: normal;
+  }
+  .hub-eyebrow {
+    top: calc(var(--header-h) + 0.5rem);
+  }
+  .hub-title {
+    display: contents;
+    --line: clamp(2.5rem, 13vw, 6.5rem);
+  }
+  .hub-speak,
+  .hub-think {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    display: block;
+    padding-inline: var(--gutter);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: var(--line);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .hub-speak {
+    order: 1;
+    margin-top: calc(var(--header-h) + 2.5rem);
+    animation-name: hub-part-down;
+  }
+  .hub-chair {
+    order: 2;
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: min(100vw, 49svh);
+    height: auto;
+    aspect-ratio: 5 / 6;
+    margin: -0.25rem auto 0;
+    overflow: hidden;
+    mask-image:
+      linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
+      linear-gradient(to bottom, #000 78%, transparent 100%);
+  }
+  .hub-chair-img {
+    object-position: 50% 16%;
+  }
+  .hub-think {
+    order: 3;
+    margin-top: -2.75rem;
+    text-align: right;
+    animation-name: hub-part-up;
+  }
+  .hub-lead {
+    order: 4;
+    position: static;
+    width: auto;
+    margin: 1.25rem var(--gutter) 0;
+    font-size: clamp(1.25rem, 5.4vw, 2rem);
+  }
+  .hub-action {
+    order: 5;
+    position: static;
+    width: auto;
+    margin: 1.25rem var(--gutter) 0;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  .hub-action .cta {
+    margin-left: 0;
+  }
+  .hub-pause-second {
+    font-size: min(17vw, 9rem);
+  }
+  .hub-options li {
+    font-size: clamp(1.625rem, 7.2vw, 3.5rem);
+  }
+}
+@keyframes hub-part-down {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes hub-part-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -2.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

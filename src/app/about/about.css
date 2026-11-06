@@ -116,22 +116,14 @@
   letter-spacing: -0.04em;
   line-height: 0.92;
 }
-.who-positioning {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.625rem, 2.5vw, 3rem);
-  letter-spacing: -0.02em;
-  line-height: 1.16;
-  text-wrap: balance;
+.who-story {
+  max-width: 58ch;
+  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+  line-height: 1.55;
 }
-.who-own {
-  margin-top: 2.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--color-ink);
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.375rem, 1.9vw, 2rem);
-  line-height: 1.25;
+.who-path {
+  margin-top: clamp(2rem, 7svh, 5rem);
+  max-width: 21ch;
 }
 @media (min-width: 1024px) {
   .who-grid {
@@ -139,18 +131,59 @@
     column-gap: 2rem;
     align-items: start;
   }
-  .who-name {
+  .who-name,
+  .who-path {
     grid-column: 1 / -1;
   }
-  .who-words {
+  .who-label {
+    grid-column: 1 / 7;
+    padding-top: 0.45em;
+  }
+  .who-story {
     grid-column: 7 / -1;
   }
 }
 
 /* ---------- 03 What he holds ---------- */
 .holds-intro {
-  padding-block: clamp(5rem, 16svh, 11rem) clamp(4rem, 12svh, 8rem);
-  border-top: 1px solid var(--color-rule);
+  padding-block: clamp(3rem, 9svh, 6rem) 0;
+}
+.holds-pivot {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.1vw, 2.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+/* His headings and his words, beneath the page's large verb. */
+.holds-sub {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.375rem, 1.75vw, 2rem);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.holds-lead {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.1vw, 2.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.18;
+}
+.holds-paras {
+  margin-top: 1rem;
+  max-width: 58ch;
+  line-height: 1.6;
+}
+.holds-paras p + p {
+  margin-top: 0.9em;
+}
+.space-copy .holds-paras,
+.together-copy .holds-paras {
+  color: var(--color-ink-2);
 }
 .holds-word {
   font-family: var(--font-display);
@@ -164,7 +197,7 @@
 .space-text {
   display: grid;
   gap: 2.5rem;
-  padding-top: clamp(4rem, 14svh, 10rem);
+  padding-top: clamp(3rem, 10svh, 7rem);
   padding-bottom: clamp(3rem, 10svh, 8rem);
 }
 .space-photo {
@@ -181,19 +214,19 @@
   .space-text {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: 2rem;
-    align-items: end;
+    align-items: start;
   }
   .space-text .holds-word {
-    grid-column: 1 / 8;
+    grid-column: 1 / 7;
   }
   .space-copy {
-    grid-column: 8 / -1;
-    max-width: 40ch;
+    grid-column: 7 / -1;
   }
 }
 
-/* Camera: no room at all. */
+/* Camera: first seen, then read. The photograph holds still; his words pass it. */
 .camera {
+  position: relative;
   background: var(--color-ink);
   color: var(--color-paper);
 }
@@ -202,35 +235,91 @@
   aspect-ratio: 1 / 1;
   overflow: hidden;
 }
+.camera-lens {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.07);
+  will-change: transform;
+}
 .camera-img {
   object-fit: cover;
   object-position: 50% 32%;
 }
+/* The photograph dissolves into the dark: no seam, and a dark ground for the word. */
+.camera-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--color-ink), #14161a00 26%);
+}
 .camera-copy {
-  padding: 2.75rem var(--gutter) 4.5rem;
+  position: relative;
+  z-index: 1;
+  margin-top: -3.25rem;
+  padding: 0 var(--gutter) 5rem;
+}
+.camera-read {
+  margin-top: 2rem;
+  max-width: 40rem;
+}
+.camera-para {
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+.camera-lead {
+  margin-block: 2.25rem;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.625rem, 2.5vw, 2.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+}
+@media (max-width: 1023px) {
+  .camera-lens {
+    transform: none !important;
+  }
 }
 @media (min-width: 1024px) {
   .camera {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    min-height: 100svh;
   }
+  /* Under the fixed header, always one whole screen. */
   .camera-photo {
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100svh - var(--header-h));
     aspect-ratio: auto;
   }
   .camera-img {
-    object-position: 50% 30%;
+    object-position: 50% 20%;
+  }
+  .camera-photo::after {
+    background: linear-gradient(to left, var(--color-ink), #14161a00 34%);
   }
   .camera-copy {
-    position: relative;
-    z-index: 1;
-    align-self: end;
-    padding: 0 var(--gutter) clamp(2.5rem, 9svh, 6rem) 0;
+    --inset: clamp(2rem, 4.5vw, 6rem);
+    margin-top: 0;
+    padding: 0 var(--gutter) clamp(4rem, 16svh, 10rem) var(--inset);
   }
-  /* The word reaches back on to the photograph: paper on deep denim. */
+  /* Beat one: the photograph and the words, nothing else. */
+  .camera-opening {
+    display: flex;
+    align-items: flex-end;
+    min-height: calc(100svh - var(--header-h));
+    padding-bottom: clamp(2.5rem, 10svh, 6rem);
+  }
+  /* The word reaches back on to the photograph, across the dissolve. */
   .camera-copy .holds-word {
-    margin-left: -11vw;
+    margin-left: calc(-1 * var(--inset) - 8vw);
     font-size: clamp(3.5rem, 8.6vw, 10rem);
+  }
+  .camera-read {
+    margin-top: 0;
+  }
+  .camera-para {
+    font-size: clamp(1.0625rem, 1.2vw, 1.3125rem);
   }
 }
 
@@ -274,7 +363,7 @@
   height: 100svh;
 }
 :root.js .pair-track {
-  height: 210svh;
+  height: 280svh;
 }
 .pair-stage {
   position: sticky;
@@ -291,6 +380,7 @@
   flex-direction: column;
   justify-content: center;
   padding-inline: var(--gutter);
+  padding-bottom: 13svh;
   font-family: var(--font-display);
   font-weight: 300;
   font-size: min(10.2vw, 21svh, 11rem);
@@ -319,6 +409,25 @@
 }
 :root.js .pair-blue {
   clip-path: inset(100% 0 0 0);
+}
+
+/* His family, in his words. The quietest line on the page, and the last thing the blue shows. */
+.pair-family {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 9svh;
+  max-width: 34ch;
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.375rem, 2.15vw, 2.5rem);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+:root.js .pair-family {
+  opacity: 0;
+  will-change: opacity;
 }
 
 /* ---------- 05 Your turn ---------- */

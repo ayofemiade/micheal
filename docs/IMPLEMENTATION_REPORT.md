@@ -285,13 +285,31 @@ These are requested sizes: browsers allocate large layers in tiles, so they show
 
 **Photographs.** `IMG_1982c` and `IMG_1980c` are registered on his face (scale 1.015) in `scripts/optimize-images.mjs`, so scrolling lowers the camera. Crops: `propfie` (eyes), `IMG_2518` (clasped hands), `IMG_2040` (camera), `IMG_2486` (folded arms), `IMG_2552cc` (pointing). The kitchen pair is not used: the two shots were taken from different positions, so they cannot wipe, and the homepage already shows them.
 
-**Motion.** Two scroll scenes only, both using `useStageProgress` (native scroll and rAF, no new library): the lowered camera, and the cyanotype rising through the sentence. `LineReveal` and `PushIn` are reused. Every stage is bounded by the screen (§9g).
+**Holds a camera.** Two beats. On desktop the photograph sticks under the header at one screen tall, so it is always framed whole, while the word arrives first and his paragraphs then pass beside it. It dissolves into the ink instead of ending on a seam. On phones it stacks. Sticky is bounded by the screen, so it follows §9g.
+
+**Motion.** Scroll scenes use `useStageProgress` (native scroll and rAF, no new library): the lowered camera, and the cyanotype rising through the sentence. `LineReveal` and `PushIn` are reused. Every stage is bounded by the screen (§9g).
 
 **Shared files changed.** `about` removed from `holdingPages` in `src/data/site.ts`, and About crops added to the image script. Global CSS, the homepage, header and footer are untouched. `about.css` loads on this route only.
 
-**Copy status.** Service descriptions repeat approved homepage wording. Everything else is marked `// pending` in `src/data/about.ts`. `who.ownWords` renders only when Segun supplies a sentence of his own.
+**Copy status.** Segun's supplied About copy (2026-11-06) runs verbatim from "A little about me" onward, in the first person, and must not be edited. The large lines are the page's own voice and stay `// pending` in `src/data/about.ts`. The family line sits alone on the blue screen, with no family photographs. The Listening Hub notice stays beneath his words.
 
 **Known issue, not caused by this page.** `NEXT_PUBLIC_SITE_URL` is not set in production, so the live social preview image resolves to `http://localhost:3000/...`. A canonical tag was left off this page for the same reason. Set the variable in Vercel and redeploy, then add `alternates: { canonical: "/about" }` to the page metadata.
+
+## 9i. Listening Hub: "Making room"
+
+**The idea.** The page behaves like its subject: it gives you room. In `IMG_2518` he sits across a table, so the first screen puts you in the other chair, with the two sentences of the headline opening to either side of him (above and below him on phones). The table runs out into the page. Later the page pauses: the first sentence rises away, the screen holds, and "Being heard can be valuable in itself." arrives.
+
+**Directions weighed.** Sound and waveforms were decoration. Near-empty dark silence risked feeling cold to a hesitant visitor. "Making room" comes directly from the approved headline.
+
+**A still page (decided 2026-11-06).** An earlier version pinned about 11 of 15.6 screens to scroll-revealed text. It was removed at the user's request: holding the visitor and making them reveal words contradicted "at your own pace". The page now scrolls normally, every word is simply there, and only the hero's headline moves, once, on arrival. Sections step from day to evening with fixed colours: paper, pale, `#3d5688`, `#264272`, cyan. The offer, the recognition sentence and "You may simply want to be heard." form one spread beside `hub-reach` (`IMG_2555`, warmed like `hub-table`). The photograph is flush to the edge because both arms leave its frame. The pause is a tall still screen whose empty space does the work. `hub-print` is a cyanotype of the hands from the first screen, built in the image script.
+
+**Structure.** The approved order: 01 The other chair · 02 Thoughts · 03 A conversation shaped around you · 04 The pause · 05 My role · 06 Book a session. Files: `src/app/listening-hub/`, `src/components/listening/`, `src/data/listening-hub.ts`. The five options are never numbered: they are choices, not steps. There is no FAQ, because almost every answer depends on unconfirmed details.
+
+**Photographs.** `hub-table` (`IMG_2518`) is lifted and multiplied by the paper colour in the image script, so he sits in the page's warm room with no box. `hub-window` (`IMG_1980c`) is cropped above the camera.
+
+**Booking.** No calendar exists in the project. Both buttons are one component (`BookButton`), reading one setting: `NEXT_PUBLIC_BOOKING_URL`, via `siteConfig.bookingCalendarUrl`. Unset, it renders a resting state with no link and never falls back to Contact. Set it in Vercel and redeploy to go live. Site-wide "book" links lead to this page; on this page they go to `#book` (`BookingLink`). No contact-to-schedule route was found in the code. Contact links are unchanged.
+
+**Unconfirmed.** `sessionDetails` in `src/data/listening-hub.ts` holds duration and format; the line renders only when both are set. The waiting line is `// pending`.
 
 ## 10. ⚠ The GitHub repository is public
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { expressions, navItems, siteConfig } from "@/data/site";
+import { BookingLink } from "./BookingLink";
 
 /**
  * Set like the title block of a drawing: the part of the sheet that says what
@@ -15,9 +16,9 @@ export function Footer() {
           <p className="font-display mt-3 text-[clamp(2.75rem,6vw,5rem)]">{siteConfig.name}</p>
           <p className="mt-4 max-w-[32ch]">One person. Three expressions of purpose.</p>
           {/* Cyan button: the mark goes paper, never MAO red on cyan (1.55:1). */}
-          <Link href={siteConfig.bookingHref} className="cta !bg-cyan !text-paper mt-8 [&::before]:!bg-paper">
+          <BookingLink className="cta !bg-cyan !text-paper mt-8 [&::before]:!bg-paper">
             Book a Listening Session
-          </Link>
+          </BookingLink>
         </div>
 
         {expressions.map((e, i) => (
