@@ -160,7 +160,7 @@ Final page weight is 565 KB, including 196 KB of JavaScript, 80 KB of fonts and 
 **The kitchen pair.** Of five supplied property photographs, the gutted kitchen and the finished kitchen are the same room. The U-run, the double window with its scalloped valance, the hood position, the peninsula and the cabinet carcasses all match. The client confirmed it is a **MAO Contractors renovation** (2026-11-03).
 
 **What was not used, and why:**
-- The snow-covered house: it carries a TriadMLS watermark.
+- The snow-covered house: it carries a TriadMLS watermark. (Used in Places from 2026-11-06, pending confirmation: see §9f.)
 - The open-plan kitchen and the manufactured home: these are 768 px listing copies, so their rights and quality are both doubtful.
 
 **Layout.** In the section, the line drawing and its "not a real project" note are replaced by Before (small) → After (large) → Segun, all on one floor line. The portrait is lifted by the caption's height so all three bottoms align (measured equal at 1024, 1440 and 1920). Below 1024 px they stack. The room drawing remains in the hero at 1:100.
@@ -204,6 +204,52 @@ The hero prints now finish about 1.8 s later on a slow phone. They download at t
 **Tried and dropped.** I tested a strict queue: the portrait first, then the hero prints, then the sections. It was slower: the arrival lifted at 6.8 s instead of 4.7 s. The browser already fetches the portrait first, because of the preload and `fetchPriority`, and the queue only removed parallel downloading.
 
 **Hosting checked.** The HTML and images are served from Vercel's edge cache (images cached for 1 week, fonts for 1 year). The page responds in about 0.46 s from London. A first visit after the edge cache has gone cold is slower, and that cannot be changed from the code.
+
+## 9e. The introduction: he comes first
+
+**Request.** Segun wants the first screen to say who he is and everything he does, with the portrait shown rather than only his head. People becomes the next stop.
+
+**What changed.**
+
+- The first screen is now an introduction: the waist-up portrait, "I’m Segun Michael.", the approved positioning line, one row each for the Listening Hub, Media & Communication and Real Estate, and the booking button. Phones show the ventures in one sentence instead of the rows.
+- Scrolling moves the camera in from the portrait to the face (People, 1:1), then back out to Stories, Places and Possibilities. Progress now runs 0 → 4, and the page has one more screen of scroll.
+- The ruler appears from People onwards. The arrival screen no longer shows "1:1".
+- People now has its own line, marked pending, because the positioning sentence moved to the introduction.
+
+**How it stays sharp.** Photographs are laid out at 3 × the hero frame and shown at 1/3, so moving in scales them down, never up (`LAYOUT_SCALE` in `scene.ts`). The CSS first frame matches the camera, so the first paint is the finished composition.
+
+**Photograph.** The portrait is unchanged. Its backdrop is slightly whiter than the page, so a CSS overlay (`.pullback-blend`) dissolves its edges during the introduction and fades out before Stories, where it hangs as a print.
+
+**Copy.** Every phrase in the introduction comes from wording already on the site. The rows are condensed from the section copy, so Segun should still read them.
+
+## 9f. The hero recomposed; Places becomes a real house
+
+**Hero.** His name runs on one line along his eye-line and stops at his ear, so reading it leads to his face. His statement and the booking action sit directly under it. People, Stories and Places sit in three columns at the foot of the screen. The portrait stays flush right because his right sleeve runs out of the photograph: centred, the sleeve would end in mid-air. Below 1180 px wide the name stacks into two lines beside the portrait.
+
+**Real laptop screens.** A 1920×1080 laptop at 150% Windows scaling lays the page out at about 1265×598, so that is a primary design target. The columns stay down to 520 px tall (600 px below 1180 px wide). Type scales with the screen's height and the column width, and column titles hold one line. Rebuilt photographs carry a version in `src/lib/image-loader.ts`, because the files are cached for a week under fixed names.
+
+**Portrait backdrop.** `flatBackdrop()` in `scripts/optimize-images.mjs` flood-fills the studio backdrop from the frame edges and settles it on the page's exact #fafafa, so the photograph has no visible edge. A polygon over his body stops the fill entering the shirt, whose highlights are close to the backdrop colour. The photograph is otherwise unchanged. The desktop edge overlay is gone; phones and tablets keep it where his arms meet the frame.
+
+**Places.** Between Stories and Places:
+1. The prints and portrait recede and leave for good. The kitchen print is no longer in the hero; it stays in the Real Estate section.
+2. A line drawing traced from the real house draws itself on the paper (`HouseDrawing.tsx`).
+3. The outline fills with the photograph, then opens to full screen.
+4. The words sit in the sky. On phones the snow runs out into the paper and the words sit below it.
+
+At 1:∞ the blue rises over the photograph and the same drawing remains as a small blueprint on the open ground. The drawn room, chairs and lamp are gone, along with their note.
+
+**Geometry.** `HOUSE` in `scene.ts` places the photograph in world units with the ground at y = 1000. The drawing is traced in the photograph's own pixels, so the two register on every aspect. The camera covers most of the 1:10 → 1:100 distance early, so the whole house is in frame when its outline fills.
+
+**Source photograph.** `real estate/house-after.webp` is the supplied 1024 × 682 copy, git-ignored. It is cropped to 1024 × 640, which removes the TriadMLS mark at the bottom left, and enlarged with sharp to 2400 × 1500. The user approved publishing it on 2026-11-06. No caption claims anything about it beyond what it shows. To replace it, swap the source file, rerun `node scripts/optimize-images.mjs re-house`, and re-trace `HouseDrawing.tsx` and `HOUSE_OUTLINE` if the framing changes.
+
+**Verified on a production build:** 375×667, 390×844, 768×1024, 844×390, 1024×700, 1280×720, 1366×625, 1536×730, 1897×897, 1920×1080, 3440×1440 and reduced motion. No console errors and no sideways overflow. Wheel, keyboard and "Step closer" work.
+
+| Slow 4G, 3 runs | Portrait visible (LCP) | Images |
+| :-- | :-: | :-: |
+| Phone (3x) | median 2.38 s (2.0–3.0) | 1,503 KB |
+| Desktop | median 2.83 s | 1,202 KB |
+
+Frame pacing from Stories to Possibilities: desktop median 16.7 ms, worst 33 ms. Phone emulation at 4× CPU slowdown: median 16.8 ms, p95 50 ms, worst 117 ms. That run has no GPU, so a real-phone check is still needed.
 
 ## 10. ⚠ The GitHub repository is public
 

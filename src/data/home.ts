@@ -69,19 +69,35 @@ export const maoPrints: readonly ScenePrint[] = [
 ];
 
 /**
- * The finished MAO Contractors kitchen, hung on the drawn room's wall above the
- * chairs (world units; the room spans x −1400…2000, floor at y 1000). Stays out
- * of frame at 1:1 and 1:10 on every aspect (the 1:10 view ends near x 635), so
- * it arrives with the room at 1:100. Shown in full, with alt text, in the
- * Real Estate section, so it is decorative here (alt "").
+ * Places, full screen. Approved for use by the user (2026-11-06). Captions and
+ * copy describe only what it shows; never publish an address.
  */
-export const placePrint = { src: img("re-after"), width: 2400, height: 1600, x: 700, y: -60, w: 600, h: 400 };
+export const house: Photo = {
+  src: img("re-house"),
+  alt: "A two-storey house in red brick and grey siding under a deep blue winter sky, with snow across the lawn.",
+  width: 2400,
+  height: 1500,
+};
+
+/** The first screen says who he is and everything he does. */
+export const hero = {
+  heading: ["I’m Segun", "Michael."],
+  body: "I listen, create and bring ideas to life across conversations, media and real estate.",
+  // Shown in place of the columns below where they do not fit.
+  ventures: "Through the Listening Hub, MAO Media, Inspire Network and MAO Contractors.",
+  rows: [
+    { tag: "People", name: "Listening Hub", href: "/listening-hub", does: "Supportive listening and unhurried conversation." },
+    { tag: "Stories", name: "Media & Communication", href: "/media-communication", does: "Portraits, weddings and studio work through MAO Media. Inspire Network, my editorial platform." },
+    { tag: "Places", name: "Real Estate", href: "/real-estate", does: "Renovation planning and project coordination through MAO Contractors." },
+  ],
+};
 
 export const chapters = [
   {
     ratio: "1:1",
     label: "Listening Hub · human connection",
     word: "People.",
+    body: "Up close, it starts with listening: a calm space for unhurried conversation and personal reflection.", // pending
   },
   {
     ratio: "1:10",
@@ -93,8 +109,7 @@ export const chapters = [
     ratio: "1:100",
     label: "MAO Contractors · practical execution",
     word: "Places.",
-    body: "Step back again and there’s a room. Renovation planning and project coordination, through MAO Contractors.", // pending
-    note: "The room is drawn for illustration. The kitchen is a real MAO Contractors renovation.",
+    body: "Step back again and there’s a house. Renovation planning and project coordination, through MAO Contractors.", // pending
   },
   {
     ratio: "1:∞",

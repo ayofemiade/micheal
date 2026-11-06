@@ -162,9 +162,9 @@ body {
 }
 
 /* ==========================================================================
-   The pull-back (hero). Geometry mirrors src/components/home/scene.ts.
-   Before JS, the photographs are laid out at the exact 1:1 camera using
-   container units, so the first paint is the finished composition.
+   The hero and camera. Geometry mirrors src/components/home/scene.ts.
+   Before JS, the photographs are laid out and shown at the exact introduction
+   frame using container units, so the first paint is the finished composition.
    ========================================================================== */
 
 .pullback-track {
@@ -173,11 +173,11 @@ body {
   height: 100lvh;
 }
 :root.js .pullback-track {
-  height: 430svh;
+  height: 540svh;
 }
 @media (max-width: 639px) {
   :root.js .pullback-track {
-    height: 360svh;
+    height: 447svh;
   }
 }
 
@@ -196,16 +196,25 @@ body {
   container-type: size;
   background: var(--stage-bg, var(--color-studio));
   color: var(--stage-fg, var(--color-ink));
+}
 
-  /* camera at 1:1: frame world rect (30,2,80,68) */
-  --s0: min(1.25cqw, 1.4706cqh);
-  --tx0: calc(66cqw - 70 * var(--s0));
-  --ty0: calc(55cqh - 36 * var(--s0));
+/*
+ * The introduction frame (--sh, one world unit in px). Photographs are laid out
+ * at 3 × that (--s0) and shown at scale(1/3), so moving in to the face scales
+ * them down, never up: LAYOUT_SCALE in scene.ts. Custom properties live here
+ * because a container query cannot restyle its own container.
+ */
+.pullback-photos {
+  --sh: 0.5714cqh;
+  --s0: calc(3 * var(--sh));
+  --tx0: calc(3 * (100cqw - 140 * var(--sh)));
+  --ty0: 10.5cqh;
 }
 @container (max-width: 639px) or (max-aspect-ratio: 1/1) {
   .pullback-photos {
-    --tx0: calc(50cqw - 70 * var(--s0));
-    --ty0: calc(34cqh - 36 * var(--s0));
+    --sh: min(0.7143cqw, 0.3164cqh);
+    --tx0: calc(3 * (50cqw - 70 * var(--sh)));
+    --ty0: 174px;
   }
 }
 
@@ -219,6 +228,7 @@ body {
   position: absolute;
   inset: 0;
   transform-origin: 0 0;
+  transform: scale(0.33333);
   will-change: transform, opacity;
 }
 .pullback-photos > * {
@@ -230,6 +240,51 @@ body {
   max-width: none;
   object-fit: cover;
   will-change: transform;
+}
+
+/* Only the portrait shows in the introduction, before and without JS. */
+.pullback-photos > [data-print],
+.pullback-photos > [data-face] {
+  opacity: 0;
+}
+
+/* Phones and tablets: where his arms and the frame end in open space, they end softly. */
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-blend {
+    background:
+      linear-gradient(to right, var(--color-studio), #fafafa00 8%),
+      linear-gradient(to left, var(--color-studio), #fafafa00 8%),
+      linear-gradient(to bottom, var(--color-studio), #fafafa00 6%),
+      linear-gradient(to top, var(--color-studio), #fafafa00 12%);
+  }
+}
+
+/* Places: the real house, sized and moved by the camera (PullBackMotion). */
+.pullback-place {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  visibility: hidden;
+  will-change: transform, clip-path;
+}
+/* Holds the copy in the sky; on phones, the snow runs out into the paper. */
+.pullback-place-shade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, #0e1c3b73, #0e1c3b00 13%),
+    linear-gradient(112deg, #0e1c3bb8 0%, #0e1c3b80 26%, #0e1c3b00 52%);
+}
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-place-shade {
+    background:
+      linear-gradient(to bottom, #0e1c3b73, #0e1c3b00 13%),
+      linear-gradient(to bottom, #f5f3ee00 50%, var(--color-paper) 61.6%);
+  }
 }
 
 /* The cyanotype exposure: blue rises from the horizon at 1:∞ */
@@ -274,6 +329,16 @@ body {
   stroke-width: 0.6;
   opacity: 0.5;
 }
+/* Dashes need strokes in world units, so the camera supplies --hw. */
+.pullback-drawing .pullback-house * {
+  vector-effect: none;
+  stroke-width: var(--hw, 1);
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+.pullback-drawing .pullback-house .faint {
+  opacity: 0.6;
+}
 
 .pullback-chapter {
   position: absolute;
@@ -287,12 +352,14 @@ body {
 }
 .pullback-chapter[data-i="1"],
 .pullback-chapter[data-i="2"],
-.pullback-chapter[data-i="3"] {
+.pullback-chapter[data-i="3"],
+.pullback-chapter[data-i="4"] {
   opacity: 0;
 }
 :root:not(.js) .pullback-chapter[data-i="1"],
 :root:not(.js) .pullback-chapter[data-i="2"],
 :root:not(.js) .pullback-chapter[data-i="3"],
+:root:not(.js) .pullback-chapter[data-i="4"],
 :root:not(.js) .pullback-ruler {
   display: none;
 }
@@ -305,16 +372,297 @@ body {
   }
 }
 
+/*
+ * The introduction. His name runs on one line along his eye-line and stops at
+ * his ear, so reading it leads straight to his face. Everything else sits on
+ * one baseline along the foot of the screen, stopping at his sleeve.
+ * The photograph is 80cqh wide, flush right; his eyes are 27cqh down, the left of his head 52cqh from the right.
+ */
+.pullback-hero {
+  top: 0;
+  right: var(--gutter);
+  bottom: calc(6.5cqh + var(--toolbar));
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+.pullback-hero :is(a, button) {
+  pointer-events: auto;
+}
+.pullback-hero-title {
+  --name: min((100cqw - 52cqh - 3.5cqh - var(--gutter)) / 8.55, 20cqh);
+  margin-top: calc(27cqh - 0.5 * var(--name));
+  /* The I's serif carries built-in space: pull it onto the left edge everything else sits on. */
+  margin-left: -0.04em;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--name);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.pullback-hero-lower {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  --lower: min(100cqw - 80cqh - 2 * var(--gutter) - 2cqw, 100rem);
+  margin-top: 2.6cqh;
+  width: var(--lower);
+}
+.pullback-hero-body {
+  max-width: 44ch;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.375rem, 3.9cqh, 3rem);
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.pullback-hero-ventures {
+  display: none;
+}
+.pullback-hero-rows {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2cqw, 2.5rem);
+}
+.pullback-hero-rows li {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--color-ink);
+}
+.pullback-hero-rows small {
+  color: var(--color-ink-2);
+}
+.pullback-hero-rows a {
+  width: fit-content;
+  margin-top: 0.375rem;
+  font-family: var(--font-display);
+  /* Sized from the column, so the longest title always holds one line. */
+  font-size: clamp(1rem, var(--lower) / 40, 2.25rem);
+  white-space: nowrap;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  text-decoration: underline transparent;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 0.25s;
+}
+.pullback-hero-rows a:hover {
+  text-decoration-color: currentColor;
+}
+.pullback-hero-rows span {
+  margin-top: 0.125rem;
+  font-size: clamp(0.8125rem, 1.02cqw, 1.25rem);
+  line-height: 1.45;
+  color: var(--color-ink-2);
+}
+.pullback-hero-actions {
+  margin-top: 2.8cqh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+/* Laptops too narrow for one line: the name stacks above the copy, beside the portrait. */
+@container (max-width: 1180px) {
+  .pullback-hero-title {
+    --name: min(6.9cqw, 13.5cqh, 7rem);
+    margin-top: auto;
+    white-space: normal;
+    width: min(100cqw - 80cqh - 2 * var(--gutter), 46cqw, 42rem);
+    line-height: 0.98;
+  }
+  .pullback-hero-title span {
+    display: block;
+  }
+  .pullback-hero-lower {
+    flex: none;
+    margin-top: 1.25rem;
+    width: min(100cqw - 80cqh - 2 * var(--gutter), 46cqw, 42rem);
+  }
+  .pullback-hero-body {
+    max-width: 38ch;
+    text-wrap: wrap;
+    font-family: inherit;
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+  .pullback-hero-actions {
+    margin-top: 1.25rem;
+  }
+  .pullback-hero-rows {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 1.25rem;
+  }
+  .pullback-hero-rows li {
+    gap: 0.125rem;
+    padding-block: 0.5rem;
+    border-top-color: var(--color-rule);
+  }
+  .pullback-hero-rows small {
+    display: none;
+  }
+  .pullback-hero-rows a {
+    margin-top: 0;
+    font-family: inherit;
+    white-space: normal;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .pullback-hero-rows span {
+    font-size: 0.8125rem;
+  }
+}
+/*
+ * Short screens: the columns give way to one line of ventures. 1920×1080 laptops
+ * at 150% display scaling are about 1265×598, so the columns must survive that.
+ */
+@container ((max-height: 520px) and (min-aspect-ratio: 1/1)) or ((max-height: 600px) and (max-width: 1180px) and (min-aspect-ratio: 1/1)) {
+  .pullback-hero {
+    bottom: calc(5svh + var(--toolbar));
+  }
+  .pullback-hero-rows {
+    display: none;
+  }
+  .pullback-hero-ventures {
+    display: inline;
+  }
+  .pullback-hero-body {
+    max-width: 50ch;
+    text-wrap: wrap;
+    font-size: 1.125rem;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+}
+/* Phones held sideways */
+@container (max-height: 480px) and (min-aspect-ratio: 1/1) {
+  .pullback-hero-title {
+    --name: 12cqh;
+  }
+  .pullback-hero-lower {
+    margin-top: 0.75rem;
+  }
+  .pullback-hero-body {
+    font-size: 0.9375rem;
+  }
+  .pullback-hero-ventures {
+    display: none;
+  }
+  .pullback-hero-actions {
+    margin-top: 1rem;
+  }
+}
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .pullback-hero {
+    top: auto;
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    display: block;
+    bottom: calc(3.5svh + var(--toolbar));
+  }
+  /* The portrait ends softly just above the copy, however tall the copy runs. */
+  .pullback-hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -4.5rem calc(-1 * var(--gutter)) calc(-3.5svh - var(--toolbar) - 1px);
+    pointer-events: none;
+    background: linear-gradient(to bottom, #fafafa00, #fafafa 4.25rem);
+  }
+  .pullback-hero-title {
+    --name: clamp(2.5rem, 12cqw, 3.5rem);
+    width: auto;
+  }
+  .pullback-hero-lower {
+    width: auto;
+    margin-top: 0.75rem;
+  }
+  .pullback-hero-body {
+    max-width: none;
+    font-size: 1rem;
+  }
+  .pullback-hero-ventures {
+    display: inline;
+  }
+  .pullback-hero-rows {
+    display: none;
+  }
+  .pullback-hero-actions {
+    margin-top: 1rem;
+  }
+  .pullback-hero-actions button {
+    display: none;
+  }
+}
+
+:root.js .pullback-ruler {
+  visibility: hidden;
+  opacity: 0;
+}
 .pullback-ruler {
   position: absolute;
   right: var(--gutter);
-  bottom: calc(11svh + var(--toolbar));
+  top: calc(var(--header-h) + 0.25rem);
   z-index: 3;
 }
+
+/* Places: the words sit in the sky, clear of the house. */
+.pullback-chapter[data-i="3"] {
+  top: calc(var(--header-h) + 1.5cqh);
+  bottom: auto;
+  width: min(52cqw, 46rem);
+}
+.pullback-chapter[data-i="3"] h2 {
+  font-size: min(10.6cqw, 17.5cqh, 10.5rem);
+}
+.pullback-chapter[data-i="3"] h2 + p {
+  margin-top: 2cqh;
+  max-width: 38ch;
+}
+/* Short screens: the sky is shallow, so the copy stays small and above the low roof. */
+@container (max-height: 480px) and (min-aspect-ratio: 1/1) {
+  .pullback-chapter[data-i="3"] {
+    top: calc(var(--header-h) - 0.5rem);
+  }
+  .pullback-chapter[data-i="3"] h2 {
+    margin-top: 0.25rem;
+    font-size: 15cqh;
+  }
+  .pullback-chapter[data-i="3"] h2 + p {
+    margin-top: 0.25rem;
+    max-width: 46ch;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+}
+/* Over the sky the quieter ratios need more presence. */
+:root[data-tone="dark"] .pullback-ruler button:not([aria-current]) {
+  opacity: 0.9;
+}
 @container (max-width: 639px) or (max-aspect-ratio: 1/1) {
-  .pullback-ruler {
-    top: calc(var(--header-h) + 0.25rem);
-    bottom: auto;
+  /* On the paper beneath the photograph, in ink. */
+  .pullback-chapter[data-i="3"] {
+    top: auto;
+    bottom: calc(4.5svh + var(--toolbar));
+    width: auto;
+    color: var(--color-ink);
+  }
+  .pullback-chapter[data-i="3"] h2 {
+    font-size: clamp(3.75rem, 19cqw, 7rem);
   }
 }
 

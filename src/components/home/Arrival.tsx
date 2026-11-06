@@ -64,7 +64,6 @@ export function Arrival() {
     <div className="arrival" aria-hidden="true">
       <div className="arrival-mark">
         <p className="t-scale flex items-center gap-3.5">
-          <span className="ratio">1:1</span>
           <span>Segun Michael</span>
         </p>
         <span className="arrival-track">

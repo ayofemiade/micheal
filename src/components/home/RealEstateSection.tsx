@@ -5,7 +5,7 @@ import { realEstate, SIZES } from "@/data/home";
 /**
  * 04: Real Estate, at 1:100. Real work, not an illustration: one MAO
  * Contractors kitchen, before and after, standing on the same floor line as
- * Segun. (The line-drawn room still appears in the hero at 1:100.)
+ * Segun.
  */
 export function RealEstateSection() {
   const { before, after, caption } = realEstate.project;
