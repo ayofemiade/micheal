@@ -4,7 +4,6 @@ import type { CSSProperties } from "react";
 import { chapters, face, hero, house, maoPrints, portrait, SIZES } from "@/data/home";
 import { siteConfig } from "@/data/site";
 import { FACE_RECT, PRINT_RECT } from "./scene";
-import { GroundGrid } from "./RoomDrawing";
 import { HouseDrawing } from "./HouseDrawing";
 import { PullBackMotion } from "./PullBackMotion";
 import { Arrival } from "./Arrival";
@@ -37,8 +36,8 @@ export function PullBack() {
           />
           <div className="pullback-place-shade" aria-hidden="true" data-place-shade />
           <div className="pullback-exposure" aria-hidden="true" data-exposure />
-          <svg className="pullback-drawing" width="1" height="1" aria-hidden="true" data-drawing>
-            <GroundGrid />
+          <div className="pullback-ground" aria-hidden="true" data-ground />
+          <svg className="pullback-drawing" aria-hidden="true" data-drawing>
             <HouseDrawing />
           </svg>
 

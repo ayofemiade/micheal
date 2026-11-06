@@ -251,6 +251,30 @@ At 1:∞ the blue rises over the photograph and the same drawing remains as a sm
 
 Frame pacing from Stories to Possibilities: desktop median 16.7 ms, worst 33 ms. Phone emulation at 4× CPU slowdown: median 16.8 ms, p95 50 ms, worst 117 ms. That run has no GPU, so a real-phone check is still needed.
 
+## 9g. iPhone crash on the way to Places
+
+**Symptom.** On an iPhone, scrolling toward Places replaced the site with the browser's "Can't open this page" screen. That is the browser ending a page that ran out of memory.
+
+**Cause.** The survey grid and ground line were world-sized SVG geometry sharing one SVG with the house. While the drawing was visible the browser requested a 32,302 × 29,002 px layer, plus an 80,002 px wide layer for the ground line at 1:∞. The 2026-11-06 Places work made the drawing visible earlier and larger, which exposed it. This was measured in Chromium with iPhone dimensions.
+
+| 390 × 844 at 3x, layer memory requested | Before | After |
+| :-- | -: | -: |
+| Stories (1:10) | 603 MB | 603 MB |
+| Drawing on the way to Places | 32,914 MB | 283–400 MB |
+| Places (1:100) | 309 MB | 309 MB |
+| Possibilities (1:∞) | 35,364 MB | 305 MB |
+
+These are requested sizes: browsers allocate large layers in tiles, so they show which layer was the problem, not exact memory in use.
+
+**Fix.** Nothing on the stage may be sized in world units.
+- The grid is one screen-sized CSS layer (`.pullback-ground`).
+- The drawing's SVG is exactly stage-sized, and the camera sets its `viewBox` rather than scaling it.
+- The photograph no longer keeps `will-change: clip-path`, and the edge blend is hidden once it has faded.
+
+**Rule for future work.** Any new stage element must be bounded by the screen. Check with a layer-memory measurement at 390 × 844 at 3x before shipping.
+
+**Limit of this verification.** The peak across screens measured was 718 MB (430 × 932 at 3x). This has not yet been run on a physical iPhone.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:

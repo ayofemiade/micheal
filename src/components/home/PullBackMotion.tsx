@@ -9,6 +9,9 @@ const PAPER = "#f5f3ee";
 const INK = "#14161a";
 const CYAN = "#1b3463";
 const LAST = 4;
+// World units: the ground line, and the size of a survey grid square.
+const GROUND_Y = 1000;
+const GROUND_CELL = 1700;
 
 /**
  * Drives the camera from native scroll (rAF scrub, no library): in from the
@@ -32,7 +35,7 @@ export function PullBackMotion() {
     const ruler = stage?.querySelector<HTMLElement>(".pullback-ruler");
     const placeEl = stage?.querySelector<HTMLElement>("[data-place]");
     const shade = stage?.querySelector<HTMLElement>("[data-place-shade]");
-    const ground = drawing?.querySelector<SVGGElement>("[data-ground]");
+    const ground = stage?.querySelector<HTMLElement>("[data-ground]");
     if (!track || !stage || !photos || !drawing || !faceEl || !exposure || !placeEl || !shade || !ground) return;
     const lines = [...drawing.querySelectorAll<SVGElement>("[data-line]")];
     const chapterEls = [...stage.querySelectorAll<HTMLElement>("[data-chapter]")];
@@ -121,7 +124,14 @@ export function PullBackMotion() {
       // introduction frames the same wall, so they must stay away until then.
       put("prints", op(pc <= 1 ? 0 : 1 - smoothstep(0.75, 0.97, near)), (v) => prints.forEach((el) => (el.style.opacity = v)));
       // Blends the photograph's edges into the studio white; a print again from 1:10.
-      if (blend) put("blend", op(1 - smoothstep(1, 1.3, pc)), (v) => (blend.style.opacity = v));
+      if (blend) {
+        const b = 1 - smoothstep(1, 1.3, pc);
+        put("blend", op(b), (v) => {
+          blend.style.opacity = v;
+          // Hidden, so a phone can release the memory behind it.
+          blend.style.visibility = b > 0 ? "visible" : "hidden";
+        });
+      }
 
       // Places. Draw, then fill the outline, then open it. Reduced motion simply holds the full frame.
       const fill = smoothstep(2.52, 2.64, pc);
@@ -151,14 +161,26 @@ export function PullBackMotion() {
           const local = Math.max(0, Math.min(1, u * 1.7 - (i / lines.length) * 0.7));
           put(`l${i}`, (1 - local).toFixed(3), (v) => (el.style.strokeDashoffset = v));
         });
-        put("ground", op(blueprint), (v) => (ground.style.opacity = v));
+      }
+      // The open ground: one screen-sized layer. Never world-sized geometry, which
+      // asked iPhones for a 32 GB layer and crashed the page (docs §9g).
+      put("groundO", op(blueprint * scene), (v) => {
+        ground.style.opacity = v;
+        ground.style.visibility = blueprint * scene > 0 ? "visible" : "hidden";
+      });
+      if (blueprint > 0) {
+        const cell = GROUND_CELL * cam.s;
+        put("groundT", `translate3d(0, ${(cam.ty + GROUND_Y * cam.s).toFixed(2)}px, 0)`, (v) => (ground.style.transform = v));
+        put("groundS", `${cell.toFixed(2)}px ${cell.toFixed(2)}px`, (v) => (ground.style.backgroundSize = v));
+        put("groundP", `${(cam.tx % cell).toFixed(2)}px 0`, (v) => (ground.style.backgroundPosition = v));
       }
       put("drawO", op(drawO), (v) => {
         drawing.style.opacity = v;
         drawing.style.visibility = drawO > 0 ? "visible" : "hidden";
       });
-      // Repainting the drawing is costly; skip it entirely while it is invisible.
-      if (drawO > 0) put("draw", `translate3d(${cam.tx.toFixed(2)}px, ${cam.ty.toFixed(2)}px, 0) scale(${cam.s.toFixed(5)})`, (v) => (drawing.style.transform = v));
+      // Stage-sized for life: the camera moves the window on to the drawing, so
+      // its memory is one screen however close or far the view.
+      if (drawO > 0) put("draw", `${(-cam.tx / cam.s).toFixed(2)} ${(-cam.ty / cam.s).toFixed(2)} ${(W / cam.s).toFixed(2)} ${(H / cam.s).toFixed(2)}`, (v) => drawing.setAttribute("viewBox", v));
 
       // studio white → paper; then the cyanotype exposure rises from the horizon
       // Reduced motion fades the blue instead of wiping it, and only after the scene has

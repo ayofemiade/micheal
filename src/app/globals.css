@@ -254,7 +254,6 @@ body {
     background:
       linear-gradient(to right, var(--color-studio), #fafafa00 8%),
       linear-gradient(to left, var(--color-studio), #fafafa00 8%),
-      linear-gradient(to bottom, var(--color-studio), #fafafa00 6%),
       linear-gradient(to top, var(--color-studio), #fafafa00 12%);
   }
 }
@@ -267,7 +266,7 @@ body {
   max-width: none;
   transform-origin: 0 0;
   visibility: hidden;
-  will-change: transform, clip-path;
+  will-change: transform;
 }
 /* Holds the copy in the sky; on phones, the snow runs out into the paper. */
 .pullback-place-shade {
@@ -310,12 +309,24 @@ body {
   }
 }
 
+/* The open ground at 1:∞: a screen-sized layer, the horizon along its top edge. */
+.pullback-ground {
+  --line: #f5f3ee1c;
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: 0;
+  border-top: 1px solid var(--color-paper);
+  background-image:
+    linear-gradient(to right, var(--line) 1px, #0000 1px),
+    linear-gradient(to bottom, var(--line) 1px, #0000 1px);
+}
 .pullback-drawing {
   position: absolute;
-  left: 0;
-  top: 0;
-  overflow: visible;
-  transform-origin: 0 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   opacity: 0;
   color: var(--stage-line, var(--color-cyan));
 }
