@@ -30,7 +30,6 @@ export const navItems: readonly NavItem[] = [
 
 /** Routes linked but not built yet. They render an honest holding page. */
 export const holdingPages: Record<string, string> = {
-  about: "About",
   "listening-hub": "Listening Hub",
   "media-communication": "Media & Communication",
   "real-estate": "Real Estate",

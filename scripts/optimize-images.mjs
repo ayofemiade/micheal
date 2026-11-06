@@ -183,6 +183,43 @@ for (const [src, name, edge, crop] of jobs) {
   console.log(`${name.padEnd(18)} ${master.info.width}×${master.info.height}`);
 }
 
+/**
+ * About page. Crops are fractions of the frame: [source, output, left, top, width, height].
+ * The lowered-camera frame is scaled and shifted so his face stays on the raised
+ * frame's face (measured: scale 1.015, shift -2.0% and +0.86% of the width).
+ */
+const aboutCrops = [
+  ["potrait/IMG_1982c.jpg", "about-lens.jpg", 0, 0, 1, 1],
+  ["potrait/propfie.jpg", "about-eyes.jpg", 0.13, 0.285, 0.74, 0.17],
+  ["potrait/IMG_2518.jpg", "about-space.jpg", 0, 0.52, 1, 0.48],
+  ["potrait/IMG_2040.jpg", "about-camera.jpg", 0, 0.16, 0.655, 0.5],
+  ["potrait/IMG_2486.jpg", "about-arms.jpg", 0, 0.5, 1, 0.42],
+  ["potrait/IMG_2552cc.jpg", "about-you.jpg", 0, 0.06, 1, 0.62],
+];
+async function aboutImage(input, name) {
+  const master = await sharp(input)
+    .resize({ width: 2400, withoutEnlargement: true })
+    .jpeg({ quality: 86, mozjpeg: true })
+    .toBuffer({ resolveWithObject: true });
+  await sharp(master.data).toFile(path.join(out, name));
+  await sizes(master.data, name, 80);
+  console.log(`${name.padEnd(18)} ${master.info.width}×${master.info.height}`);
+}
+for (const [src, name, l, t, w, h] of aboutCrops) {
+  if (only && !name.startsWith(only)) continue;
+  const file = path.join(root, src);
+  const { width: W, height: H } = await sharp(file).rotate().metadata();
+  const region = { left: Math.round(l * W), top: Math.round(t * H), width: Math.round(w * W), height: Math.round(h * H) };
+  await aboutImage(await sharp(file).rotate().extract(region).toBuffer(), name);
+}
+if (!only || "about-lowered.jpg".startsWith(only)) {
+  const scaled = await sharp(path.join(root, "potrait/IMG_1980c.jpg")).resize({ width: Math.round(2400 * 1.015) }).toBuffer();
+  const moved = await sharp(scaled)
+    .extend({ top: 21, right: 12, extendWith: "mirror" })
+    .toBuffer();
+  await aboutImage(await sharp(moved).extract({ left: 48, top: 0, width: 2400, height: 1600 }).toBuffer(), "about-lowered.jpg");
+}
+
 // The 1:1 face layer: an exact crop of the print, at high resolution.
 if (!only || "face.jpg".startsWith(only)) {
   const { width } = await sharp(PORTRAIT_SRC).metadata();

@@ -275,6 +275,24 @@ These are requested sizes: browsers allocate large layers in tiles, so they show
 
 **Limit of this verification.** The peak across screens measured was 718 MB (430 × 932 at 3x). This has not yet been run on a physical iPhone.
 
+## 9h. About: "Holds"
+
+**The idea.** One verb, three objects, read from what his hands are doing in real photographs: he holds space (Listening Hub), holds a camera (Media), holds it together (project coordination). The homepage steps back from him; this page comes in. It opens with a camera pointed at you and ends with him pointing at you.
+
+**Directions weighed.** A timeline profile needed history that has not been supplied. A type-only essay on how he sees the world needed beliefs that have not been supplied. "Holds" needs only what the photographs show, and treats the three expressions equally.
+
+**Structure.** 01 He lowers the camera · 02 You look back · 03 What he holds · 04 One pair of hands · 05 Your turn. Files: `src/app/about/`, `src/components/about/`, `src/data/about.ts`.
+
+**Photographs.** `IMG_1982c` and `IMG_1980c` are registered on his face (scale 1.015) in `scripts/optimize-images.mjs`, so scrolling lowers the camera. Crops: `propfie` (eyes), `IMG_2518` (clasped hands), `IMG_2040` (camera), `IMG_2486` (folded arms), `IMG_2552cc` (pointing). The kitchen pair is not used: the two shots were taken from different positions, so they cannot wipe, and the homepage already shows them.
+
+**Motion.** Two scroll scenes only, both using `useStageProgress` (native scroll and rAF, no new library): the lowered camera, and the cyanotype rising through the sentence. `LineReveal` and `PushIn` are reused. Every stage is bounded by the screen (§9g).
+
+**Shared files changed.** `about` removed from `holdingPages` in `src/data/site.ts`, and About crops added to the image script. Global CSS, the homepage, header and footer are untouched. `about.css` loads on this route only.
+
+**Copy status.** Service descriptions repeat approved homepage wording. Everything else is marked `// pending` in `src/data/about.ts`. `who.ownWords` renders only when Segun supplies a sentence of his own.
+
+**Known issue, not caused by this page.** `NEXT_PUBLIC_SITE_URL` is not set in production, so the live social preview image resolves to `http://localhost:3000/...`. A canonical tag was left off this page for the same reason. Set the variable in Vercel and redeploy, then add `alternates: { canonical: "/about" }` to the page metadata.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:

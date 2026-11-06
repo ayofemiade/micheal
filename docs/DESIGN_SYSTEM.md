@@ -66,13 +66,17 @@ The system behind the homepage. The concept and reasoning are in [NEW_CREATIVE_D
 - **Reduced motion:** the camera *cuts* between the four distances. There is no line reveal, line draw or push-in, and CSS transitions are reduced to ~0.
 - **GSAP loads after the browser is idle** (`src/lib/gsap.ts`), so animation never delays first render.
 
+## About page
+
+"Holds": see IMPLEMENTATION_REPORT §9h. The same tokens and type, with one addition: `holds-word` (Zodiak 300, up to 11.5rem). Compositions are set by meaning: space is the emptiest screen on the site, the camera the densest, and the arms close the layout.
+
 ## Components
 
 | File | Purpose |
 | :-- | :-- |
 | `components/home/PullBack.tsx` (server) + `PullBackMotion.tsx` (client) | The hero scene and its camera |
 | `components/home/scene.ts` | Camera maths. **Must match** the `.pullback-*` CSS and the face crop in `scripts/optimize-images.mjs` |
-| `components/home/RoomDrawing.tsx` | The illustrative room and ground grid |
+| `components/home/HouseDrawing.tsx` | The house traced from the Places photograph |
 | `components/home/{Listening,Media,RealEstate,Closing}Section.tsx` | Sections 02–05 |
 | `components/motion/{LineReveal,DrawOn,PushIn}.tsx` | The three motion islands |
 | `components/layout/{Header,Footer}.tsx` | Fixed header; title-block footer |

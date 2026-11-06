@@ -1,0 +1,423 @@
+/* ==========================================================================
+   About: "Holds". Loaded by this route only, so the homepage cannot be touched.
+   Stages are bounded by the screen: never add anything larger (docs §9g).
+   ========================================================================== */
+
+/* ---------- 01 He lowers the camera ---------- */
+.lb-track {
+  position: relative;
+  height: 100lvh;
+}
+:root.js .lb-track {
+  height: 240svh;
+}
+.lb-stage {
+  position: sticky;
+  top: 0;
+  height: 100lvh;
+  overflow: hidden;
+  container-type: size;
+  background: var(--color-paper);
+  --toolbar: calc(100lvh - 100svh);
+}
+.lb-frames {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.045);
+  transform-origin: 72% 40%;
+  will-change: transform;
+}
+:root:not(.js) .lb-frames {
+  transform: none;
+}
+.lb-lowered {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  will-change: opacity;
+}
+.lb-photo {
+  object-fit: cover;
+  object-position: 70% 50%;
+}
+.lb-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, #fafafa8c, #fafafa00 16%),
+    linear-gradient(to right, #fafafac7 0%, #fafafa99 30%, #fafafa00 52%);
+}
+.lb-copy {
+  position: absolute;
+  left: var(--gutter);
+  bottom: calc(8cqh + var(--toolbar));
+  width: min(50cqw, 60rem);
+}
+.lb-lines {
+  position: relative;
+  margin-top: 1.25rem;
+}
+.lb-line {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: min(7.6cqw, 15.2cqh, 9.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.94;
+  /* Measured in the type's own size: three lines that stop short of his sleeve. */
+  max-width: 5.9em;
+}
+.lb-line-second {
+  margin-top: 0.4em;
+}
+:root.js .lb-line {
+  will-change: transform, opacity;
+}
+:root.js .lb-line-second {
+  position: absolute;
+  inset: auto 0 0;
+  margin-top: 0;
+  opacity: 0;
+}
+.lb-cue {
+  display: inline-block;
+  margin-top: 1.75rem;
+}
+:root:not(.js) .lb-cue {
+  display: none;
+}
+
+/* ---------- 02 You look back ---------- */
+.who-eyes {
+  position: relative;
+  aspect-ratio: 3 / 1;
+  width: 100%;
+  overflow: hidden;
+}
+/* His face sits right of centre in the source: phones crop to both eyes. */
+.who-eyes-img {
+  object-fit: cover;
+  object-position: 90% 50%;
+}
+@media (min-width: 640px) {
+  .who-eyes {
+    aspect-ratio: 435 / 100;
+  }
+}
+.who-grid {
+  display: grid;
+  gap: 2.5rem;
+  padding-block: clamp(2.5rem, 7svh, 5rem) clamp(4rem, 12svh, 9rem);
+}
+.who-name {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 10.6vw, 12rem);
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+.who-positioning {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.625rem, 2.5vw, 3rem);
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+  text-wrap: balance;
+}
+.who-own {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.375rem, 1.9vw, 2rem);
+  line-height: 1.25;
+}
+@media (min-width: 1024px) {
+  .who-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: start;
+  }
+  .who-name {
+    grid-column: 1 / -1;
+  }
+  .who-words {
+    grid-column: 7 / -1;
+  }
+}
+
+/* ---------- 03 What he holds ---------- */
+.holds-intro {
+  padding-block: clamp(5rem, 16svh, 11rem) clamp(4rem, 12svh, 8rem);
+  border-top: 1px solid var(--color-rule);
+}
+.holds-word {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 10.6vw, 11.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.94;
+}
+
+/* Space: the emptiest screen on the site, the hands resting at the foot of it. */
+.space-text {
+  display: grid;
+  gap: 2.5rem;
+  padding-top: clamp(4rem, 14svh, 10rem);
+  padding-bottom: clamp(3rem, 10svh, 8rem);
+}
+.space-photo {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .space-photo {
+    aspect-ratio: 2.2 / 1;
+  }
+}
+@media (min-width: 1024px) {
+  .space-text {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: end;
+  }
+  .space-text .holds-word {
+    grid-column: 1 / 8;
+  }
+  .space-copy {
+    grid-column: 8 / -1;
+    max-width: 40ch;
+  }
+}
+
+/* Camera: no room at all. */
+.camera {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.camera-photo {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.camera-img {
+  object-fit: cover;
+  object-position: 50% 32%;
+}
+.camera-copy {
+  padding: 2.75rem var(--gutter) 4.5rem;
+}
+@media (min-width: 1024px) {
+  .camera {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    min-height: 100svh;
+  }
+  .camera-photo {
+    aspect-ratio: auto;
+  }
+  .camera-img {
+    object-position: 50% 30%;
+  }
+  .camera-copy {
+    position: relative;
+    z-index: 1;
+    align-self: end;
+    padding: 0 var(--gutter) clamp(2.5rem, 9svh, 6rem) 0;
+  }
+  /* The word reaches back on to the photograph: paper on deep denim. */
+  .camera-copy .holds-word {
+    margin-left: -11vw;
+    font-size: clamp(3.5rem, 8.6vw, 10rem);
+  }
+}
+
+/* Together: the arms cross, the words close against them. */
+.together {
+  background: var(--color-paper);
+}
+.together-photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.together-copy {
+  padding-block: 3rem 5rem;
+}
+@media (min-width: 1024px) {
+  .together {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    min-height: 100svh;
+  }
+  .together-photo {
+    grid-column: 2;
+    grid-row: 1;
+    aspect-ratio: auto;
+  }
+  .together-copy {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    padding-block: 5rem;
+  }
+  .together-copy .holds-word {
+    font-size: clamp(3.5rem, 7.6vw, 9rem);
+  }
+}
+
+/* ---------- 04 One pair of hands ---------- */
+.pair-track {
+  position: relative;
+  height: 100svh;
+}
+:root.js .pair-track {
+  height: 210svh;
+}
+.pair-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.pair-line {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-inline: var(--gutter);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: min(10.2vw, 21svh, 11rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+/* Tall screens: four deliberate lines, as large as the width allows. */
+@media (max-aspect-ratio: 1/1) {
+  .pair-line {
+    font-size: min(16.5vw, 8rem);
+    line-height: 0.98;
+  }
+  .pair-line span {
+    text-wrap: balance;
+  }
+  .pair-line span + span {
+    margin-top: 0.5em;
+  }
+}
+.pair-blue {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cyan);
+  color: var(--color-paper);
+  clip-path: inset(0 0 0 0);
+}
+:root.js .pair-blue {
+  clip-path: inset(100% 0 0 0);
+}
+
+/* ---------- 05 Your turn ---------- */
+.turn-photo {
+  position: relative;
+  aspect-ratio: 8 / 7;
+  overflow: hidden;
+}
+.turn-copy {
+  padding-block: 3.5rem 2rem;
+}
+.doors {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--color-ink);
+}
+.door {
+  display: grid;
+  gap: 0.25rem;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--color-rule);
+}
+.door-ask {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.3vw, 2.25rem);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  transition: transform 0.45s var(--ease-camera);
+}
+.door-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  font-size: 0.9375rem;
+  color: var(--color-ink-2);
+}
+.door-book::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-mao);
+}
+.door:hover .door-ask,
+.door:focus-visible .door-ask {
+  transform: translateX(0.5rem);
+}
+.door:hover .door-go {
+  color: var(--color-ink);
+}
+@media (min-width: 1024px) {
+  .turn {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    min-height: 100svh;
+  }
+  .turn-photo {
+    order: 2;
+    grid-column: 7 / -1;
+    aspect-ratio: auto;
+  }
+  .turn-copy {
+    order: 1;
+    grid-column: 1 / 7;
+    align-self: center;
+    padding-block: 5rem;
+  }
+}
+
+/* Short, wide laptops (1920×1080 at 150% is about 1265×598). */
+@media (min-width: 1024px) and (max-height: 720px) {
+  .turn-copy .t-statement {
+    font-size: clamp(2.5rem, 4.1vw, 4.25rem);
+  }
+  .doors {
+    margin-top: 1.5rem;
+  }
+  .door {
+    padding-block: 0.625rem;
+  }
+  .door-ask {
+    font-size: 1.5rem;
+  }
+}
+
+/* ---------- Phones: redesigned, not shrunk ---------- */
+@container (max-width: 639px) or (max-aspect-ratio: 1/1) {
+  .lb-shade {
+    background:
+      linear-gradient(to bottom, #fafafa8c, #fafafa00 13%),
+      linear-gradient(to top, #14161af2 0%, #14161ab3 28%, #14161a00 58%);
+  }
+  .lb-copy {
+    right: var(--gutter);
+    width: auto;
+    bottom: calc(5cqh + var(--toolbar));
+    color: var(--color-paper);
+  }
+  .lb-line {
+    font-size: clamp(2.75rem, 13.5cqw, 5.5rem);
+  }
+}
