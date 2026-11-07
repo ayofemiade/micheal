@@ -269,6 +269,45 @@ if (!only || "hub-window.jpg".startsWith(only)) {
   await aboutImage(await sharp(file).extract({ left: Math.round(0.45 * W), top: Math.round(0.1 * H), width: Math.round(0.42 * W), height: Math.round(0.74 * H) }).toBuffer(), "hub-window.jpg");
 }
 
+/**
+ * Media & Communication. [source, output, keep-from-top fraction]. Wedding frames
+ * lose only the translucent bar baked across their lower edge.
+ */
+const mediaJobs = [
+  ["IMG_5680-Editd.jpg", "media-hero"],
+  ["IMG_9193 - Copy_1c.jpg", "media-profile"],
+  ["_MG_4478_edited-1-2.jpg", "media-sofa"],
+  ["_MG_5554-c.jpg", "media-overhead"],
+  ["IMG_9107_1.jpg", "media-keys"],
+  ["img_3491-edit-edit.jpg", "media-crown"],
+  ["100ways2smile51.jpg", "media-braids"],
+  ["ma1 (5).jpg", "media-drum"],
+  ["01.jpg", "media-lw1"],
+  ["03.jpg", "media-lw3"],
+  ["04.jpg", "media-lw4"],
+  ["Leatherworld Letterheaded back.jpg", "media-lh1"],
+  ["Leatherworld Letterheaded back2.jpg", "media-lh2"],
+  ["Leatherworld Letterheaded back3.jpg", "media-lh3"],
+  ["IMG_3216-Edit.jpg", "media-coke-trio"],
+  ["IMG_3047-Edit (2).jpg", "media-coke-bag"],
+  ["IMG_3128-Edit.jpg", "media-coke-park"],
+  ["IMG_3188-Edit.jpg", "media-coke-flat"],
+  ["IMG_2784-Edit.jpg", "media-coke-ball"],
+  ["Orijin 3.jpg", "media-or-shirt"],
+  ["Orijin 2.jpg", "media-or-hand"],
+  ["Oririjin 4.jpg", "media-or-blue"],
+  ["wed11-2cc.jpg", "media-wed-veil", 0.76],
+  ["wed13c-2c.jpg", "media-wed-blue", 0.8],
+  ["wed12-2c.jpg", "media-wed-garden", 0.8],
+];
+for (const [src, name, keep] of mediaJobs) {
+  if (only && !name.startsWith(only)) continue;
+  const file = path.join(root, "website gallery", src);
+  const { width: W, height: H } = await sharp(file).rotate().metadata();
+  const input = keep ? await sharp(file).rotate().extract({ left: 0, top: 0, width: W, height: Math.round(H * keep) }).toBuffer() : await sharp(file).rotate().toBuffer();
+  await aboutImage(input, `${name}.jpg`);
+}
+
 // The 1:1 face layer: an exact crop of the print, at high resolution.
 if (!only || "face.jpg".startsWith(only)) {
   const { width } = await sharp(PORTRAIT_SRC).metadata();

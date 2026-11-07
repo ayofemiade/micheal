@@ -74,7 +74,7 @@ export function Header() {
           {siteConfig.name}
         </Link>
 
-        <nav aria-label="Main" className="hidden items-center gap-7 text-sm md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-3.5 text-sm whitespace-nowrap md:flex lg:gap-7">
           {navItems.map((item) => (
             <Link
               key={item.href}

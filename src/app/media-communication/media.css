@@ -1,0 +1,574 @@
+/* ==========================================================================
+   Media & Communication: "The Issue". Loaded by this route only.
+   A magazine, not a grid: every photograph keeps its own proportions.
+   ========================================================================== */
+
+html:has(.media-page) {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.media-page) {
+    scroll-behavior: auto;
+  }
+}
+.media-page {
+  --crimson: #6d0a1f;
+  --forest: #10291f;
+  overflow-x: clip;
+}
+
+/* Photographs */
+.media-photo-frame {
+  overflow: hidden;
+}
+.media-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.9s var(--ease-camera);
+}
+@media (hover: hover) {
+  .media-photo:hover img {
+    transform: scale(1.02);
+  }
+}
+.media-photo figcaption {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+.media-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.25rem, 5vw, 6.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* ---------- Cover ---------- */
+.cover {
+  position: relative;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: hidden;
+  background: var(--crimson);
+  color: var(--color-paper);
+}
+.cover-img {
+  object-fit: cover;
+  object-position: 70% 40%;
+}
+.cover-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, #2a040d73, #2a040d00 16%),
+    linear-gradient(to right, #4a0515cc, #4a051566 42%, #4a051500 62%);
+}
+.cover-copy {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(1.75rem, 7svh, 5rem);
+  width: min(54vw, 52rem);
+}
+.cover-headline {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: min(6.2vw, 13svh, 10rem);
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+  white-space: nowrap;
+  animation: cover-settle 1.3s var(--ease-camera) 0.1s both;
+}
+.cover-headline span {
+  display: block;
+}
+@keyframes cover-settle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.cover-body {
+  margin-top: clamp(0.75rem, 2.4svh, 1.25rem);
+  max-width: 50ch;
+  font-size: clamp(1rem, 1.2vw, 1.25rem);
+  line-height: 1.5;
+}
+.cover-invite {
+  margin-top: 0.5rem;
+}
+.cover-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+.cover-cta {
+  background: var(--color-paper);
+  color: var(--crimson);
+}
+
+/* ---------- MAO Media opening ---------- */
+.mao {
+  background: var(--color-paper);
+  /* The page already reserves header-h + 1rem: land flush under the header. */
+  scroll-margin-top: -1rem;
+}
+.mao-opening {
+  display: grid;
+  gap: 2rem;
+  padding-block: clamp(4rem, 13svh, 9rem);
+}
+.mao-statement {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 3.2vw, 4rem);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+.mao-body {
+  margin-top: 1.25rem;
+  max-width: 50ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.55;
+  color: var(--color-ink-2);
+}
+.mao-index {
+  border-top: 1px solid var(--color-ink);
+}
+.mao-index a {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.75rem;
+  align-items: center;
+  border-bottom: 1px solid var(--color-rule);
+}
+.mao-index a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+@media (min-width: 1024px) {
+  .mao-opening {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: start;
+  }
+  .mao-opening h2 {
+    grid-column: 1 / 7;
+  }
+  .mao-words {
+    grid-column: 7 / -1;
+    padding-top: 0.6rem;
+  }
+  .mao-index {
+    grid-column: 7 / -1;
+  }
+}
+
+/* ---------- Photography: the heading sits in the picture ---------- */
+.profile {
+  position: relative;
+  /* The page already reserves header-h + 1rem: land flush under the header. */
+  scroll-margin-top: -1rem;
+  background: #fbfbfb;
+}
+.profile-img {
+  object-fit: cover;
+  object-position: 100% 50%;
+}
+.profile-copy {
+  position: relative;
+  padding: 2.5rem var(--gutter);
+}
+.profile-copy p {
+  margin-top: 1.25rem;
+  max-width: 46ch;
+  line-height: 1.55;
+}
+@media (max-width: 899px) {
+  .profile > img {
+    position: relative !important;
+    height: auto !important;
+    aspect-ratio: 5 / 4;
+  }
+}
+@media (min-width: 900px) {
+  .profile {
+    height: min(66.6vw, 100svh);
+    min-height: 34rem;
+  }
+  .profile-copy {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(46vw, 46rem);
+    padding: 0 0 0 var(--gutter);
+  }
+}
+
+/* Portraits, hung at different sizes */
+.portraits {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-block: clamp(3rem, 9svh, 6rem);
+}
+.p-green,
+.p-overhead {
+  width: 72%;
+}
+.p-overhead {
+  margin-left: auto;
+}
+@media (min-width: 1024px) {
+  .portraits {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    row-gap: 4rem;
+    align-items: start;
+  }
+  .portraits {
+    align-items: end;
+  }
+  .p-sofa {
+    grid-column: 1 / 9;
+  }
+  .p-green {
+    grid-column: 9 / -1;
+    width: auto;
+  }
+  .p-overhead {
+    grid-column: 1 / 5;
+    width: auto;
+    margin: 0;
+  }
+  .p-keys {
+    grid-column: 5 / -1;
+  }
+  /* The two smaller files keep to a size they can hold. */
+  .p-crown {
+    grid-column: 1 / 8;
+  }
+  .p-braids {
+    grid-column: 8 / -1;
+  }
+}
+
+/* Documentary: two quiet black-and-white frames on black */
+.documentary {
+  background: var(--color-ink);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(1.5rem, 5vw, 6rem);
+  padding: clamp(3.5rem, 11svh, 7rem) var(--gutter);
+}
+.documentary .media-photo {
+  width: min(78vw, 30rem);
+}
+.d-bride {
+  margin-bottom: 3rem;
+}
+
+/* ---------- Creative concepts: the real print work, shown as it is ---------- */
+.concepts {
+  padding-block: clamp(4rem, 13svh, 9rem);
+  /* The page already reserves header-h + 1rem: land flush under the header. */
+  scroll-margin-top: -1rem;
+}
+.concepts-head p {
+  margin-top: 1.25rem;
+  max-width: 50ch;
+  line-height: 1.55;
+  color: var(--color-ink-2);
+}
+.c-lead {
+  margin-top: 2.5rem;
+}
+.concepts-row {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+.concepts-stationery {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+.concepts-caption {
+  grid-column: 1 / -1;
+  font-size: 0.875rem;
+  color: var(--color-ink-2);
+}
+@media (min-width: 900px) {
+  .concepts-head {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: end;
+  }
+  .concepts-head h3 {
+    grid-column: 1 / 8;
+  }
+  .concepts-head p {
+    grid-column: 8 / -1;
+    margin: 0;
+  }
+  .concepts-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .concepts-stationery {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .concepts-stationery .media-photo {
+    grid-column: span 3;
+  }
+  .concepts-caption {
+    grid-column: 10 / -1;
+  }
+}
+
+/* ---------- Voice: nothing to look at, on purpose ---------- */
+.voice {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  /* The page already reserves header-h + 1rem: land flush under the header. */
+  scroll-margin-top: -1rem;
+}
+.voice-inner {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: clamp(4.5rem, 16svh, 10rem);
+}
+.voice-body {
+  max-width: 46ch;
+  line-height: 1.55;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+}
+.voice-statement {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.25rem, 6.4vw, 9rem);
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+@media (min-width: 900px) {
+  .voice-inner {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+  .voice-inner h3 {
+    grid-column: 1 / 8;
+  }
+  .voice-body {
+    grid-column: 8 / -1;
+    align-self: end;
+  }
+  .voice-statement {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Selected work: each project on its own ground ---------- */
+.selected-head {
+  background: var(--color-paper);
+  padding-block: clamp(4rem, 13svh, 9rem) clamp(2.5rem, 7svh, 5rem);
+}
+.work {
+  padding-block: clamp(3rem, 9svh, 6rem);
+}
+.work-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem 2rem;
+  margin-bottom: clamp(1.5rem, 4svh, 3rem);
+}
+.work-hang {
+  display: grid;
+  gap: clamp(0.75rem, 1.2vw, 1.25rem);
+}
+.work-coke {
+  background: #0d0d0e;
+  color: var(--color-paper);
+}
+.work-orijin {
+  background: var(--forest);
+  color: var(--color-paper);
+}
+.work-weddings {
+  background: var(--color-studio);
+}
+@media (min-width: 768px) {
+  /* A dense wall, close together */
+  .work-coke .work-hang {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+  }
+  .work-coke .w-0 {
+    grid-column: 1 / 9;
+    grid-row: span 2;
+  }
+  .work-coke .w-1 {
+    grid-column: 9 / -1;
+  }
+  .work-coke .w-2 {
+    grid-column: 9 / -1;
+  }
+  .work-coke .w-3 {
+    grid-column: 1 / 7;
+  }
+  .work-coke .w-4 {
+    grid-column: 7 / -1;
+  }
+  /* A lead picture and two details */
+  .work-orijin .work-hang {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+  }
+  .work-orijin .w-0 {
+    grid-column: 1 / 8;
+  }
+  .work-orijin .w-1 {
+    grid-column: 8 / -1;
+  }
+  .work-orijin .w-2 {
+    grid-column: 5 / -1;
+  }
+  /* One wide moment, then two at matched heights (the columns follow their proportions). */
+  .work-weddings .work-hang {
+    grid-template-columns: 53fr 47fr;
+    gap: clamp(0.75rem, 1.6vw, 1.75rem);
+  }
+  .work-weddings .w-0 {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Discuss ---------- */
+.discuss {
+  background: var(--crimson);
+  color: var(--color-paper);
+}
+.discuss-inner {
+  display: grid;
+  gap: 2rem;
+  padding-block: clamp(4.5rem, 15svh, 10rem);
+}
+.discuss-body {
+  max-width: 44ch;
+  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+  line-height: 1.55;
+}
+@media (min-width: 1024px) {
+  .discuss-inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 2rem;
+    align-items: end;
+  }
+}
+
+/* ---------- Inspire Network: a different publication ---------- */
+.inspire {
+  background: var(--color-paper);
+  color: var(--color-cyan);
+  padding-block: clamp(4.5rem, 15svh, 10rem);
+  /* The page already reserves header-h + 1rem: land flush under the header. */
+  scroll-margin-top: -1rem;
+}
+.inspire-rule {
+  height: 3px;
+  background: var(--color-cyan);
+}
+.inspire-masthead {
+  padding-block: 0.12em 0.16em;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: min(11.2vw, 14rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.inspire-page {
+  margin-top: clamp(2.5rem, 8svh, 5rem);
+  display: grid;
+  gap: 1.5rem;
+}
+.inspire-lead {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.25rem, 4.6vw, 6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.inspire-body {
+  max-width: 44ch;
+  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+  line-height: 1.55;
+}
+.inspire-wait {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  opacity: 0.8;
+}
+.inspire-items li {
+  padding-block: 0.75rem;
+  border-top: 1px solid #1b346340;
+}
+@media (min-width: 900px) {
+  .inspire-page {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+  .inspire-lead {
+    grid-column: 1 / 8;
+  }
+  .inspire-page > div {
+    grid-column: 8 / -1;
+  }
+}
+
+/* ---------- Phones: the cover is recomposed, not shrunk ---------- */
+@media (max-width: 639px), (max-aspect-ratio: 1/1) {
+  .cover {
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .cover-img {
+    height: 66% !important;
+    object-position: 74% 30%;
+  }
+  .cover-shade {
+    background:
+      linear-gradient(to bottom, #2a040d73, #2a040d00 14%),
+      linear-gradient(to top, var(--crimson) 36%, #6d0a1f00 66%);
+  }
+  .cover-copy {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: auto;
+    padding: 58svh var(--gutter) 2rem;
+  }
+  .cover-headline {
+    font-size: clamp(2.75rem, 13.4vw, 6rem);
+    white-space: normal;
+  }
+}

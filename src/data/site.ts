@@ -26,14 +26,13 @@ export const siteConfig = {
 export const navItems: readonly NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Listening Hub", href: "/listening-hub" },
-  { label: "Media", href: "/media-communication" },
+  { label: "Media & Communication", href: "/media-communication" },
   { label: "Real Estate", href: "/real-estate" },
   { label: "Contact", href: "/contact" },
 ];
 
 /** Routes linked but not built yet. They render an honest holding page. */
 export const holdingPages: Record<string, string> = {
-  "media-communication": "Media & Communication",
   "real-estate": "Real Estate",
   contact: "Contact",
 };

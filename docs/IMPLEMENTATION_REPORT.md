@@ -311,6 +311,18 @@ These are requested sizes: browsers allocate large layers in tiles, so they show
 
 **Unconfirmed.** `sessionDetails` in `src/data/listening-hub.ts` holds duration and format; the line renders only when both are set. The waiting line is `// pending`.
 
+## 9j. Media & Communication: "The Issue"
+
+**The idea.** A printed issue: a cover, then spreads composed around the work. Every photograph keeps its own proportions, and each project has its own ground. It is still by design, following the Listening Hub decision: no pinned scenes and nothing revealed by scrolling.
+
+**Structure.** The approved order: Cover · MAO Media · Photography · Creative concepts · Voice · Selected work · Discuss · Inspire Network. Files: `src/app/media-communication/`, `src/components/media/`, `src/data/media.ts`. See [MEDIA_REFERENCE_ANALYSIS.md](./MEDIA_REFERENCE_ANALYSIS.md) and [MEDIA_ASSET_INVENTORY.md](./MEDIA_ASSET_INVENTORY.md).
+
+**Decisions from the user (2026-11-06).** "Michael Adebiyi Photography" frames are Segun's. Brand work may be shown as commissioned work. Inspire Network is built from verified lines only. Contact stays a holding page for now.
+
+**Not yet real.** There are no audio files, so `voice.clips` is empty and no player is built. `/contact?enquiry=mao-media` carries the choice, but nothing shows as selected until Contact has a form. `inspire.items` is empty. `year` and `role` are null on every project and render nothing.
+
+**Shared change.** The navigation label is now "Media & Communication", as the brief requires. This also shows on the homepage, About and Listening Hub headers.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:
