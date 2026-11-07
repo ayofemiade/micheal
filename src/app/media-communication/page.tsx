@@ -7,10 +7,10 @@ import { Inspire } from "@/components/media/Inspire";
 import "./media.css";
 
 export const metadata: Metadata = {
-  title: media.title,
+  title: { absolute: "Media and Communication | Segun Michael" },
   description: media.description,
   openGraph: {
-    title: "Media & Communication · Segun Michael",
+    title: "Media and Communication | Segun Michael",
     description: media.description,
     images: [{ url: media.hero.photo.src, width: 5184, height: 3456, alt: "Portrait by MAO Media" }],
   },

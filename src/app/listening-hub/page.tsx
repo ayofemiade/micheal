@@ -9,10 +9,10 @@ import { Book } from "@/components/listening/Book";
 import "./listening-hub.css";
 
 export const metadata: Metadata = {
-  title: hub.title,
+  title: { absolute: "Listening Hub | Segun Michael" },
   description: hub.description,
   openGraph: {
-    title: "Listening Hub · Segun Michael",
+    title: "Listening Hub | Segun Michael",
     description: hub.description,
     images: [{ url: hub.hero.photo.src, width: 2400, height: 3360, alt: "Segun Michael" }],
   },

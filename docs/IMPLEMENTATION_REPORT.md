@@ -323,6 +323,39 @@ These are requested sizes: browsers allocate large layers in tiles, so they show
 
 **Shared change.** The navigation label is now "Media & Communication", as the brief requires. This also shows on the homepage, About and Listening Hub headers.
 
+## 9k. Real Estate: "The Drawing Set"
+
+**The idea.** Set like construction documents: visible drafting lines on the 12-column grid, with everything aligned to them, plain facts and a blueprint sheet for the assessment. It is still: no pinned scenes.
+
+**Structure.** The approved order: Introduction · Understanding the work ahead · Renovation and project coordination · Development planning · Selected property projects · Property partnerships · Discuss your project. Files: `src/app/real-estate/`, `src/components/realestate/`, `src/data/real-estate.ts`. See [REAL_ESTATE_ASSET_INVENTORY.md](./REAL_ESTATE_ASSET_INVENTORY.md) and [REAL_ESTATE_CONTENT_GAPS.md](./REAL_ESTATE_CONTENT_GAPS.md).
+
+**Projects.** Three properties, each composed differently: the split-level house (a full-width diptych split on the centre line, then the interior pair), the kitchen (the before set into the after like a detail callout) and the single-story home (a smaller pair). Only the kitchen names a company. The V&M logo is held back until its name is settled against the approved copy. `real estate pic/` is git-ignored because its filenames hold addresses and its phone photographs hold GPS.
+
+**Enquiries.** Contact has no form, so links carry `enquiry=mao-contractors`, and `topic=renovation-assessment` for assessments. The V and M Property name becomes a link when `partnership.url` is set.
+
+## 9l. Contact: "1:1"
+
+**The idea.** The footer reads "Scale 1:1 to 1:∞". The site opens close and pulls back; Contact returns to 1:1, one person reaching out to another (IMG_2555, the open hand). The form is a letter, not a card: ruled lines, the visitor's words in the display face. The Listening Hub route is its own blue band, because booking and inquiries are separate workflows.
+
+**Delivery.** `src/app/contact/actions.ts` is a server action that posts to Resend's API with no new dependency. Success is shown only when Resend answers with an email id. Missing settings or any failure show a failure, keep everything typed, and send nothing.
+
+**To turn delivery on (required before the form works):**
+
+1. Create a Resend account at resend.com, using the inbox that should receive inquiries, and create an API key.
+2. In Vercel, Project Settings, Environment Variables, set `RESEND_API_KEY` and `CONTACT_TO_EMAIL` (that same inbox). Do not prefix them with NEXT_PUBLIC.
+3. Redeploy, then send one real test inquiry and confirm it arrives. Delivery has only been tested against a simulated Resend, never the real service.
+4. Later, to send to any inbox, verify a domain in Resend and set `CONTACT_FROM_EMAIL`. Until then Resend's test sender only reaches the account's own email.
+
+**Routing.** `?enquiry=` and `&topic=` are read in `contextFromQuery` (`src/data/contact.ts`). Unknown values are ignored. The form is keyed to the link, so a selection cannot carry over between routes. Project links end in `#inquiry`, so visitors land on the form with their selection in view. Assessments keep the five approved options: a note appears under MAO Contractors, and the email's subject and body say "Renovation assessment". Changing the area removes it.
+
+**Booking.** Set `NEXT_PUBLIC_BOOKING_URL` once and every "Book a Listening Session" action opens that calendar. Until then, the Contact and Listening Hub buttons rest with a note, and the other links lead to the Listening Hub page.
+
+**Footer.** The approved descriptor replaced "One person. Three expressions of purpose." Set `privacyNoticeHref` and `socialLinks` in `src/data/site.ts` and they appear. Both are empty because neither has been supplied.
+
+**Spam.** A hidden field catches form-filling software. There is no rate limit, because that needs a shared store. Add one if spam appears.
+
+**Removed.** The `[slug]` holding route, now unused.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:

@@ -8,7 +8,7 @@ import { YourTurn } from "@/components/about/YourTurn";
 import "./about.css";
 
 export const metadata: Metadata = {
-  title: about.title,
+  title: { absolute: "About Segun Michael" },
   description: about.description,
   openGraph: {
     title: "About Segun Michael",

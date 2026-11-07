@@ -1,0 +1,537 @@
+/* ==========================================================================
+   Real Estate: "The Drawing Set". Loaded by this route only.
+   Drafting lines at the 12-column grid: everything sits exactly on them.
+   ========================================================================== */
+
+.re-page {
+  --graphite: #1a1d22;
+  --bays: 3;
+  --draft: #1b346321;
+  overflow-x: clip;
+}
+@media (min-width: 768px) {
+  .re-page {
+    --bays: 6;
+  }
+}
+/* The drafting grid: fine lines every two columns, measured from the sheet. */
+.re-lines,
+.re-assess,
+.re-plan {
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+  background-size: calc((100% - 2 * var(--gutter)) / var(--bays)) 100%;
+  background-position: var(--gutter) 0;
+}
+.re-lines {
+  --line: var(--draft);
+  background-color: var(--color-paper);
+}
+.re-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.25rem, 4.6vw, 6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+.re-page img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.re-cta-dark {
+  align-self: flex-start;
+  margin-top: clamp(1rem, 3svh, 2rem);
+}
+
+/* ---------- 01 Introduction ---------- */
+.re-intro-copy {
+  padding: calc(var(--header-h) + 2.5rem) var(--gutter) 2.5rem;
+}
+.re-title {
+  margin-top: 0.875rem;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 12vw, 4.5rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+  animation: re-settle 1.2s var(--ease-camera) 0.1s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .re-title {
+    animation: none;
+  }
+}
+@keyframes re-settle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.re-intro-body {
+  margin-top: 1.25rem;
+  max-width: 54ch;
+  line-height: 1.55;
+}
+.re-intro-body p + p {
+  margin-top: 0.75em;
+}
+.re-intro-photo {
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+}
+.re-intro-photo img {
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 60%;
+}
+@media (min-width: 1024px) {
+  .re-intro {
+    display: grid;
+    grid-template-columns: calc(var(--gutter) + (100% - 2 * var(--gutter)) * 8 / 12) minmax(0, 1fr);
+    min-height: 100svh;
+  }
+  .re-intro-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: calc(var(--header-h) + 1rem) 2.5rem clamp(1.75rem, 6svh, 4rem) var(--gutter);
+  }
+  .re-title {
+    font-size: min(4.6vw, 9.8svh, 7.5rem);
+  }
+  .re-intro-body {
+    font-size: clamp(1rem, 1.15vw, 1.3125rem);
+    max-width: 74ch;
+  }
+  .re-intro-photo {
+    aspect-ratio: auto;
+    position: relative;
+  }
+  .re-intro-photo img {
+    position: absolute;
+    inset: 0;
+  }
+}
+
+/* ---------- 02 Assessment: the blueprint sheet ---------- */
+.re-assess {
+  --line: #f5f3ee1f;
+  background-color: var(--color-cyan);
+  color: var(--color-paper);
+}
+.re-assess-grid {
+  display: grid;
+  gap: 2.5rem;
+  padding-block: clamp(3.5rem, 10svh, 9rem);
+}
+.re-assess-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.625rem, 5.4vw, 7rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-wrap: balance;
+}
+.re-assess-lead {
+  margin-top: 1.25rem;
+  max-width: 30ch;
+  font-size: clamp(1.1875rem, 1.6vw, 1.75rem);
+  line-height: 1.4;
+}
+.re-assess-open {
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+}
+.re-assess-sheet ul {
+  margin-top: 0.875rem;
+  border-top: 1px solid var(--color-paper);
+}
+.re-assess-sheet li {
+  padding-block: clamp(0.625rem, 1.9svh, 1.25rem);
+  border-bottom: 1px solid #f5f3ee47;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.4vw, 3.25rem);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+.re-assess-close {
+  margin-block: 1rem 1.25rem;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.5;
+}
+@media (min-width: 1024px) {
+  .re-assess-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: start;
+  }
+  .re-assess-grid > div:first-child {
+    grid-column: 1 / 7;
+    padding-right: 2rem;
+  }
+  .re-assess-sheet {
+    grid-column: 7 / -1;
+  }
+}
+
+/* ---------- 03 Coordination ---------- */
+.re-coord {
+  display: grid;
+  gap: 2.5rem;
+  padding: clamp(3.5rem, 11svh, 7rem) var(--gutter) 0;
+}
+/* Multiply takes the studio white out, so the drafting lines run behind him. */
+.re-coord-photo {
+  order: 1;
+  width: min(82%, 26rem);
+  aspect-ratio: 5 / 6;
+  overflow: hidden;
+  mix-blend-mode: multiply;
+}
+.re-coord-photo img {
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+}
+.re-coord-lead {
+  margin-top: 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.6vw, 3.25rem);
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+}
+.re-coord-body {
+  margin-top: 1.25rem;
+  max-width: 52ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.55;
+  color: var(--color-ink-2);
+}
+@media (min-width: 1024px) {
+  .re-coord {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: end;
+  }
+  .re-coord-photo {
+    order: 0;
+    grid-column: 1 / 5;
+    width: auto;
+    max-height: calc(100svh - var(--header-h) - clamp(3.5rem, 11svh, 7rem));
+    padding-right: 2rem;
+  }
+  .re-coord-copy {
+    grid-column: 5 / -1;
+    padding-bottom: clamp(3.5rem, 11svh, 7rem);
+  }
+}
+
+/* ---------- 04 Planning ---------- */
+.re-plan {
+  --line: #f5f3ee14;
+  background-color: var(--graphite);
+  color: var(--color-paper);
+}
+.re-plan-grid {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: clamp(4rem, 13svh, 9rem);
+}
+.re-plan-label {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  padding: 0.35em 0.6em;
+  border: 1px solid currentColor;
+}
+.re-plan-body {
+  max-width: 52ch;
+  align-self: end;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.55;
+}
+@media (min-width: 1024px) {
+  .re-plan-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+  }
+  .re-plan-grid > div {
+    grid-column: 1 / 7;
+  }
+  .re-plan-body {
+    grid-column: 7 / -1;
+  }
+}
+
+/* ---------- 05 Selected projects ---------- */
+.re-projects {
+  --plate-h: min(calc(100svh - var(--header-h)), 45vw);
+  background: var(--color-studio);
+  padding-block: clamp(4rem, 13svh, 9rem) clamp(3.5rem, 10svh, 7rem);
+}
+.re-project {
+  margin-top: clamp(4rem, 13svh, 9rem);
+}
+.re-projects > .shell:first-child + .re-project {
+  margin-top: clamp(2.5rem, 7svh, 5rem);
+}
+/* A plate: the Before or After tag sits on the photograph itself. */
+.re-plate {
+  position: relative;
+  overflow: hidden;
+}
+.re-plate figcaption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.5em 0.75em;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.re-facts {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--color-ink);
+}
+.re-facts > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 2rem;
+  padding-block: 0.625rem;
+  border-bottom: 1px solid var(--color-rule);
+}
+.re-facts dt {
+  color: var(--color-ink-2);
+}
+
+/* The diptych: one look, split on the sheet's centre line. */
+.re-diptych {
+  display: grid;
+  gap: 1px;
+}
+.re-diptych .re-plate {
+  aspect-ratio: 4 / 3;
+}
+.re-diptych img {
+  height: 100%;
+  object-fit: cover;
+}
+.re-diptych .re-plate:last-child img {
+  object-position: 66% 70%;
+}
+.re-split-foot {
+  display: grid;
+  gap: 1.75rem;
+  margin-top: 1px;
+}
+.re-inside {
+  display: grid;
+  gap: 1px;
+}
+.re-split-foot .re-info {
+  padding-top: 0.5rem;
+}
+
+/* The callout: the before set into the corner of the after. */
+.re-callout-after {
+  aspect-ratio: 3 / 2;
+}
+.re-callout-after img {
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 62%;
+}
+.re-callout-before {
+  margin: 1px var(--gutter) 0;
+}
+.re-kitchen-foot {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+.re-kitchen-foot .re-facts {
+  margin-top: 0;
+}
+
+.re-single {
+  display: grid;
+  gap: 1.75rem;
+}
+.re-single-pair {
+  display: grid;
+  gap: 1px;
+}
+.re-single-pair .re-plate {
+  aspect-ratio: 4 / 3;
+}
+.re-single-pair img {
+  height: 100%;
+  object-fit: cover;
+}
+@media (min-width: 768px) {
+  .re-diptych {
+    grid-template-columns: 1fr 1fr;
+    height: var(--plate-h);
+  }
+  .re-diptych .re-plate {
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+  .re-split-foot {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: end;
+  }
+  /* Widths in proportion, so the portrait and the landscape share a height. */
+  .re-inside {
+    grid-column: 1 / 9;
+    grid-template-columns: 75fr 138fr;
+  }
+  .re-split-foot .re-info {
+    grid-column: 9 / -1;
+    padding: 0 0 0 2rem;
+  }
+  .re-callout {
+    position: relative;
+  }
+  .re-callout-after {
+    aspect-ratio: auto;
+    height: var(--plate-h);
+  }
+  .re-callout-before {
+    position: absolute;
+    left: var(--gutter);
+    bottom: var(--gutter);
+    width: calc((100% - 2 * var(--gutter)) / 3);
+    margin: 0;
+    outline: 6px solid var(--color-paper);
+  }
+  .re-kitchen-foot {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: end;
+  }
+  .re-kitchen-foot .re-heading {
+    grid-column: 1 / 7;
+  }
+  .re-kitchen-foot .re-facts {
+    grid-column: 7 / -1;
+  }
+  .re-single-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .re-single {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: end;
+  }
+  .re-single .re-info {
+    grid-column: 1 / 5;
+    padding-right: 2rem;
+  }
+  /* Project names stay on one line in their four columns. */
+  .re-info .re-heading {
+    font-size: clamp(2rem, 3vw, 4.5rem);
+  }
+  .re-single-pair {
+    grid-column: 5 / -1;
+  }
+}
+
+/* ---------- 06 Partnership ---------- */
+.re-partner-grid {
+  display: grid;
+  gap: 2.5rem;
+  padding-block: clamp(3.5rem, 10svh, 9rem);
+}
+.re-partner-body {
+  margin-top: 1.25rem;
+  max-width: 44ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.55;
+}
+/* A title block: the part of a drawing that says who is who. */
+.re-partner-map {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--color-cyan);
+  color: var(--color-cyan);
+  background: var(--color-paper);
+}
+.re-partner-map > div {
+  padding: clamp(0.875rem, 1.5vw, 1.5rem);
+}
+.re-partner-map > div:nth-child(2) {
+  border-left: 1px solid var(--color-cyan);
+}
+.re-partner-map > div:nth-child(3) {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--color-cyan);
+}
+.re-partner-map p:last-child {
+  margin-top: clamp(1.5rem, 4svh, 3rem);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.375rem, 2.2vw, 2.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.re-partner-map > div:nth-child(3) p:last-child {
+  font-size: clamp(2rem, 3.6vw, 4.5rem);
+}
+.re-partner-map a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+@media (min-width: 1024px) {
+  .re-partner-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: end;
+  }
+  .re-partner-grid > div:first-child {
+    grid-column: 1 / 7;
+    padding-right: 2rem;
+  }
+  .re-partner-map {
+    grid-column: 7 / -1;
+  }
+}
+
+/* ---------- 07 Discuss ---------- */
+.re-discuss {
+  background: var(--color-cyan);
+  color: var(--color-paper);
+}
+.re-discuss-grid {
+  display: grid;
+  gap: 2rem;
+  padding-block: clamp(4.5rem, 15svh, 10rem);
+}
+.re-discuss-grid p {
+  max-width: 46ch;
+  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+  line-height: 1.55;
+}
+@media (min-width: 1024px) {
+  .re-discuss-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+    align-items: end;
+  }
+  .re-discuss-grid h2 {
+    grid-column: 1 / 7;
+  }
+  .re-discuss-grid > div {
+    grid-column: 7 / -1;
+  }
+}

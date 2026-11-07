@@ -5,20 +5,24 @@ export interface NavItem {
 
 export const siteConfig = {
   name: "Segun Michael",
-  title: "Segun Michael: People. Stories. Places. Possibilities.",
+  title: "Segun Michael | Listening, Media and Real Estate",
   description:
     "Segun Michael listens, creates and brings ideas to life across conversations, media and real estate, through the Listening Hub, MAO Media, Inspire Network and MAO Contractors.",
   /** Approved positioning sentence. */
   positioning:
     "I’m Segun Michael. I listen, create and bring ideas to life across conversations, media and real estate.",
-  /** Site-wide "book" links lead to the Listening Hub page, which explains it first. */
-  bookingHref: "/listening-hub",
   /**
-   * The real booking calendar: the one destination of both buttons on the
-   * Listening Hub page. Set NEXT_PUBLIC_BOOKING_URL (see .env.example) and
-   * rebuild. Booking and general enquiries are separate: never point this at Contact.
+   * The real booking calendar: the one destination of every "Book a Listening
+   * Session" action. Set NEXT_PUBLIC_BOOKING_URL (see .env.example) and rebuild.
+   * Booking and general inquiries are separate: never point this at Contact.
    */
   bookingCalendarUrl: process.env.NEXT_PUBLIC_BOOKING_URL || null,
+  /** Until the calendar exists, site-wide "book" links lead to the Listening Hub page. */
+  bookingHref: process.env.NEXT_PUBLIC_BOOKING_URL || "/listening-hub",
+  /** Shown in the footer only once a real, approved notice exists. */
+  privacyNoticeHref: null as string | null,
+  /** Verified, intentionally chosen accounts only. Shown in the footer when present. */
+  socialLinks: [] as readonly NavItem[],
   copyrightYear: 2026,
   credit: "MoyoCode Technologies",
 } as const;
@@ -30,12 +34,6 @@ export const navItems: readonly NavItem[] = [
   { label: "Real Estate", href: "/real-estate" },
   { label: "Contact", href: "/contact" },
 ];
-
-/** Routes linked but not built yet. They render an honest holding page. */
-export const holdingPages: Record<string, string> = {
-  "real-estate": "Real Estate",
-  contact: "Contact",
-};
 
 /** The three expressions and the ventures that carry them. Names are fixed. */
 export const expressions = [

@@ -14,7 +14,7 @@ export function Footer() {
         <div className={`${cell} border-t-0 sm:col-span-2 lg:col-span-5 lg:row-span-3 lg:border-r`}>
           <p className="t-scale opacity-70">Sheet</p>
           <p className="font-display mt-3 text-[clamp(2.75rem,6vw,5rem)]">{siteConfig.name}</p>
-          <p className="mt-4 max-w-[32ch]">One person. Three expressions of purpose.</p>
+          <p className="mt-4 max-w-[32ch]">{expressions.map((e) => e.name).join(" · ")}</p>
           {/* Cyan button: the mark goes paper, never MAO red on cyan (1.55:1). */}
           <BookingLink className="cta !bg-cyan !text-paper mt-8 [&::before]:!bg-paper">
             Book a Listening Session
@@ -45,6 +45,20 @@ export function Footer() {
                 <Link href={item.href} className="link-quiet">
                   {item.label}
                 </Link>
+              </li>
+            ))}
+            {siteConfig.privacyNoticeHref && (
+              <li>
+                <Link href={siteConfig.privacyNoticeHref} className="link-quiet">
+                  Privacy notice
+                </Link>
+              </li>
+            )}
+            {siteConfig.socialLinks.map((item) => (
+              <li key={item.href}>
+                <a href={item.href} target="_blank" rel="noopener" className="link-quiet">
+                  {item.label}
+                </a>
               </li>
             ))}
           </ul>

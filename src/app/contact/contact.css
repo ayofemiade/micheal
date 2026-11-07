@@ -1,0 +1,428 @@
+/* ==========================================================================
+   Contact: "1:1". Loaded by this route only.
+   The form is a letter, not a card: ruled lines, and the visitor's own words
+   in the display face. Motion is only feedback, and never makes anyone wait.
+   ========================================================================== */
+
+.ct-page {
+  --error: #9a3412; /* MAO red stays reserved for booking. */
+  --line: 2.25rem;
+  background: var(--color-paper);
+}
+.ct-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.25rem, 4.6vw, 6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+/* ---------- Introduction ---------- */
+.ct-intro-copy {
+  padding: calc(var(--header-h) + 2.5rem) var(--gutter) 2.5rem;
+}
+.ct-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 14vw, 5.5rem);
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  text-wrap: balance;
+  animation: ct-settle 1.2s var(--ease-camera) 0.1s both;
+}
+@keyframes ct-settle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ct-intro-body {
+  margin-top: 1.5rem;
+  max-width: 56ch;
+  line-height: 1.55;
+}
+.ct-intro-photo {
+  aspect-ratio: 1;
+  overflow: hidden;
+  mix-blend-mode: multiply;
+}
+.ct-intro-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+@media (min-width: 1024px) {
+  .ct-intro {
+    display: grid;
+    grid-template-columns: calc(var(--gutter) + (100% - 2 * var(--gutter)) * 7 / 12) minmax(0, 1fr);
+    min-height: 100svh;
+  }
+  .ct-intro-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: calc(var(--header-h) + 1rem) 2.5rem clamp(2rem, 7svh, 4.5rem) var(--gutter);
+  }
+  .ct-title {
+    font-size: min(7.4vw, 17svh, 11rem);
+  }
+  .ct-intro-body {
+    font-size: clamp(1rem, 1.25vw, 1.375rem);
+  }
+  .ct-intro-photo {
+    aspect-ratio: auto;
+    position: relative;
+  }
+  .ct-intro-photo img {
+    position: absolute;
+    inset: 0;
+    object-position: 50% 42%;
+  }
+}
+
+/* ---------- The Listening Hub route: its own band, its own workflow ---------- */
+.ct-hub {
+  background: var(--color-cyan);
+  color: var(--color-paper);
+}
+.ct-hub-grid {
+  display: grid;
+  gap: 1.5rem;
+  padding-block: clamp(3rem, 9svh, 6rem);
+}
+.ct-hub-grid p:not([class]) {
+  max-width: 48ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.5;
+}
+/* The button at rest until the calendar exists (see BookButton). */
+.ct-hub .hub-resting {
+  width: fit-content;
+  opacity: 0.6;
+  cursor: default;
+}
+.ct-hub .hub-wait {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* ---------- The inquiry ---------- */
+.ct-inquiry {
+  /* The header adds its own height; this lands the section flush beneath it. */
+  scroll-margin-top: -1rem;
+  padding-block: clamp(2.5rem, 7svh, 5rem) clamp(1rem, 3svh, 2rem);
+}
+.ct-inquiry-head {
+  display: grid;
+  gap: 1rem;
+}
+.ct-inquiry-head p {
+  max-width: 44ch;
+  font-size: clamp(1.0625rem, 1.25vw, 1.375rem);
+  line-height: 1.5;
+}
+.ct-form {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: 2.25rem;
+}
+.ct-letter {
+  display: grid;
+  gap: 1.75rem;
+  min-width: 0;
+}
+.ct-pair {
+  display: grid;
+  gap: 1.75rem;
+}
+
+/* The five areas, all in view: one tap, and everyone can see where they fit. */
+.ct-areas {
+  min-width: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.ct-areas legend {
+  padding: 0 0 0.75rem;
+}
+.ct-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-height: 3.25rem;
+  padding-block: 0.5rem;
+  border-top: 1px solid var(--color-rule);
+  cursor: pointer;
+  transition: color 0.2s var(--ease-camera);
+}
+.ct-area:last-of-type {
+  border-bottom: 1px solid var(--color-rule);
+}
+.ct-area input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ct-area-mark {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 1px solid currentColor;
+  transition:
+    background-color 0.2s var(--ease-camera),
+    box-shadow 0.2s var(--ease-camera);
+}
+.ct-area-name {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.25rem, 1.9vw, 2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.ct-area-name small {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.ct-area:hover,
+.ct-area:has(input:checked) {
+  color: var(--color-cyan);
+}
+.ct-area:has(input:checked) .ct-area-mark {
+  background: currentColor;
+}
+.ct-area:has(input:focus-visible) {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+/* The letter: ruled lines, and the visitor's words in the display face. */
+.ct-field {
+  min-width: 0;
+}
+.ct-field label {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: color 0.2s var(--ease-camera);
+}
+.ct-required {
+  color: var(--color-ink-2);
+}
+.ct-field input,
+.ct-field textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background-color: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.375rem;
+  letter-spacing: -0.015em;
+}
+.ct-field input {
+  height: 3rem;
+  border-bottom: 1px solid var(--color-ink);
+  transition: box-shadow 0.2s var(--ease-camera);
+}
+/* The writing lines scroll with the words. */
+.ct-field textarea {
+  min-height: calc(var(--line) * 4);
+  padding: 0;
+  resize: vertical;
+  line-height: var(--line);
+  background-image: linear-gradient(to bottom, transparent calc(var(--line) - 1px), var(--color-rule) calc(var(--line) - 1px));
+  background-size: 100% var(--line);
+  background-attachment: local;
+  border-bottom: 1px solid var(--color-ink);
+}
+.ct-field:focus-within label {
+  color: var(--color-cyan);
+}
+.ct-field input:focus,
+.ct-field textarea:focus {
+  box-shadow: 0 2px 0 var(--color-cyan);
+  border-bottom-color: var(--color-cyan);
+}
+.ct-field [aria-invalid="true"] {
+  border-bottom-color: var(--error);
+  box-shadow: 0 2px 0 var(--error);
+}
+.ct-error {
+  margin-top: 0.5rem;
+  color: var(--error);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  animation: ct-note 0.25s var(--ease-camera) both;
+}
+@keyframes ct-note {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -0.25rem, 0);
+  }
+}
+.ct-prompt {
+  margin-top: 0.75rem;
+  max-width: 62ch;
+  color: var(--color-ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* Off-screen, not display:none, which some software skips. */
+.ct-trap {
+  position: absolute;
+  left: -100vw;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.ct-send {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+.ct-send button {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.ct-send button:disabled {
+  cursor: progress;
+}
+/* A thin line runs along the button's foot while sending. */
+.ct-send button[data-pending]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: var(--color-paper);
+  transform-origin: left;
+  animation: ct-sending 1.2s var(--ease-camera) infinite;
+}
+@keyframes ct-sending {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.ct-failed {
+  flex: 1 1 18rem;
+  color: var(--error);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* The letter is sent: the words take the place of the form and its instructions. */
+.ct-inquiry:has(.ct-thanks) .ct-inquiry-head {
+  display: none;
+}
+.ct-thanks {
+  max-width: 24ch;
+  outline: 0;
+  color: var(--color-cyan);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.2vw, 5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  animation: ct-settle 0.8s var(--ease-camera) both;
+}
+
+@media (min-width: 640px) {
+  .ct-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .ct-hub-grid,
+  .ct-inquiry-head,
+  .ct-form {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+  }
+  .ct-hub-grid {
+    align-items: end;
+  }
+  .ct-hub-grid > :first-child,
+  .ct-inquiry-head > :first-child {
+    grid-column: 1 / 6;
+    padding-right: 2rem;
+  }
+  .ct-hub-grid > :last-child,
+  .ct-inquiry-head > :last-child {
+    grid-column: 6 / -1;
+    padding-left: 2rem;
+    align-self: end;
+  }
+  .ct-areas {
+    grid-column: 1 / 6;
+    padding-right: 2rem;
+  }
+  .ct-letter {
+    grid-column: 6 / -1;
+    padding-left: 2rem;
+  }
+}
+
+/* Short laptop screens: arriving from a project button, Send Inquiry stays in view. */
+@media (min-width: 1024px) and (max-height: 700px) {
+  .ct-inquiry {
+    padding-top: 1.5rem;
+  }
+  .ct-form {
+    margin-top: 1rem;
+  }
+  .ct-letter {
+    gap: 1rem;
+  }
+  .ct-area {
+    min-height: 3rem;
+  }
+  .ct-field input {
+    height: 2.75rem;
+  }
+  .ct-field textarea {
+    min-height: calc(var(--line) * 2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-title,
+  .ct-error,
+  .ct-thanks {
+    animation: none;
+  }
+  .ct-send button[data-pending]::after {
+    animation: none;
+    transform: none;
+  }
+}

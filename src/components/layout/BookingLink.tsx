@@ -6,9 +6,8 @@ import type { MouseEventHandler, ReactNode } from "react";
 import { siteConfig } from "@/data/site";
 
 /**
- * The site-wide "book" links. Everywhere else they lead to the Listening Hub
- * page, so people understand it first. On that page they go to its booking
- * section, rather than reloading the page they are already on.
+ * The site-wide "book" links. With a calendar set they all open it. Until then
+ * they lead to the Listening Hub page, or to its booking section when already there.
  */
 export function BookingLink({
   className,
@@ -19,7 +18,14 @@ export function BookingLink({
   onClick?: MouseEventHandler<HTMLAnchorElement>;
   children: ReactNode;
 }) {
-  const here = usePathname() === siteConfig.bookingHref;
+  const here = usePathname() === "/listening-hub";
+  if (siteConfig.bookingCalendarUrl) {
+    return (
+      <a href={siteConfig.bookingCalendarUrl} target="_blank" rel="noopener" className={className} onClick={onClick}>
+        {children}
+      </a>
+    );
+  }
   return (
     <Link href={here ? "#book" : siteConfig.bookingHref} className={className} onClick={onClick}>
       {children}

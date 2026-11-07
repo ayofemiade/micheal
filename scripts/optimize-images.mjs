@@ -308,6 +308,86 @@ for (const [src, name, keep] of mediaJobs) {
   await aboutImage(input, `${name}.jpg`);
 }
 
+/** Real Estate: a tall crop of the finished kitchen, and his portrait in black and white. */
+if (!only || "re-hero.jpg".startsWith(only)) {
+  const file = path.join(root, "real estate/kitchen-after.jpg");
+  const { width: W, height: H } = await sharp(file).metadata();
+  const height = H;
+  const width = Math.round((height * 4) / 5);
+  await aboutImage(await sharp(file).extract({ left: Math.min(W - width, Math.round(W * 0.36)), top: 0, width, height }).toBuffer(), "re-hero.jpg");
+}
+if (!only || "re-portrait.jpg".startsWith(only)) {
+  // The studio backdrop is 243, not white, and the floor shadow beside his arm is
+  // about 200. Lift both so he can sit on the drawing with multiply. The shadow
+  // area holds only backdrop and dark jacket, so the face and shirt are not retouched.
+  const { data, info } = await sharp(path.join(root, "potrait/IMG_2487.jpg"))
+    .rotate()
+    .greyscale()
+    .linear(1.05, 0)
+    .extractChannel(0)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  if (info.channels !== 1) throw new Error("re-portrait: expected one channel");
+  const soften = (i, low, high) => {
+    const t = Math.min(1, Math.max(0, (data[i] - low) / (high - low)));
+    data[i] += (255 - data[i]) * t * t * (3 - 2 * t);
+  };
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      const fx = x / info.width;
+      const fy = y / info.height;
+      if ((fy > 0.7 && fx > 0.66) || fx > 0.72 || fx < 0.28) soften(y * info.width + x, 150, 190);
+      // The rest of the backdrop, around the shirt and cuffs.
+      else if (!(fy > 0.3 && fx > 0.3 && fx < 0.7)) soften(y * info.width + x, 205, 232);
+    }
+  }
+  const master = await sharp(data, { raw: { width: info.width, height: info.height, channels: 1 } }).jpeg({ quality: 96 }).toBuffer();
+  await aboutImage(master, "re-portrait.jpg");
+}
+
+/**
+ * Real Estate projects. Sources are git-ignored, neutrally named copies, because
+ * the originals are named by street address. Their phone GPS is dropped here.
+ * The listing copies are 768 wide, so they are only doubled, and shown small.
+ */
+const pics = "real estate";
+const wanted = (name) => !only || name.startsWith(only);
+async function doubled(input, name) {
+  const master = await sharp(input)
+    .removeAlpha()
+    .resize({ width: 1536, kernel: "lanczos3" })
+    .sharpen({ sigma: 0.8, m1: 0.4, m2: 1.1 })
+    .jpeg({ quality: 88, mozjpeg: true })
+    .toBuffer({ resolveWithObject: true });
+  await sharp(master.data).toFile(path.join(out, name));
+  await sizes(master.data, name, 80);
+  console.log(`${name.padEnd(18)} ${master.info.width}×${master.info.height}`);
+}
+for (const [source, name] of [
+  ["split-before.jpg", "re-split-before.jpg"],
+  ["inside-before.jpg", "re-inside-before.jpg"],
+  ["single-before.jpg", "re-single-before.jpg"],
+]) {
+  if (wanted(name)) await aboutImage(await sharp(path.join(root, pics, source)).rotate().toBuffer(), name);
+}
+if (wanted("re-inside-after.jpg")) {
+  // The foot of the listing copy holds a mark.
+  const crop = sharp(path.join(root, pics, "inside-after.webp")).extract({ left: 0, top: 0, width: 768, height: 556 });
+  await doubled(await crop.toBuffer(), "re-inside-after.jpg");
+}
+if (wanted("re-single-after.jpg")) {
+  // A house number sits on the siding, left of the first window. Same-row siding
+  // from just beside it covers the digits, and the courses still line up.
+  const file = path.join(root, pics, "single-after.webp");
+  const patch = await sharp(file).removeAlpha().extract({ left: 66, top: 304, width: 14, height: 20 }).toBuffer();
+  await doubled(await sharp(file).removeAlpha().composite([{ input: patch, left: 47, top: 304 }]).toBuffer(), "re-single-after.jpg");
+}
+
+/** Contact: the open hand, at life size. */
+if (!only || "ct-hand.jpg".startsWith(only)) {
+  await aboutImage(await sharp(path.join(root, "potrait/IMG_2555.jpg")).rotate().toBuffer(), "ct-hand.jpg");
+}
+
 // The 1:1 face layer: an exact crop of the print, at high resolution.
 if (!only || "face.jpg".startsWith(only)) {
   const { width } = await sharp(PORTRAIT_SRC).metadata();

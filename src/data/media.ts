@@ -25,9 +25,9 @@ export interface AudioClip {
   src: string;
 }
 
-/** Where "Discuss a Creative Project" goes. Contact reads `enquiry` once its form exists. */
-export const mediaEnquiryHref = "/contact?enquiry=mao-media";
-export const inspireEnquiryHref = "/contact?enquiry=inspire-network";
+/** Where "Discuss a Creative Project" goes. Contact reads `enquiry` and lands on the form. */
+export const mediaEnquiryHref = "/contact?enquiry=mao-media#inquiry";
+export const inspireEnquiryHref = "/contact?enquiry=inspire-network#inquiry";
 
 export const media = {
   title: "Media & Communication",
