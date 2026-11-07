@@ -487,9 +487,11 @@ html:has(.media-page) {
 .inspire {
   background: var(--color-paper);
   color: var(--color-cyan);
-  padding-block: clamp(4.5rem, 15svh, 10rem);
   /* The page already reserves header-h + 1rem: land flush under the header. */
   scroll-margin-top: -1rem;
+}
+.inspire-top {
+  padding-block: clamp(3.5rem, 11svh, 7rem) clamp(4rem, 12svh, 8rem);
 }
 .inspire-rule {
   height: 3px;
@@ -506,39 +508,130 @@ html:has(.media-page) {
 .inspire-page {
   margin-top: clamp(2.5rem, 8svh, 5rem);
   display: grid;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 .inspire-lead {
   font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(2.25rem, 4.6vw, 6rem);
   letter-spacing: -0.03em;
-  line-height: 1.02;
+  line-height: 1.04;
+  text-wrap: balance;
 }
-.inspire-body {
-  max-width: 44ch;
-  font-size: clamp(1.125rem, 1.35vw, 1.5rem);
+.inspire-intro {
+  max-width: 48ch;
+  font-size: clamp(1.0625rem, 1.3vw, 1.4375rem);
   line-height: 1.55;
 }
-.inspire-wait {
-  margin-top: 1rem;
-  font-size: 0.9375rem;
-  opacity: 0.8;
+.inspire-intro p + p {
+  margin-top: 0.9em;
 }
-.inspire-items li {
-  padding-block: 0.75rem;
-  border-top: 1px solid #1b346340;
+/* Shown only once real selections exist. */
+.inspire-shelf {
+  margin-top: clamp(3rem, 9svh, 6rem);
+}
+.inspire-shelf > p {
+  margin-top: 1rem;
+  max-width: 48ch;
+  line-height: 1.55;
+}
+.inspire-shelf ul {
+  margin-top: 1.75rem;
+  border-top: 1px solid var(--color-cyan);
+}
+.inspire-shelf li,
+.inspire-shelf li a {
+  display: grid;
+  gap: 0.375rem;
+}
+.inspire-shelf li {
+  padding-block: 1rem;
+  border-bottom: 1px solid #1b346340;
+}
+.inspire-item {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.4vw, 2.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.inspire-meta {
+  font-size: 0.875rem;
+}
+.inspire-shelf audio {
+  width: min(100%, 32rem);
+  margin-top: 0.5rem;
+}
+
+/* The next chapter: the page's own turn to blue, for something not yet here. */
+.inspire-next {
+  background: var(--color-cyan);
+  color: var(--color-paper);
+}
+.inspire-next-inner {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: clamp(4.5rem, 15svh, 10rem);
+}
+.inspire-next-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 9.4vw, 12rem);
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+}
+.inspire-next-inner p {
+  max-width: 46ch;
+  font-size: clamp(1.125rem, 1.45vw, 1.625rem);
+  line-height: 1.5;
+}
+
+.inspire-collab {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: clamp(4rem, 13svh, 9rem);
+}
+.inspire-collab .media-heading {
+  max-width: 13em;
+  text-wrap: balance;
+}
+.inspire-collab p {
+  max-width: 44ch;
+  font-size: clamp(1.0625rem, 1.3vw, 1.4375rem);
+  line-height: 1.55;
+}
+.inspire-cta {
+  margin-top: 1.75rem;
+  background: var(--color-cyan);
+  color: var(--color-paper);
 }
 @media (min-width: 900px) {
-  .inspire-page {
+  .inspire-page,
+  .inspire-next-inner,
+  .inspire-collab {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: 2rem;
   }
   .inspire-lead {
+    grid-column: 1 / 9;
+  }
+  .inspire-intro {
+    grid-column: 9 / -1;
+    padding-top: 0.4rem;
+  }
+  .inspire-next-title {
     grid-column: 1 / 8;
   }
-  .inspire-page > div {
+  .inspire-next-inner p {
     grid-column: 8 / -1;
+    align-self: end;
+  }
+  .inspire-collab .media-heading {
+    grid-column: 1 / 8;
+  }
+  .inspire-collab > div {
+    grid-column: 8 / -1;
+    align-self: end;
   }
 }
 

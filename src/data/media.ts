@@ -27,6 +27,7 @@ export interface AudioClip {
 
 /** Where "Discuss a Creative Project" goes. Contact reads `enquiry` once its form exists. */
 export const mediaEnquiryHref = "/contact?enquiry=mao-media";
+export const inspireEnquiryHref = "/contact?enquiry=inspire-network";
 
 export const media = {
   title: "Media & Communication",
@@ -142,13 +143,38 @@ export const media = {
     cta: "Discuss a Creative Project",
   },
 
+  /**
+   * Approved copy, verbatim. Articles and audio stay hidden until selections are
+   * confirmed: authorship, title, date and destination for articles; which
+   * recordings belong to Inspire Network for audio. One to three of each. Keep
+   * commissioned client work in the MAO Media portfolio.
+   */
   inspire: {
     heading: "Inspire Network",
-    // Both lines are already approved elsewhere on this site. The full section copy has not been supplied.
-    lead: "Stories, articles, and audio.",
-    body: "Inspire Network brings together stories and reflections that encourage purposeful living.",
-    waiting: "The first stories, articles and audio will be published here.", // pending
-    /** Real published items only. Nothing renders until these exist. */
-    items: [] as { title: string; kind: "Story" | "Article" | "Audio"; href: string }[],
+    tagline: "Stories and conversations that encourage purposeful living",
+    intro: [
+      "I created Inspire Network to encourage a generation toward positive living through storytelling and audio content.",
+      "It brings together my interest in personal stories, reflection, and the experiences and choices that shape our lives. Its roots include radio programming and dramatized storytelling.",
+    ],
+    articles: {
+      heading: "Articles and reflections",
+      body: "Written stories and reflections offering encouragement and a fresh perspective on everyday life.",
+      items: [] as { title: string; author: string; date: string; href: string; archive: boolean }[],
+    },
+    audio: {
+      heading: "From the audio archive",
+      body: "Explore earlier audio work, including storytelling and reflections created to encourage and engage listeners.",
+      items: [] as { title: string; src: string }[],
+    },
+    // Future intent. No Subscribe or Listen to the Podcast until a live show or feed exists.
+    next: {
+      heading: "The next chapter",
+      body: "My vision for Inspire Network includes a podcast with interviews, conversations, and short reflections. I would like to revisit some written ideas in audio and make room for people to share their own experiences and perspectives.",
+    },
+    collaborate: {
+      heading: "Have a story or collaboration in mind",
+      body: "If you would like to contribute to a conversation or discuss an Inspire Network collaboration, I would be glad to hear from you.",
+      cta: "Discuss an Inspire Network Collaboration",
+    },
   },
 };

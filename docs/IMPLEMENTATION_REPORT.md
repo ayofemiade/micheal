@@ -317,9 +317,9 @@ These are requested sizes: browsers allocate large layers in tiles, so they show
 
 **Structure.** The approved order: Cover · MAO Media · Photography · Creative concepts · Voice · Selected work · Discuss · Inspire Network. Files: `src/app/media-communication/`, `src/components/media/`, `src/data/media.ts`. See [MEDIA_REFERENCE_ANALYSIS.md](./MEDIA_REFERENCE_ANALYSIS.md) and [MEDIA_ASSET_INVENTORY.md](./MEDIA_ASSET_INVENTORY.md).
 
-**Decisions from the user (2026-11-06).** "Michael Adebiyi Photography" frames are Segun's. Brand work may be shown as commissioned work. Inspire Network is built from verified lines only. Contact stays a holding page for now.
+**Decisions from the user (2026-11-06).** "Michael Adebiyi Photography" frames are Segun's. Brand work may be shown as commissioned work. Inspire Network was first built from verified lines, then from the approved copy when it was supplied. Contact stays a holding page for now.
 
-**Not yet real.** There are no audio files, so `voice.clips` is empty and no player is built. `/contact?enquiry=mao-media` carries the choice, but nothing shows as selected until Contact has a form. `inspire.items` is empty. `year` and `role` are null on every project and render nothing.
+**Not yet real.** There are no audio files, so `voice.clips` is empty and no player is built. `/contact?enquiry=mao-media` carries the choice, but nothing shows as selected until Contact has a form. Inspire Network now uses its approved copy; `inspire.articles.items` and `inspire.audio.items` are empty, so those two parts stay hidden until confirmed selections exist. The podcast is future intent only: no Subscribe or Listen buttons until a live show or feed exists. The collaboration button goes to `/contact?enquiry=inspire-network`. `year` and `role` are null on every project and render nothing.
 
 **Shared change.** The navigation label is now "Media & Communication", as the brief requires. This also shows on the homepage, About and Listening Hub headers.
 
