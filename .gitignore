@@ -45,3 +45,6 @@ next-env.d.ts
 /real estate/
 # Address-named source photos: never publish (anything in public/ is served)
 /public/real estate/
+
+# Originals with street addresses in filenames and GPS in their metadata
+/real estate pic/
