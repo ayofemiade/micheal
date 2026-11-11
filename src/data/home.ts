@@ -30,10 +30,9 @@ export interface ScenePrint extends Photo {
 const img = (name: string) => `/images/home/${name}.jpg`;
 
 /**
- * `sizes` for photographs shown twice on the page (a hero print and again in a
- * section). Both places must use the same string, so the browser picks the same
- * file for both and downloads it once (mismatched sizes downloaded every MAO
- * frame twice on phones: ~560 KB extra on 3x screens).
+ * `sizes` for photographs shared between parts of the page. Places that show
+ * the same photograph must use the same string, so the browser picks the same
+ * file and downloads it once.
  */
 export const SIZES = {
   maoPrint: "(max-width: 639px) 80vw, 520px",
@@ -45,6 +44,18 @@ export const portrait: Photo = {
   alt: "Segun Michael, arms crossed, smiling, in a cream mandarin-collar shirt against a white studio backdrop.",
   width: 1429,
   height: 2000,
+};
+
+/**
+ * Stories (1:10): Segun's MAO Media collage, as he supplied it. The grid in
+ * scene.ts (COLLAGE) is measured in the 1907 px original; this is the same layout
+ * at 3000 px, built to 2400. Replace it only with the same layout, in proportion.
+ */
+export const storiesCollage: Photo = {
+  src: img("stories-collage"),
+  alt: "A grid of MAO Media portraits: women in studio light and traditional dress, a man with a travel bag, a mother-to-be in green, a man in profile, and children and twin babies laughing.",
+  width: 2400,
+  height: 1249,
 };
 
 /** Exact crop of the portrait (world rect 30,2 → 80×68). Built by scripts/optimize-images.mjs. */

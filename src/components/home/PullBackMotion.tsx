@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { prefersReducedMotion } from "@/lib/gsap";
-import { camera, HOUSE, HOUSE_OUTLINE, LAYOUT_SCALE, mixHex, smoothstep } from "./scene";
+import { camera, COLLAGE, COLLAGE_RECT, HOUSE, HOUSE_OUTLINE, isMobile, LAYOUT_SCALE, mixHex, SLOT_TRIM, smoothstep, type StoriesFrame } from "./scene";
 
 const STUDIO = "#fafafa";
 const PAPER = "#f5f3ee";
@@ -12,13 +12,22 @@ const LAST = 4;
 // World units: the ground line, and the size of a survey grid square.
 const GROUND_Y = 1000;
 const GROUND_CELL = 1700;
+// Stories holds still from 2 until here, then the camera leaves for Places.
+const HOLD = 2.16;
+// Below this tile width (px) the copy cannot sit in the collage's grid: it goes on paper below.
+const MIN_TILE = 260;
+// From this much free width (px) beside the whole collage, the copy takes a column there instead.
+const MIN_COLUMN = 240;
 
 /**
  * Drives the camera from native scroll (rAF scrub, no library): in from the
- * whole portrait to the face, then back out through the four distances. On the
- * way to Places the prints recede and go; the real house draws itself on the
- * paper, its outline fills with the photograph, and that opens to full screen.
- * - transform-only: one transform for the photographs, one for the drawing
+ * whole portrait to the face, then back out through the four distances.
+ * Stories: pulling back from his face, the collage's grid draws out from his
+ * print, his print settles into its slot, and the photographs develop outward
+ * from him; at rest his slot hands over to the photograph that is really there.
+ * Places: the collage clears, the real house draws itself on the paper, its
+ * outline fills with the photograph, and that opens to full screen.
+ * - transform-only: one transform each for the photographs, the collage, the house
  * - reduced motion: no camera travel; each distance dissolves into the next
  * - keyboard: focusing anything in a chapter moves the camera to it
  */
@@ -29,6 +38,7 @@ export function PullBackMotion() {
     const photos = stage?.querySelector<HTMLElement>("[data-photos]");
     const drawing = stage?.querySelector<SVGSVGElement>("[data-drawing]");
     const faceEl = stage?.querySelector<HTMLElement>("[data-face]");
+    const portraitEl = stage?.querySelector<HTMLElement>("[data-portrait]");
     const exposure = stage?.querySelector<HTMLElement>("[data-exposure]");
     const veil = stage?.querySelector<HTMLElement>("[data-veil]");
     const blend = stage?.querySelector<HTMLElement>("[data-blend]");
@@ -36,11 +46,30 @@ export function PullBackMotion() {
     const placeEl = stage?.querySelector<HTMLElement>("[data-place]");
     const shade = stage?.querySelector<HTMLElement>("[data-place-shade]");
     const ground = stage?.querySelector<HTMLElement>("[data-ground]");
-    if (!track || !stage || !photos || !drawing || !faceEl || !exposure || !placeEl || !shade || !ground) return;
+    const collageEl = stage?.querySelector<HTMLElement>("[data-collage]");
+    const grid = stage?.querySelector<SVGSVGElement>("[data-grid]");
+    const clipEl = stage?.querySelector<HTMLElement>("[data-collage-clip]");
+    if (!clipEl || !track || !stage || !photos || !drawing || !faceEl || !portraitEl || !exposure || !placeEl || !shade || !ground || !collageEl || !grid) return;
     const lines = [...drawing.querySelectorAll<SVGElement>("[data-line]")];
     const chapterEls = [...stage.querySelectorAll<HTMLElement>("[data-chapter]")];
-    const prints = [...photos.querySelectorAll<HTMLElement>("[data-print]")];
+    const storiesCopy = chapterEls[2];
     const rulerBtns = [...stage.querySelectorAll<HTMLButtonElement>(".pullback-ruler [data-goto]")];
+    const cells = [...collageEl.querySelectorAll<HTMLElement>(".pullback-cells > span")].map((el) => ({
+      el,
+      d: Number(el.dataset.d),
+      slot: el.dataset.slot !== undefined,
+      tile: el.dataset.tile !== undefined,
+    }));
+    const R = COLLAGE_RECT;
+    const { xs, ys, slot } = COLLAGE;
+    // The slot's centre in world units: the grid draws out from here.
+    const slotWX = R.x + ((xs[slot.c] + xs[slot.c + 1]) / 2) * R.k;
+    const slotWY = R.y + ((ys[slot.r0] + ys[slot.r1]) / 2) * R.k;
+    const gridLines = [...grid.querySelectorAll<SVGLineElement>("line")].map((el) => ({
+      el,
+      x: el.dataset.gx !== undefined ? R.x + Number(el.dataset.gx) * R.k : null,
+      y: el.dataset.gy !== undefined ? R.y + Number(el.dataset.gy) * R.k : null,
+    }));
     const root = document.documentElement;
 
     let W = 0;
@@ -48,30 +77,22 @@ export function PullBackMotion() {
     let layout = { s: 1, tx: 0, ty: 0 };
     let faceScale = 1;
     let houseScale = 1;
+    let collageScale = 1;
+    let frame: StoriesFrame = { mode: "tile", top: 0, bottom: 0, glide: 0.5 };
+    let tileMode = true;
+    // Band screens: where the glide starts, his slot still in view at the right.
+    let glideFrom = 0.5;
     let current = -1;
     // The header turns light only while the exposed stage is actually behind it.
     let dark = false;
     let underHeader = true;
+    let away = false;
     const applyTone = () => {
       // Only on change: rewriting <html data-tone> re-checks every [data-tone] selector.
       const tone = dark && underHeader ? "dark" : "light";
       if (root.dataset.tone !== tone) root.dataset.tone = tone;
     };
     const reduce = prefersReducedMotion();
-
-    const measure = () => {
-      W = stage.clientWidth;
-      H = stage.clientHeight;
-      // The frame the CSS lays the photographs out at (see scene.ts).
-      const hero = camera(0, W, H);
-      layout = { s: hero.s * LAYOUT_SCALE, tx: hero.tx * LAYOUT_SCALE, ty: hero.ty * LAYOUT_SCALE };
-      faceScale = camera(1, W, H).s;
-      // The photograph's own size is its full-screen frame; the camera scales up from that.
-      houseScale = camera(3, W, H).s;
-      placeEl.style.width = `${HOUSE.w * houseScale}px`;
-      placeEl.style.height = `${HOUSE.h * houseScale}px`;
-      written.delete("placeT");
-    };
 
     // Write a style only when its value changes. Rewriting identical values every
     // frame (colour variables especially) forced a style recalc of the whole
@@ -84,6 +105,64 @@ export function PullBackMotion() {
     };
     const op = (v: number) => v.toFixed(3);
     if (reduce) exposure.style.clipPath = "none";
+
+    const measure = () => {
+      W = stage.clientWidth;
+      H = stage.clientHeight;
+
+      // Stories sits beneath the menu, which turns into a paper bar while the
+      // collage shows: the links stay, and never sit on a photograph.
+      const top = document.querySelector<HTMLElement>("[data-site-header]")?.offsetHeight ?? 72;
+      const wide = !isMobile(W, H) && W / H >= 1.5;
+      const setTile = (x: number, y: number, w: number, h: number) => {
+        storiesCopy.style.setProperty("--tile-x", `${x.toFixed(1)}px`);
+        storiesCopy.style.setProperty("--tile-y", `${y.toFixed(1)}px`);
+        storiesCopy.style.setProperty("--tile-w", `${w.toFixed(1)}px`);
+        storiesCopy.style.setProperty("--tile-h", `${h.toFixed(1)}px`);
+      };
+      // Wide, short screens: the whole collage at full height, the copy in the paper beside it.
+      const column = W - R.w * ((H - top) / R.h);
+      // Other wide screens: the collage covers the space, the copy in a tile of its grid.
+      const cover: StoriesFrame = { mode: "tile", top, bottom: H, glide: 0.5 };
+      const c2 = camera(2, W, H, cover);
+      const { tile } = COLLAGE;
+      const left = Math.max(0, c2.tx + (R.x + xs[tile.c0] * R.k) * c2.s);
+      const right = c2.tx + (R.x + xs[tile.c1] * R.k) * c2.s;
+      const tileTop = Math.max(top, c2.ty + (R.y + ys[tile.r0] * R.k) * c2.s);
+      if (wide && column >= MIN_COLUMN) {
+        frame = { mode: "column", top, bottom: H, glide: 0.5 };
+        setTile(0, top, column, H - top);
+      } else if (wide && right - left >= MIN_TILE) {
+        frame = cover;
+        setTile(left, tileTop, right - left, H - tileTop);
+      } else {
+        // The band ends a little above the copy, which keeps its own CSS position.
+        stage.dataset.stories = "band";
+        const copyTop = H - storiesCopy.offsetHeight - parseFloat(getComputedStyle(storiesCopy).bottom || "0");
+        const bottom = Math.max(top + H * 0.35, Math.min(H, copyTop - 24));
+        const visW = W / camera(2, W, H, { mode: "band", top, bottom, glide: 0 }).s;
+        const slotRight = R.x + xs[slot.c + 1] * R.k;
+        glideFrom = R.w > visW ? Math.max(0, Math.min(1, (slotRight + 0.08 * visW - visW - R.x) / (R.w - visW))) : 0.5;
+        frame = { mode: "band", top, bottom, glide: glideFrom };
+      }
+      stage.dataset.stories = frame.mode;
+      tileMode = frame.mode === "tile";
+
+      // The frame the CSS lays the photographs out at (see scene.ts).
+      const hero = camera(0, W, H, frame);
+      layout = { s: hero.s * LAYOUT_SCALE, tx: hero.tx * LAYOUT_SCALE, ty: hero.ty * LAYOUT_SCALE };
+      faceScale = camera(1, W, H, frame).s;
+      // Each photograph's own size is its resting frame; the camera scales from that.
+      collageScale = camera(2, W, H, frame).s;
+      // On band screens nothing of the collage, grid included, runs on to the copy's paper.
+      clipEl.style.clipPath = grid.style.clipPath = frame.mode === "band" ? `inset(0 0 ${(H - frame.bottom).toFixed(1)}px 0)` : "none";
+      collageEl.style.width = `${R.w * collageScale}px`;
+      collageEl.style.height = `${R.h * collageScale}px`;
+      houseScale = camera(3, W, H, frame).s;
+      placeEl.style.width = `${HOUSE.w * houseScale}px`;
+      placeEl.style.height = `${HOUSE.h * houseScale}px`;
+      written.clear();
+    };
 
     // The photograph opens from the building's outline: each corner of the
     // silhouette travels straight out, past the frame, from the middle of the house.
@@ -104,32 +183,83 @@ export function PullBackMotion() {
       // still visibly does something (rounding alone left four "dead" wheel
       // notches and then a cut).
       const pc = reduce ? Math.round(p) : p;
-      // The pull-back to Places covers most of its distance early, so the whole
-      // house is in frame by the time its outline fills.
-      const zoom = pc > 2 && pc < 3 ? 3 - Math.pow(3 - pc, 2.4) : pc;
+      // Pulling back from the face settles into the collage; the collage holds
+      // until HOLD; the pull-back to Places then covers most of its distance
+      // early, so the whole house is in frame by the time its outline fills.
+      let zoom = pc;
+      if (pc > 1 && pc < 2) zoom = 2 - Math.pow(2 - pc, 1.6);
+      else if (pc >= 2 && pc < HOLD) zoom = 2;
+      else if (pc >= HOLD && pc < 3) zoom = 3 - Math.pow(1 - (pc - HOLD) / (3 - HOLD), 3.2);
       const scene = reduce ? smoothstep(0.08, 0.42, Math.abs(p - Math.floor(p) - 0.5)) : 1;
+      // Phones and band screens: the camera glides across the collage while it holds.
+      const st: StoriesFrame = { ...frame, glide: reduce ? glideFrom : glideFrom + (1 - glideFrom) * smoothstep(1.96, HOLD, pc) };
 
-      const cam = camera(zoom, W, H);
+      const cam = camera(zoom, W, H, st);
       const r = cam.s / layout.s;
-      // The prints and the portrait recede and leave for good; only the house remains.
-      const stories = 1 - smoothstep(2.08, 2.32, pc);
-      put("photosV", stories * scene > 0 ? "visible" : "hidden", (v) => (photos.style.visibility = v));
+
+      // His print: whole, then trimmed into its slot, then handing over to the photograph there.
+      const handover = smoothstep(1.9, 2, pc);
+      const portraitO = (1 - handover) * scene;
+      put("photosV", portraitO > 0 ? "visible" : "hidden", (v) => (photos.style.visibility = v));
       put("photos", `translate3d(${(cam.tx - layout.tx * r).toFixed(2)}px, ${(cam.ty - layout.ty * r).toFixed(2)}px, 0) scale(${r.toFixed(5)})`, (v) => (photos.style.transform = v));
-      put("photosO", op(stories * scene), (v) => (photos.style.opacity = v));
+      put("photosO", op(portraitO), (v) => (photos.style.opacity = v));
+      const trim = smoothstep(1.3, 1.5, pc) * SLOT_TRIM * 100;
+      put("trim", trim > 0 ? `inset(0 ${trim.toFixed(2)}% 0 ${trim.toFixed(2)}%)` : "none", (v) => (portraitEl.style.clipPath = v));
       // Size relative to the 1:1 close-up.
       const near = cam.s / faceScale;
       // The sharper face crop takes over as the camera closes in, and hands back on the way out.
       put("face", op(pc <= 1 ? smoothstep(0.4, 0.9, pc) : smoothstep(0.35, 0.8, near)), (v) => (faceEl.style.opacity = v));
-      // The other prints arrive only once the camera pulls back past 1:1; the
-      // introduction frames the same wall, so they must stay away until then.
-      put("prints", op(pc <= 1 ? 0 : 1 - smoothstep(0.75, 0.97, near)), (v) => prints.forEach((el) => (el.style.opacity = v)));
-      // Blends the photograph's edges into the studio white; a print again from 1:10.
+      // Blends the photograph's edges into the studio white; a print again past 1:1.
       if (blend) {
         const b = 1 - smoothstep(1, 1.3, pc);
         put("blend", op(b), (v) => {
           blend.style.opacity = v;
           // Hidden, so a phone can release the memory behind it.
           blend.style.visibility = b > 0 ? "visible" : "hidden";
+        });
+      }
+
+      // Stories. The collage sits under paper cells; each lifts in turn, nearest
+      // his slot first, and on the way to Places they close again, farthest first.
+      const collageOn = pc > 1.1 && pc < 2.38;
+      put("collageV", collageOn && scene > 0 ? "visible" : "hidden", (v) => (collageEl.style.visibility = v));
+      if (collageOn) {
+        put("collage", `translate3d(${(cam.tx + R.x * cam.s).toFixed(2)}px, ${(cam.ty + R.y * cam.s).toFixed(2)}px, 0) scale(${(cam.s / collageScale).toFixed(5)})`, (v) => (collageEl.style.transform = v));
+        put("collageO", op(scene), (v) => (collageEl.style.opacity = v));
+        cells.forEach((c, i) => {
+          let dev: number;
+          if (tileMode && c.tile) dev = 0; // the copy's paper
+          else if (c.slot) dev = handover;
+          else {
+            const start = 1.42 + 0.36 * c.d;
+            dev = smoothstep(start, start + 0.16, pc);
+          }
+          const close = HOLD + 0.04 + 0.1 * (1 - c.d);
+          const paper = 1 - dev * (1 - smoothstep(close, close + 0.06, pc));
+          put(`v${i}`, op(paper), (v) => (c.el.style.opacity = v));
+        });
+      }
+
+      // The grid draws out from his slot in drafting blue, and turns into the
+      // collage's own white hairlines as the photographs arrive.
+      const g = smoothstep(1.12, 1.45, pc);
+      const white = smoothstep(1.75, 1.95, pc);
+      const gridO = (g > 0 ? 1 : 0) * (1 - smoothstep(HOLD + 0.02, HOLD + 0.14, pc)) * scene;
+      put("gridV", gridO > 0 ? "visible" : "hidden", (v) => (grid.style.visibility = v));
+      if (gridO > 0) {
+        put("gridC", mixHex(CYAN, "#ffffff", white), (v) => (grid.style.color = v));
+        put("gridO", op(gridO * (0.5 + 0.4 * white)), (v) => (grid.style.opacity = v));
+        put("gridB", `${(-cam.tx / cam.s).toFixed(2)} ${(-cam.ty / cam.s).toFixed(2)} ${(W / cam.s).toFixed(2)} ${(H / cam.s).toFixed(2)}`, (v) => grid.setAttribute("viewBox", v));
+        const lerp = (a: number, b: number) => (a + (b - a) * g).toFixed(2);
+        gridLines.forEach((l, i) => {
+          const v = l.x !== null ? `${l.x} ${lerp(slotWY, R.y)} ${l.x} ${lerp(slotWY, R.y + R.h)}` : `${lerp(slotWX, R.x)} ${l.y} ${lerp(slotWX, R.x + R.w)} ${l.y}`;
+          put(`g${i}`, v, (s) => {
+            const [x1, y1, x2, y2] = s.split(" ");
+            l.el.setAttribute("x1", x1);
+            l.el.setAttribute("y1", y1);
+            l.el.setAttribute("x2", x2);
+            l.el.setAttribute("y2", y2);
+          });
         });
       }
 
@@ -142,7 +272,7 @@ export function PullBackMotion() {
       if (placeO > 0) {
         put("placeO", op(placeO), (v) => (placeEl.style.opacity = v));
         // Holds still once it is full screen: past here the camera would show its edges.
-        const c = camera(Math.min(zoom, 3), W, H);
+        const c = camera(Math.min(zoom, 3), W, H, st);
         put("placeT", `translate3d(${(c.tx + HOUSE.x * c.s).toFixed(2)}px, ${(c.ty + HOUSE.y * c.s).toFixed(2)}px, 0) scale(${(c.s / houseScale).toFixed(5)})`, (v) => (placeEl.style.transform = v));
         put("placeC", open >= 1 ? "none" : aperture(open * open), (v) => (placeEl.style.clipPath = v));
       }
@@ -150,9 +280,9 @@ export function PullBackMotion() {
       put("shade", op(p < 3.9 ? shadeO : 0), (v) => (shade.style.opacity = v));
 
       // The line drawing draws itself, gives way to the photograph, and returns on the blue.
-      const away = smoothstep(2.28, 2.34, pc) * (1 - smoothstep(2.7, 2.9, pc));
+      const awayLine = smoothstep(2.28, 2.34, pc) * (1 - smoothstep(2.7, 2.9, pc));
       const blueprint = smoothstep(3.55, 3.85, p);
-      const drawO = Math.max(away, blueprint) * scene;
+      const drawO = Math.max(awayLine, blueprint) * scene;
       if (drawO > 0) {
         // World-unit strokes (dashes need them): keep them a hairline at any distance.
         put("hw", (1.25 / cam.s).toFixed(3), (v) => drawing.style.setProperty("--hw", v));
@@ -196,7 +326,10 @@ export function PullBackMotion() {
       if (reduce) put("exp", op(exposed), (v) => (exposure.style.opacity = v));
       else put("exp", `inset(${((1 - exposed) * 100).toFixed(2)}% 0 0 0)`, (v) => (exposure.style.clipPath = v));
       if (veil) put("veil", op(Math.max(0, 1 - Math.abs(p - 1) * 2.6)), (v) => (veil.style.opacity = v));
-      // The distance ruler starts at 1:1, not on the introduction.
+
+      // While the collage fills the screen, the menu becomes a paper bar and the
+      // ruler gets a paper backing: no link or number ever sits on a photograph.
+      const cover = smoothstep(1.4, 1.52, pc) * (1 - smoothstep(HOLD + 0.02, HOLD + 0.14, pc)) * scene;
       if (ruler) {
         const o = smoothstep(0.5, 0.9, p);
         put("ruler", op(o), (v) => {
@@ -204,18 +337,31 @@ export function PullBackMotion() {
           ruler.style.visibility = o > 0 ? "visible" : "hidden";
         });
       }
+      const nextAway = cover > 0.5 && underHeader;
+      if (nextAway !== away) {
+        away = nextAway;
+        if (away) root.dataset.chrome = "paper";
+        else delete root.dataset.chrome;
+      }
       dark = light > 0.5;
       applyTone();
 
       chapterEls.forEach((el, j) => {
         const d = p - j;
-        // Places waits for the photograph to open under it.
-        const o = j === 3 && d < 0 && !reduce ? smoothstep(2.82, 2.96, p) : Math.max(0, 1 - Math.abs(d) * 2.6);
+        let o: number;
+        if (j === 2 && !reduce) {
+          // Stories arrives once the collage has settled, and is gone before it clears.
+          o = smoothstep(1.84, 1.98, p) * (1 - smoothstep(HOLD - 0.02, HOLD + 0.04, p));
+        } else if (j === 3 && d < 0 && !reduce) {
+          // Places waits for the photograph to open under it.
+          o = smoothstep(2.82, 2.96, p);
+        } else o = Math.max(0, 1 - Math.abs(d) * 2.6);
         put(`c${j}`, op(o), (v) => {
           el.style.opacity = v;
           el.style.pointerEvents = o > 0.5 ? "auto" : "none";
         });
-        if (!reduce && o > 0) put(`ct${j}`, `translate3d(0, ${(-d * 40).toFixed(1)}px, 0)`, (v) => (el.style.transform = v));
+        // Stories stays put in its tile of the grid; the others drift with the camera.
+        if (!reduce && o > 0 && j !== 2) put(`ct${j}`, `translate3d(0, ${(-d * 40).toFixed(1)}px, 0)`, (v) => (el.style.transform = v));
       });
 
       const nearest = Math.round(p);
@@ -315,6 +461,7 @@ export function PullBackMotion() {
       stage.removeEventListener("click", onClick);
       stage.removeEventListener("focusin", onFocus);
       delete root.dataset.tone;
+      delete root.dataset.chrome;
     };
   }, []);
 

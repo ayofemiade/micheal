@@ -1,15 +1,39 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { chapters, face, hero, house, maoPrints, portrait, SIZES } from "@/data/home";
+import { chapters, face, hero, house, portrait, storiesCollage } from "@/data/home";
 import { siteConfig } from "@/data/site";
-import { FACE_RECT, PRINT_RECT } from "./scene";
+import { COLLAGE, FACE_RECT, PRINT_RECT } from "./scene";
 import { HouseDrawing } from "./HouseDrawing";
 import { PullBackMotion } from "./PullBackMotion";
 import { Arrival } from "./Arrival";
 
 const place = (r: { x: number; y: number; w: number; h: number }) =>
   ({ "--x": r.x, "--y": r.y, "--w": r.w, "--h": r.h }) as CSSProperties;
+
+/**
+ * The collage's 64 cells, as paper laid over it. Each lifts in turn, nearest his
+ * slot first, so the photographs develop outward from him (PullBackMotion).
+ * d is the cell's distance from the slot, 0 → 1.
+ */
+const { xs, ys, slot, tile } = COLLAGE;
+const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
+const slotX = (xs[slot.c] + xs[slot.c + 1]) / 2;
+const slotY = (ys[slot.r0] + ys[slot.r1]) / 2;
+const reach = Math.hypot(COLLAGE.pxW, COLLAGE.pxH) * 0.62;
+const cells = xs.slice(0, -1).flatMap((x, c) =>
+  ys.slice(0, -1).map((y, r) => {
+    const w = xs[c + 1] - x;
+    const h = ys[r + 1] - y;
+    return {
+      key: `${c}-${r}`,
+      style: { left: pct(x, COLLAGE.pxW), top: pct(y, COLLAGE.pxH), width: pct(w, COLLAGE.pxW), height: pct(h, COLLAGE.pxH) },
+      d: Math.min(1, Math.hypot(x + w / 2 - slotX, y + h / 2 - slotY) / reach).toFixed(3),
+      slot: c === slot.c && r >= slot.r0 && r < slot.r1,
+      tile: c >= tile.c0 && c < tile.c1 && r >= tile.r0 && r < tile.r1,
+    };
+  }),
+);
 
 /**
  * 01: The introduction, then the camera: in to 1:1, back out to 1:10 → 1:100 → 1:∞.
@@ -41,22 +65,28 @@ export function PullBack() {
             <HouseDrawing />
           </svg>
 
+          {/* Stories: the collage, under paper cells that lift outward from his slot. */}
+          <div className="pullback-collage-clip" data-collage-clip>
+          <div className="pullback-collage" data-collage>
+            <Image
+              src={storiesCollage.src}
+              alt={storiesCollage.alt}
+              width={storiesCollage.width}
+              height={storiesCollage.height}
+              sizes="(max-width: 639px) 260vw, (max-aspect-ratio: 3/2) 140vw, 110vw"
+              // Needed the moment the camera pulls back from the face: never lazy.
+              loading="eager"
+              fetchPriority="low"
+            />
+            <div className="pullback-cells" aria-hidden="true">
+              {cells.map((c) => (
+                <span key={c.key} style={c.style} data-d={c.d} data-slot={c.slot || undefined} data-tile={c.tile || undefined} />
+              ))}
+            </div>
+          </div>
+          </div>
+
           <div className="pullback-photos" data-photos>
-            {maoPrints.map((p) => (
-              <Image
-                key={p.id}
-                src={p.src}
-                alt=""
-                width={p.width}
-                height={p.height}
-                sizes={SIZES.maoPrint}
-                style={place(p)}
-                data-print
-                // Off-screen at 1:1 but needed the moment the camera moves: never lazy.
-                loading="eager"
-                fetchPriority="low"
-              />
-            ))}
             <Image
               src={portrait.src}
               alt={portrait.alt}
@@ -67,6 +97,7 @@ export function PullBack() {
               fetchPriority="high"
               quality={85}
               style={place(PRINT_RECT)}
+              data-portrait
             />
             <Image
               src={face.src}
@@ -82,6 +113,16 @@ export function PullBack() {
             />
             <div className="pullback-blend" aria-hidden="true" style={place(PRINT_RECT)} data-blend />
           </div>
+
+          {/* The collage's grid, drawn out from his slot before the photographs arrive. */}
+          <svg className="pullback-grid" aria-hidden="true" preserveAspectRatio="none" data-grid>
+            {xs.slice(1, -1).map((x) => (
+              <line key={`x${x}`} data-gx={x} />
+            ))}
+            {ys.slice(1, -1).map((y) => (
+              <line key={`y${y}`} data-gy={y} />
+            ))}
+          </svg>
 
           <div className="pullback-veil" aria-hidden="true" data-veil />
 

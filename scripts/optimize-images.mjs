@@ -383,6 +383,11 @@ if (wanted("re-single-after.jpg")) {
   await doubled(await sharp(file).removeAlpha().composite([{ input: patch, left: 47, top: 304 }]).toBuffer(), "re-single-after.jpg");
 }
 
+/** Homepage Stories: Segun's MAO Media collage, the 3000 px export, as supplied (metadata dropped). */
+if (!only || "stories-collage.jpg".startsWith(only)) {
+  await aboutImage(await sharp(path.join(root, "website gallery/Website Collage2.jpg.jpeg")).toBuffer(), "stories-collage.jpg");
+}
+
 /** Contact: the open hand, at life size. */
 if (!only || "ct-hand.jpg".startsWith(only)) {
   await aboutImage(await sharp(path.join(root, "potrait/IMG_2555.jpg")).rotate().toBuffer(), "ct-hand.jpg");

@@ -356,6 +356,16 @@ These are requested sizes: browsers allocate large layers in tiles, so they show
 
 **Removed.** The `[slug]` holding route, now unused.
 
+## 9m. Homepage Stories: "One face among the others"
+
+**The idea.** Stories (1:10) is now Segun's MAO Media collage, full screen. The copy says it: "Step back from one face and you find the others." Pulling back from his face, the collage's grid draws out from his print in drafting blue, his print settles into the slot the children's photograph occupies (one column, three rows: almost exactly its shape), and the photographs develop cell by cell outward from him. At rest his slot hands over to the photograph really there, so the frame is the collage as supplied. On the way to Places the cells close again, farthest first, as the house begins to draw. Places is unchanged.
+
+**Framing.** The menu stays: while the collage shows it becomes a solid paper bar (`data-chrome="paper"` on `<html>`), and the ruler gets a paper backing, so no link sits on a photograph. The collage is framed beneath the bar. Wide, short screens (at least 240 px of paper beside the whole collage): the whole collage at full height against the right edge, the copy in a paper column on the left, nothing cropped or covered. Other wide screens: the collage covers the space and the copy sits in a paper tile of its grid (bottom left: blank cells and an arm, no face covered). Phones, portrait and near-square screens: the collage fills a band above the copy, and the camera glides across it, starting with his slot in view.
+
+**Files.** `COLLAGE` in `src/components/home/scene.ts` holds the grid measured from the file. Replace the image only with the same layout at a larger size. The source is `website gallery/Website Collage2.jpg.jpeg` (3000 px wide, the same layout as the 1907 px original the grid was measured on), built to 2400 px.
+
+**Measured.** Phone layer memory at 390×844@3: peak 467 MB, against 683 MB for the previous scattered prints. No console errors at six screen sizes or with reduced motion.
+
 ## 10. ⚠ The GitHub repository is public
 
 `github.com/ayofemiade/micheal` is public and contains:

@@ -67,7 +67,8 @@ export function MediaSection() {
                 className="relative overflow-hidden shadow-[0_0_0_1px_var(--color-rule)] transition-transform duration-500 ease-[var(--ease-camera)] group-hover:-translate-y-2"
                 style={{ height: `calc(${h} * clamp(14rem, 44svh, 28rem))`, aspectRatio: `${p.width} / ${p.height}` }}
               >
-                <Image loading="eager" fetchPriority="low" src={p.src} alt={p.alt} fill sizes={SIZES.maoPrint} className="object-cover" />
+                {/* Lazy: since the opening stage shows the collage, only this wall uses these prints. */}
+                <Image loading="lazy" src={p.src} alt={p.alt} fill sizes={SIZES.maoPrint} className="object-cover" />
               </div>
               <figcaption className="text-ink-2 mt-3 text-sm">{p.caption}</figcaption>
             </figure>

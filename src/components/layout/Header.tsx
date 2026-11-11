@@ -68,6 +68,7 @@ export function Header() {
       className="group/h fixed inset-x-0 top-0 z-50 h-[var(--header-h)] border-b border-transparent transition-[color,background-color,border-color] duration-500 data-solid:border-rule data-solid:bg-paper [:root[data-tone=dark]_&:not([data-open])]:text-paper"
       data-open={open || undefined}
       data-solid={solid || undefined}
+      data-site-header
     >
       <div className="shell flex h-full items-center justify-between gap-6">
         <Link href="/" className="relative z-10 text-[0.9375rem] font-semibold tracking-[-0.01em]">
