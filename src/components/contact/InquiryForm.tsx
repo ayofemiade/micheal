@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { startTransition, useActionState, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { sendInquiry } from "@/app/contact/actions";
 import { ASSESSMENT, areas, contact, type AreaValue } from "@/data/contact";
@@ -153,6 +154,11 @@ export function InquiryForm({ area: startArea, assessment }: { area: AreaValue |
           <FieldError id="ct-message-error" text={errors.message} />
           <p id="ct-prompt" className="ct-prompt">
             {copy.prompt}
+          </p>
+          <p className="ct-prompt">
+            <Link href="/privacy" className="link-quiet">
+              {copy.privacy}
+            </Link>
           </p>
         </div>
 

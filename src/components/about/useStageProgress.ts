@@ -2,6 +2,7 @@
 
 import { useEffect, type RefObject } from "react";
 import { prefersReducedMotion } from "@/lib/gsap";
+import { pageTop, watchGeometry } from "@/lib/scroll-geometry";
 
 /**
  * Progress (0 to 1) through a sticky stage inside a taller track, eased toward
@@ -23,13 +24,13 @@ export function useStageProgress(
     if (!track || !stage) return;
     const reduced = prefersReducedMotion();
 
-    const read = () => {
-      const span = track.offsetHeight - stage.offsetHeight;
-      return span > 0 ? Math.max(0, Math.min(1, -track.getBoundingClientRect().top / span)) : 0;
-    };
+    // Measured, never read on scroll (see scroll-geometry.ts).
+    let trackTop = 0;
+    let span = 0;
+    const read = () => (span > 0 ? Math.max(0, Math.min(1, (window.scrollY - trackTop) / span)) : 0);
 
-    let cur = read();
-    let target = cur;
+    let cur = 0;
+    let target = 0;
     let raf = 0;
     let last = 0;
 
@@ -50,13 +51,22 @@ export function useStageProgress(
       if (!raf) raf = requestAnimationFrame(tick);
     };
 
-    render(cur, reduced);
+    let first = true;
+    const unwatch = watchGeometry(() => {
+      trackTop = pageTop(track);
+      span = track.offsetHeight - stage.offsetHeight;
+      if (first) {
+        // A reload mid-page starts where the visitor is, without a sweep.
+        first = false;
+        cur = target = read();
+        render(cur, reduced);
+      } else onScroll();
+    });
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
     return () => {
       cancelAnimationFrame(raf);
+      unwatch();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
     };
   }, [trackRef, stageRef, render]);
 }

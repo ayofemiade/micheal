@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { prefersReducedMotion } from "@/lib/gsap";
+import { pageTop, watchGeometry } from "@/lib/scroll-geometry";
 import { camera, COLLAGE, COLLAGE_RECT, HOUSE, HOUSE_OUTLINE, isMobile, LAYOUT_SCALE, mixHex, SLOT_TRIM, smoothstep, type StoriesFrame } from "./scene";
 
 const STUDIO = "#fafafa";
@@ -47,7 +48,7 @@ export function PullBackMotion() {
     const shade = stage?.querySelector<HTMLElement>("[data-place-shade]");
     const ground = stage?.querySelector<HTMLElement>("[data-ground]");
     const collageEl = stage?.querySelector<HTMLElement>("[data-collage]");
-    const grid = stage?.querySelector<SVGSVGElement>("[data-grid]");
+    const grid = stage?.querySelector<HTMLElement>("[data-grid]");
     const clipEl = stage?.querySelector<HTMLElement>("[data-collage-clip]");
     if (!clipEl || !track || !stage || !photos || !drawing || !faceEl || !portraitEl || !exposure || !placeEl || !shade || !ground || !collageEl || !grid) return;
     const lines = [...drawing.querySelectorAll<SVGElement>("[data-line]")];
@@ -65,7 +66,7 @@ export function PullBackMotion() {
     // The slot's centre in world units: the grid draws out from here.
     const slotWX = R.x + ((xs[slot.c] + xs[slot.c + 1]) / 2) * R.k;
     const slotWY = R.y + ((ys[slot.r0] + ys[slot.r1]) / 2) * R.k;
-    const gridLines = [...grid.querySelectorAll<SVGLineElement>("line")].map((el) => ({
+    const gridLines = [...grid.querySelectorAll<HTMLElement>("i")].map((el) => ({
       el,
       x: el.dataset.gx !== undefined ? R.x + Number(el.dataset.gx) * R.k : null,
       y: el.dataset.gy !== undefined ? R.y + Number(el.dataset.gy) * R.k : null,
@@ -74,6 +75,7 @@ export function PullBackMotion() {
 
     let W = 0;
     let H = 0;
+    let dpr = 1;
     let layout = { s: 1, tx: 0, ty: 0 };
     let faceScale = 1;
     let houseScale = 1;
@@ -109,6 +111,7 @@ export function PullBackMotion() {
     const measure = () => {
       W = stage.clientWidth;
       H = stage.clientHeight;
+      dpr = window.devicePixelRatio || 1;
 
       // Stories sits beneath the menu, which turns into a paper bar while the
       // collage shows: the links stay, and never sit on a photograph.
@@ -236,7 +239,9 @@ export function PullBackMotion() {
           }
           const close = HOLD + 0.04 + 0.1 * (1 - c.d);
           const paper = 1 - dev * (1 - smoothstep(close, close + 0.06, pc));
-          put(`v${i}`, op(paper), (v) => (c.el.style.opacity = v));
+          // Faded by colour, which only repaints the one cells layer. Opacity made the browser
+          // lay the cells out again, and 64 separate GPU layers cost more than they saved (measured).
+          put(`v${i}`, (paper * 100).toFixed(1), (v) => c.el.style.setProperty("--paper", `${v}%`));
         });
       }
 
@@ -249,17 +254,21 @@ export function PullBackMotion() {
       if (gridO > 0) {
         put("gridC", mixHex(CYAN, "#ffffff", white), (v) => (grid.style.color = v));
         put("gridO", op(gridO * (0.5 + 0.4 * white)), (v) => (grid.style.opacity = v));
-        put("gridB", `${(-cam.tx / cam.s).toFixed(2)} ${(-cam.ty / cam.s).toFixed(2)} ${(W / cam.s).toFixed(2)} ${(H / cam.s).toFixed(2)}`, (v) => grid.setAttribute("viewBox", v));
-        const lerp = (a: number, b: number) => (a + (b - a) * g).toFixed(2);
+        // World → screen, lines snapped to device pixels so they stay one crisp hairline.
+        const lerp = (a: number, b: number) => a + (b - a) * g;
+        const snap = (v: number) => Math.round(v * dpr) / dpr;
         gridLines.forEach((l, i) => {
-          const v = l.x !== null ? `${l.x} ${lerp(slotWY, R.y)} ${l.x} ${lerp(slotWY, R.y + R.h)}` : `${lerp(slotWX, R.x)} ${l.y} ${lerp(slotWX, R.x + R.w)} ${l.y}`;
-          put(`g${i}`, v, (s) => {
-            const [x1, y1, x2, y2] = s.split(" ");
-            l.el.setAttribute("x1", x1);
-            l.el.setAttribute("y1", y1);
-            l.el.setAttribute("x2", x2);
-            l.el.setAttribute("y2", y2);
-          });
+          let v: string;
+          if (l.x !== null) {
+            const y1 = cam.ty + lerp(slotWY, R.y) * cam.s;
+            const y2 = cam.ty + lerp(slotWY, R.y + R.h) * cam.s;
+            v = `translate3d(${snap(cam.tx + l.x * cam.s)}px, ${y1.toFixed(1)}px, 0) scaleY(${((y2 - y1) / H).toFixed(4)})`;
+          } else {
+            const x1 = cam.tx + lerp(slotWX, R.x) * cam.s;
+            const x2 = cam.tx + lerp(slotWX, R.x + R.w) * cam.s;
+            v = `translate3d(${x1.toFixed(1)}px, ${snap(cam.ty + (l.y as number) * cam.s)}px, 0) scaleX(${((x2 - x1) / W).toFixed(4)})`;
+          }
+          put(`g${i}`, v, (t) => (l.el.style.transform = t));
         });
       }
 
@@ -285,7 +294,9 @@ export function PullBackMotion() {
       const drawO = Math.max(awayLine, blueprint) * scene;
       if (drawO > 0) {
         // World-unit strokes (dashes need them): keep them a hairline at any distance.
-        put("hw", (1.25 / cam.s).toFixed(3), (v) => drawing.style.setProperty("--hw", v));
+        // Rewritten only when it changes visibly (3% steps): each write restyles every
+        // line of the drawing and lays it out again, the main cost of the zoom on phones.
+        put("hw", (1.25 * Math.pow(1.03, Math.round(Math.log(1 / cam.s) / Math.log(1.03)))).toPrecision(4), (v) => drawing.style.setProperty("--hw", v));
         const u = Math.max(0, Math.min(1, (pc - 2.3) / 0.28));
         lines.forEach((el, i) => {
           const local = Math.max(0, Math.min(1, u * 1.7 - (i / lines.length) * 0.7));
@@ -382,15 +393,25 @@ export function PullBackMotion() {
     let last = 0;
     const header = document.querySelector("header");
 
+    // Measured once, and again only when the page resizes: reading positions on
+    // every scroll forced a layout mid-frame (see scroll-geometry.ts).
     // The sticky span is track minus stage. Not innerHeight: that changes every
     // time a phone's address bar slides in or out, which made the camera jump.
-    const spanOf = () => track.offsetHeight - stage.offsetHeight;
+    let trackTop = 0;
+    let trackH = 0;
+    let span = 0;
+    let headerH = 72;
+    const measureScroll = () => {
+      trackTop = pageTop(track);
+      trackH = track.offsetHeight;
+      span = trackH - stage.offsetHeight;
+      headerH = header?.offsetHeight ?? 72;
+    };
 
     const readScroll = () => {
-      const rect = track.getBoundingClientRect();
-      const span = spanOf();
-      target = span > 0 ? Math.max(0, Math.min(1, -rect.top / span)) * LAST : 0;
-      const next = rect.top <= 0 && rect.bottom > (header?.offsetHeight ?? 72);
+      const top = trackTop - window.scrollY;
+      target = span > 0 ? Math.max(0, Math.min(1, -top / span)) * LAST : 0;
+      const next = top <= 0 && top + trackH > headerH;
       if (next !== underHeader) {
         underHeader = next;
         applyTone();
@@ -420,14 +441,13 @@ export function PullBackMotion() {
     };
     const onResize = () => {
       measure();
+      measureScroll();
       readScroll();
       render(cur);
     };
 
     const goTo = (i: number, instant = false) => {
-      const top = track.getBoundingClientRect().top + window.scrollY;
-      const span = spanOf();
-      window.scrollTo({ top: top + (span * i) / LAST, behavior: reduce || instant ? "auto" : "smooth" });
+      window.scrollTo({ top: trackTop + (span * i) / LAST, behavior: reduce || instant ? "auto" : "smooth" });
       if (instant) {
         // Skip the catch-up when focus moves the camera.
         target = cur = i;
@@ -448,14 +468,22 @@ export function PullBackMotion() {
     stage.addEventListener("focusin", onFocus);
 
     measure();
+    measureScroll();
     readScroll();
     cur = target; // a reload mid-page starts where the visitor is, without a sweep
     render(cur);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    // Images and fonts settling below can move nothing here, but a size change can.
+    const unwatch = watchGeometry(() => {
+      measureScroll();
+      readScroll();
+      kick();
+    });
 
     return () => {
       cancelAnimationFrame(raf);
+      unwatch();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       stage.removeEventListener("click", onClick);

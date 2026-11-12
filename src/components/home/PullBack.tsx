@@ -114,15 +114,16 @@ export function PullBack() {
             <div className="pullback-blend" aria-hidden="true" style={place(PRINT_RECT)} data-blend />
           </div>
 
-          {/* The collage's grid, drawn out from his slot before the photographs arrive. */}
-          <svg className="pullback-grid" aria-hidden="true" preserveAspectRatio="none" data-grid>
+          {/* The collage's grid, drawn out from his slot before the photographs arrive.
+              Each line is a 1 px strip the camera slides and stretches: moved by the GPU, never redrawn. */}
+          <div className="pullback-grid" aria-hidden="true" data-grid>
             {xs.slice(1, -1).map((x) => (
-              <line key={`x${x}`} data-gx={x} />
+              <i key={`x${x}`} data-gx={x} />
             ))}
             {ys.slice(1, -1).map((y) => (
-              <line key={`y${y}`} data-gy={y} />
+              <i key={`y${y}`} data-gy={y} />
             ))}
-          </svg>
+          </div>
 
           <div className="pullback-veil" aria-hidden="true" data-veil />
 

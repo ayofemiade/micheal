@@ -62,6 +62,7 @@ export const contact = {
     prompt:
       "For project inquiries, include your location, current stage, and preferred timing if known. For Listening Hub questions, please avoid sharing sensitive personal details here.",
     submit: "Send Inquiry",
+    privacy: "How your details are handled", // pending
     sending: "Sending",
     success: "Thank you for getting in touch. Your inquiry has been received, and I’ll respond using the email address you provided.",
     assessmentNote: "About a renovation assessment", // pending

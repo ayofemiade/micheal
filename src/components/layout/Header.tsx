@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { navItems, siteConfig } from "@/data/site";
 import { BookingLink } from "./BookingLink";
+import { pageTop, watchGeometry } from "@/lib/scroll-geometry";
 
 /**
  * Quiet, fixed, and always offering the one action. Colour follows the page:
@@ -26,24 +27,29 @@ export function Header() {
   useEffect(() => {
     let raf = 0;
     let last: boolean | undefined;
+    // Where the pull-back ends, in page coordinates: measured, never read on scroll.
+    let heroBottom = 0;
+    let headerH = 72;
     const update = () => {
       raf = 0;
-      const hero = document.getElementById("pullback");
-      const limit = hero ? hero.getBoundingClientRect().bottom : 0;
-      const next = limit <= (document.querySelector("header")?.offsetHeight ?? 72);
+      const next = heroBottom - window.scrollY <= headerH;
       // Only touch React when the state flips, not on every scrolled frame.
       if (next !== last) setSolid((last = next));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
-    update();
+    const unwatch = watchGeometry(() => {
+      const hero = document.getElementById("pullback");
+      heroBottom = hero ? pageTop(hero) + hero.offsetHeight : 0;
+      headerH = document.querySelector("header")?.offsetHeight ?? 72;
+      update();
+    });
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
     return () => {
       cancelAnimationFrame(raf);
+      unwatch();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
     };
   }, [pathname]);
 

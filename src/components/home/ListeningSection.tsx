@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { listening } from "@/data/home";
 import { BookingLink } from "@/components/layout/BookingLink";
 import { LineReveal } from "@/components/motion/LineReveal";

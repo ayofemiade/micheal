@@ -1,0 +1,65 @@
+/* Privacy notice: loaded by this route only. A plain, readable sheet. */
+.pv-page {
+  padding-top: calc(var(--header-h) + clamp(2.5rem, 9svh, 6rem));
+  padding-bottom: clamp(3rem, 10svh, 6rem);
+  background: var(--color-paper);
+}
+.pv-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 9vw, 7.5rem);
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+.pv-intro {
+  margin-top: 1.5rem;
+  max-width: 46ch;
+  font-size: clamp(1.125rem, 1.5vw, 1.5rem);
+  line-height: 1.5;
+}
+.pv-body {
+  margin-top: clamp(2.5rem, 8svh, 5rem);
+  border-top: 1px solid var(--color-ink);
+}
+.pv-section {
+  display: grid;
+  gap: 0.75rem;
+  padding-block: clamp(1.5rem, 4svh, 2.25rem);
+  border-bottom: 1px solid var(--color-rule);
+}
+.pv-section h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.pv-section p {
+  max-width: 62ch;
+  line-height: 1.6;
+  color: var(--color-ink-2);
+}
+.pv-section p + p {
+  margin-top: 0.75em;
+}
+.pv-section a {
+  display: inline-block;
+  margin-top: 0.875rem;
+}
+.pv-updated {
+  margin-top: 2rem;
+  color: var(--color-ink-2);
+}
+@media (min-width: 1024px) {
+  .pv-section {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 0;
+  }
+  .pv-section h2 {
+    grid-column: 1 / 5;
+    padding-right: 2rem;
+  }
+  .pv-section > div {
+    grid-column: 5 / -1;
+  }
+}

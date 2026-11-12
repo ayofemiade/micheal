@@ -23,11 +23,12 @@ export const siteConfig = {
   /** Where "book" links go: the calendar, or the Listening Hub page if it is ever removed. */
   bookingHref: BOOKING_URL || "/listening-hub",
   /** Shown in the footer only once a real, approved notice exists. */
-  privacyNoticeHref: null as string | null,
+  privacyNoticeHref: "/privacy" as string | null,
   /** Verified, intentionally chosen accounts only. Shown in the footer when present. */
   socialLinks: [] as readonly NavItem[],
   copyrightYear: 2026,
   credit: "MoyoCode Technologies",
+  creditHref: "https://moyocode.com",
 } as const;
 
 export const navItems: readonly NavItem[] = [

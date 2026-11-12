@@ -69,7 +69,13 @@ export function Footer() {
             © {siteConfig.copyrightYear} {siteConfig.name}
           </span>
           <span>Scale 1:1 to 1:∞</span>
-          <span>Site by {siteConfig.credit}</span>
+          <span>
+            Site by{" "}
+            <a href={siteConfig.creditHref} target="_blank" rel="noopener" className="underline-offset-4 hover:underline">
+              {siteConfig.credit}
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </span>
         </div>
       </div>
     </footer>
