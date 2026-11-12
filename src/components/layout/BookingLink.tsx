@@ -21,8 +21,9 @@ export function BookingLink({
   const here = usePathname() === "/listening-hub";
   if (siteConfig.bookingCalendarUrl) {
     return (
-      <a href={siteConfig.bookingCalendarUrl} target="_blank" rel="noopener" className={className} onClick={onClick}>
+      <a href={siteConfig.bookingCalendarUrl} target="_blank" rel="noopener" className={className} onClick={onClick} data-booking>
         {children}
+        <span className="sr-only"> (opens the booking calendar in a new tab)</span>
       </a>
     );
   }

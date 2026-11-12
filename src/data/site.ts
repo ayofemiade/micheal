@@ -3,6 +3,9 @@ export interface NavItem {
   href: string;
 }
 
+/** Segun's Calendly: the one destination of every "Book a Listening Session". NEXT_PUBLIC_BOOKING_URL overrides it. */
+const BOOKING_URL = process.env.NEXT_PUBLIC_BOOKING_URL || "https://calendly.com/adebiyimichael1/30min";
+
 export const siteConfig = {
   name: "Segun Michael",
   title: "Segun Michael | Listening, Media and Real Estate",
@@ -12,13 +15,13 @@ export const siteConfig = {
   positioning:
     "I’m Segun Michael. I listen, create and bring ideas to life across conversations, media and real estate.",
   /**
-   * The real booking calendar: the one destination of every "Book a Listening
-   * Session" action. Set NEXT_PUBLIC_BOOKING_URL (see .env.example) and rebuild.
-   * Booking and general inquiries are separate: never point this at Contact.
+   * The booking calendar: the one destination of every "Book a Listening
+   * Session" action, opened in a new tab. Booking and general inquiries are
+   * separate: never point this at Contact.
    */
-  bookingCalendarUrl: process.env.NEXT_PUBLIC_BOOKING_URL || null,
-  /** Until the calendar exists, site-wide "book" links lead to the Listening Hub page. */
-  bookingHref: process.env.NEXT_PUBLIC_BOOKING_URL || "/listening-hub",
+  bookingCalendarUrl: BOOKING_URL as string | null,
+  /** Where "book" links go: the calendar, or the Listening Hub page if it is ever removed. */
+  bookingHref: BOOKING_URL || "/listening-hub",
   /** Shown in the footer only once a real, approved notice exists. */
   privacyNoticeHref: null as string | null,
   /** Verified, intentionally chosen accounts only. Shown in the footer when present. */

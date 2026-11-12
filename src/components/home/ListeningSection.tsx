@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { listening } from "@/data/home";
-import { siteConfig } from "@/data/site";
+import { BookingLink } from "@/components/layout/BookingLink";
 import { LineReveal } from "@/components/motion/LineReveal";
 
 /**
@@ -36,9 +36,9 @@ export function ListeningSection() {
           </LineReveal>
           <p className="text-ink-2 mt-8 max-w-[36ch] text-lg leading-relaxed">{listening.body}</p>
           <div className="mt-9">
-            <Link href={siteConfig.bookingHref} className="cta">
+            <BookingLink className="cta">
               Book a Listening Session
-            </Link>
+            </BookingLink>
           </div>
           <p className="border-rule text-ink-2 mt-12 max-w-[44ch] border-t pt-5 text-sm leading-relaxed">
             {listening.notice}

@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { chapters, face, hero, house, portrait, storiesCollage } from "@/data/home";
-import { siteConfig } from "@/data/site";
 import { COLLAGE, FACE_RECT, PRINT_RECT } from "./scene";
 import { HouseDrawing } from "./HouseDrawing";
 import { PullBackMotion } from "./PullBackMotion";
+import { BookingLink } from "@/components/layout/BookingLink";
 import { Arrival } from "./Arrival";
 
 const place = (r: { x: number; y: number; w: number; h: number }) =>
@@ -139,9 +139,9 @@ export function PullBack() {
                   <span className="pullback-hero-ventures"> {hero.ventures}</span>
                 </p>
                 <div className="pullback-hero-actions">
-                  <Link href={siteConfig.bookingHref} className="cta">
+                  <BookingLink className="cta">
                     Book a Listening Session
-                  </Link>
+                  </BookingLink>
                   <button type="button" data-goto="1" className="link-quiet hidden text-[0.9375rem] [.js_&]:inline">
                     Step closer <span aria-hidden="true">↓</span>
                   </button>
@@ -172,9 +172,9 @@ export function PullBack() {
                 </p>
                 {i === 0 && (
                   <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4">
-                    <Link href={siteConfig.bookingHref} className="cta">
+                    <BookingLink className="cta">
                       Book a Listening Session
-                    </Link>
+                    </BookingLink>
                     <button type="button" data-goto="2" className="link-quiet hidden text-[0.9375rem] [.js_&]:inline">
                       Step back <span aria-hidden="true">↓</span>
                     </button>
@@ -182,9 +182,9 @@ export function PullBack() {
                 )}
                 {i === 3 && (
                   <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4">
-                    <Link href={siteConfig.bookingHref} className="cta cta-on-cyan">
+                    <BookingLink className="cta cta-on-cyan">
                       Book a Listening Session
-                    </Link>
+                    </BookingLink>
                     <a href="#media" className="link-quiet text-[0.9375rem]">
                       See the work <span aria-hidden="true">→</span>
                     </a>

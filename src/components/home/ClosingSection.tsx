@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { closing } from "@/data/home";
-import { siteConfig } from "@/data/site";
+import { BookingLink } from "@/components/layout/BookingLink";
 import { PushIn } from "@/components/motion/PushIn";
 
 /**
@@ -32,9 +32,9 @@ export function ClosingSection() {
             {closing.heading}
           </h2>
           <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
-            <Link href={siteConfig.bookingHref} className="cta">
+            <BookingLink className="cta">
               Book a Listening Session
-            </Link>
+            </BookingLink>
             <Link href="/contact" className="link-quiet text-[0.9375rem]">
               Get in touch <span aria-hidden="true">→</span>
             </Link>

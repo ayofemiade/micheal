@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BookingLink } from "@/components/layout/BookingLink";
 import { about } from "@/data/about";
 import { PushIn } from "@/components/motion/PushIn";
 
@@ -26,12 +27,21 @@ export function YourTurn() {
           <ul className="doors">
             {yourTurn.doors.map((door) => (
               <li key={door.ask}>
-                <Link href={door.href} className="door">
-                  <span className="door-ask">{door.ask}</span>
-                  <span className={door.booking ? "door-go door-book" : "door-go"}>
-                    {door.go} <span aria-hidden="true">→</span>
-                  </span>
-                </Link>
+                {door.booking ? (
+                  <BookingLink className="door">
+                    <span className="door-ask">{door.ask}</span>
+                    <span className="door-go door-book">
+                      {door.go} <span aria-hidden="true">→</span>
+                    </span>
+                  </BookingLink>
+                ) : (
+                  <Link href={door.href} className="door">
+                    <span className="door-ask">{door.ask}</span>
+                    <span className="door-go">
+                      {door.go} <span aria-hidden="true">→</span>
+                    </span>
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
